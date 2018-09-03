@@ -788,7 +788,7 @@
             "action": "list posts",
             "identifier": "list_posts",
             "description": "List posts of a channel",
-            "verbose": "Posts from only those channels will be visible which user has created or is a member of.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed",
+            "verbose": "Users can only list the posts of channels they have created or are members of.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -813,15 +813,15 @@
                     "order": 1
                 },
                 "start_time": {
-                    "description": "Start time in millisecond epoch",
-                    "data_type": "numeric",
+                    "description": "Start time in formatted timestamp",
+                    "data_type": "string",
                     "required": false,
                     "primary": false,
                     "order": 2
                 },
                 "end_time": {
-                    "description": "End time in millisecond epoch",
-                    "data_type": "numeric",
+                    "description": "End time in formatted timestamp",
+                    "data_type": "string",
                     "required": false,
                     "primary": false,
                     "order": 3

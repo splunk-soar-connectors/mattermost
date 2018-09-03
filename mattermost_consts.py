@@ -42,7 +42,9 @@ MATTERMOST_FILE_UPLOAD_FAILED = 'Cannot upload file to the given channel'
 MATTERMOST_INVALID_TIME = "Parameter 'start_time' or 'end_time' failed validation"
 MATTERMOST_INVALID_TIME_RANGE = "Invalid time range. 'end_time' should be greater than 'start_time'."
 MATTERMOST_NEGATIVE_TIME = 'Invalid time. Time cannot be negative.'
-MATTERMOST_EPOCH_VERIFICATION_FAILED = 'Time should be entered in valid millisecond epoch format'
+MATTERMOST_TIMESTAMP_VALIDATION_FAILED_MSG = 'Incorrect timestamp format, please enter in YYYY-MM-DD or valid ' \
+                                             'ISO 8601 timestamp format.'
+MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG = 'Cannot convert given timestamp into valid millisecond epoch'
 MATTERMOST_VALID_TIME = 'Time validation successful'
 MATTERMOST_CONFIG_PARAMS_REQUIRED_CONNECTIVITY = "Either 'personal_token' or 'client_id' and 'client_secret' are " \
                                                  "required for test connectivity"

@@ -5,12 +5,16 @@
 # without a valid written license from Splunk Inc. is PROHIBITED.
 # Phantom sample App Connector python file
 
+import re
 import json
 import os
 import grp
 import time
 import pwd
 import requests
+import dateutil.parser
+
+from datetime import datetime
 from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from mattermost_consts import *
@@ -662,6 +666,43 @@ class MattermostConnector(BaseConnector):
         self.send_progress('Authenticated')
         return phantom.APP_SUCCESS
 
+    def _validate_date(self, date_timestamp):
+        """ This function is used to validate date timestamp as per YYYY-MM-DD format or valid ISO 8601 format.
+
+        :param date_timestamp: Value of the date timestamp
+        :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
+        """
+
+        regex = r'^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):' \
+                r'([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$'
+        match_iso8601 = re.compile(regex).match
+        try:
+            if match_iso8601(date_timestamp) is not None:
+                return phantom.APP_SUCCESS
+            elif datetime.strptime(date_timestamp, '%Y-%m-%d'):
+                return phantom.APP_SUCCESS
+        except:
+            return phantom.APP_ERROR
+
+        return phantom.APP_ERROR
+
+    def _convert_time(self, time_stamp):
+        """ This function is used to convert formatted timestamp into millisecond epoch.
+
+        :param time_stamp: formatted timestamp of start_time or end_time
+        :return: status success/failure, epoch time in milliseconds
+        """
+
+        try:
+            parsed_time = dateutil.parser.parse(time_stamp)
+            converted_time = parsed_time.strftime('%s.%f')
+            converted_time = float(converted_time) * 1000
+            epoch_time = int(converted_time)
+        except:
+            self.debug_print("conversion failed")
+            return phantom.APP_ERROR, None
+        return phantom.APP_SUCCESS, epoch_time
+
     def _verify_time(self, time_value):
         """ This function is used to verify time parameters.
 
@@ -684,7 +725,7 @@ class MattermostConnector(BaseConnector):
         num_digits = [12, 13]
 
         if not len(str(time_value)) in num_digits:
-            return phantom.APP_ERROR, MATTERMOST_EPOCH_VERIFICATION_FAILED
+            return phantom.APP_ERROR, MATTERMOST_INVALID_TIME
 
         return phantom.APP_SUCCESS, MATTERMOST_VALID_TIME
 
@@ -730,15 +771,12 @@ class MattermostConnector(BaseConnector):
             if phantom.is_fail(post_status):
                 return action_result.get_status()
 
-            if not post_list:
-                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_NO_POSTS_FOUND)
-
-            end_time_id = post_list[-1]['id']
-
             params = {}
-            params.update({
-                'before': end_time_id
-            })
+            if post_list:
+                end_time_id = post_list[-1]['id']
+                params.update({
+                    'before': end_time_id
+                })
 
             # Get posts for given channel
             post_status, post_list = self._get_posts(action_result, url, params)
@@ -1197,8 +1235,16 @@ class MattermostConnector(BaseConnector):
 
         if start_time or end_time:
             if start_time and end_time:
-                if not isinstance(start_time, (float, int)):
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_INVALID_TIME)
+
+                date_status = self._validate_date(start_time)
+                if not date_status:
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_VALIDATION_FAILED_MSG)
+
+                # convert start_time
+                convert_status, start_time = self._convert_time(start_time)
+
+                if phantom.is_fail(convert_status):
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1206,8 +1252,15 @@ class MattermostConnector(BaseConnector):
                 if phantom.is_fail(time_status):
                     return action_result.set_status(phantom.APP_ERROR, time_response)
 
-                if not isinstance(end_time, (float, int)):
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_INVALID_TIME)
+                date_status = self._validate_date(end_time)
+                if not date_status:
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_VALIDATION_FAILED_MSG)
+
+                # convert end_time
+                convert_status, end_time = self._convert_time(end_time)
+
+                if phantom.is_fail(convert_status):
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG)
 
                 # verify end_time
                 time_status, time_response = self._verify_time(end_time)
@@ -1221,8 +1274,15 @@ class MattermostConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, MATTERMOST_INVALID_TIME_RANGE)
 
             elif start_time:
-                if not isinstance(start_time, (float, int)):
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_INVALID_TIME)
+                date_status = self._validate_date(start_time)
+                if not date_status:
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_VALIDATION_FAILED_MSG)
+
+                # convert start_time
+                convert_status, start_time = self._convert_time(start_time)
+
+                if phantom.is_fail(convert_status):
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1231,10 +1291,17 @@ class MattermostConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, time_response)
 
             elif end_time:
-                if not isinstance(end_time, (float, int)):
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_INVALID_TIME)
+                date_status = self._validate_date(end_time)
+                if not date_status:
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_VALIDATION_FAILED_MSG)
 
-                # verify start_time
+                # convert end_time
+                convert_status, end_time = self._convert_time(end_time)
+
+                if phantom.is_fail(convert_status):
+                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG)
+
+                # verify end_time
                 time_status, time_response = self._verify_time(end_time)
 
                 if phantom.is_fail(time_status):

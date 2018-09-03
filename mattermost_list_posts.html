@@ -95,6 +95,22 @@
                     </a>
                 </td>
             </tr>
+            {% if result.param.start_time %}
+            <tr>
+                <td>Start time</td>
+                <td>
+                    {{ result.param.start_time }}
+                </td>
+            </tr>
+            {% endif %}
+            {% if result.param.end_time %}
+            <tr>
+                <td>End time</td>
+                <td>
+                    {{ result.param.end_time }}
+                </td>
+            </tr>
+            {% endif %}            
         </table>
         </div>
         <div class="mattermost">
