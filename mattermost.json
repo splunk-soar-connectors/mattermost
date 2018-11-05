@@ -70,7 +70,7 @@
             "action": "list users",
             "identifier": "list_users",
             "description": "List users of a team",
-            "verbose": "While listing users from a specific team, user should have created the team or be a member of that team.",
+            "verbose": "While listing users from a specific team, the user should have created the team or be a member of that team.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1065,7 +1065,7 @@
             "action": "list channels",
             "identifier": "list_channels",
             "description": "List public channels of a team",
-            "verbose": "A user can view only those channels of a team which he is member of",
+            "verbose": "A user can view only those channels of a team which he is a member of",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1270,7 +1270,7 @@
             "action": "list teams",
             "identifier": "list_teams",
             "description": "List teams",
-            "verbose": "While creating a team, user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow team to be displayed for all users.",
+            "verbose": "While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users.",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
