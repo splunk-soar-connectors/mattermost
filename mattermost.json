@@ -70,7 +70,7 @@
             "action": "list users",
             "identifier": "list_users",
             "description": "List users of a team",
-            "verbose": "While listing users from a specific team, user should have created the team or be a member of that team.",
+            "verbose": "While listing users from a specific team, the user should have created the team or be a member of that team.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -841,7 +841,8 @@
                     "data_type": "string",
                     "example_values": [
                         "yy7muzzck3raxftdnm1zbzw3yh",
-                        "test2-second-channel"
+                        "test2-second-channel",
+                        "testing-purpose"
                     ],
                     "contains": [
                         "mattermost channel"
@@ -866,7 +867,8 @@
                     "data_type": "string",
                     "example_values": [
                         "396afxwqzbgruxdkft7d8wo5qw",
-                        "privy-chantest"
+                        "privy-chantest",
+                        "phantomtest"
                     ],
                     "contains": [
                         "mattermost team"
@@ -876,7 +878,8 @@
                     "data_path": "action_result.data.*.channel_id",
                     "data_type": "string",
                     "example_values": [
-                        "yy7muzzck3raxftdnm1zbzw3yh"
+                        "yy7muzzck3raxftdnm1zbzw3yh",
+                        "ectpw8kdeir4589wu61ijp77tc"
                     ],
                     "contains": [
                         "mattermost channel"
@@ -886,7 +889,8 @@
                     "data_path": "action_result.data.*.create_at",
                     "data_type": "numeric",
                     "example_values": [
-                        1535007703337
+                        1535007703337,
+                        1541079654322
                     ]
                 },
                 {
@@ -900,14 +904,16 @@
                     "data_path": "action_result.data.*.edit_at",
                     "data_type": "numeric",
                     "example_values": [
-                        1535007704567
+                        1535007704567,
+                        0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.file_ids",
                     "data_type": "string",
                     "example_values": [
-                        "rsnd1pcto7ggik6sm6iuk4td6e"
+                        "rsnd1pcto7ggik6sm6iuk4td6e",
+                        "e4yq14jxd3ra5pmcsjeqjw3j7o"
                     ]
                 },
                 {
@@ -921,7 +927,8 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
+                        "rb19t6ggfj81bk1txxtcw13kir"
                     ]
                 },
                 {
@@ -936,35 +943,40 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "this is from test"
+                        "this is from test",
+                        "Test"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.original_id",
                     "data_type": "string",
                     "example_values": [
-                        "uinosfs9a3r9dgay15epdn39qy"
+                        "uinosfs9a3r9dgay15epdn39qy",
+                        ""
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.parent_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
+                        ""
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.pending_post_id",
                     "data_type": "string",
                     "example_values": [
-                        "g9rit1zsx3ngzbs1srtx8tu5fe"
+                        "g9rit1zsx3ngzbs1srtx8tu5fe",
+                        ""
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.props.username",
                     "data_type": "string",
                     "example_values": [
-                        "test2"
+                        "test2",
+                        "admin"
                     ],
                     "contains": [
                         "user name"
@@ -974,42 +986,48 @@
                     "data_path": "action_result.data.*.root_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
+                        ""
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "example_values": [
-                        "system_join_channel"
+                        "system_join_channel",
+                        ""
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
                     "data_type": "numeric",
                     "example_values": [
-                        1535007703337
+                        1535007703337,
+                        1541079654322
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.user_id",
                     "data_type": "string",
                     "example_values": [
-                        "hrfxwdb7gtdjzbzqscix7edyeh"
+                        "hrfxwdb7gtdjzbzqscix7edyeh",
+                        "zxutg6e6ibgyxjmpee7wjsmc5a"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.total_posts",
                     "data_type": "numeric",
                     "example_values": [
-                        13
+                        13,
+                        5
                     ]
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Total posts: 13"
+                        "Total posts: 13",
+                        "Total posts: 5"
                     ]
                 },
                 {
@@ -1025,6 +1043,16 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.props.addedUsername",
+                    "data_type": "string",
+                    "example_values": [
+                        "surbhi"
+                    ],
+                    "contains": [
+                        "user name"
+                    ]
                 }
             ],
             "render": {
@@ -1037,7 +1065,7 @@
             "action": "list channels",
             "identifier": "list_channels",
             "description": "List public channels of a team",
-            "verbose": "A user can view only those channels of a team which he is member of",
+            "verbose": "A user can view only those channels of a team which he is a member of",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1242,7 +1270,7 @@
             "action": "list teams",
             "identifier": "list_teams",
             "description": "List teams",
-            "verbose": "While creating a team, user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow team to be displayed for all users.",
+            "verbose": "While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users.",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
