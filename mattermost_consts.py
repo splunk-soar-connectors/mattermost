@@ -4,7 +4,6 @@
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
 
-MATTERMOST_PHANTOM_BASE_URL = 'https://127.0.0.1/rest'
 MATTERMOST_API_BASE_URL = '{server_url}/api/v4'
 MATTERMOST_CONFIG_SERVER_URL = 'server_url'
 MATTERMOST_CONFIG_VERIFY_SERVER_CERT = 'verify_server_cert'

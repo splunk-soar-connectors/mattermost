@@ -607,7 +607,9 @@ class MattermostConnector(BaseConnector):
         base url of phantom
         """
 
-        url = '{}{}'.format(MATTERMOST_PHANTOM_BASE_URL, MATTERMOST_PHANTOM_SYS_INFO_URL)
+        MATTERMOST_PHANTOM_BASE_URL = self.get_phantom_base_url()
+
+        url = '{}/rest{}'.format(MATTERMOST_PHANTOM_BASE_URL, MATTERMOST_PHANTOM_SYS_INFO_URL)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
         if phantom.is_fail(ret_val):
             return ret_val, None
@@ -625,9 +627,11 @@ class MattermostConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message), asset name
         """
 
+        MATTERMOST_PHANTOM_BASE_URL = self.get_phantom_base_url()
+
         asset_id = self.get_asset_id()
         rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
-        url = '{}{}'.format(MATTERMOST_PHANTOM_BASE_URL, rest_endpoint)
+        url = '{}/rest{}'.format(MATTERMOST_PHANTOM_BASE_URL, rest_endpoint)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
 
         if phantom.is_fail(ret_val):
