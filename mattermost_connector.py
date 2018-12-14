@@ -595,7 +595,7 @@ class MattermostConnector(BaseConnector):
         app_name = app_json['name']
 
         app_dir_name = _get_dir_name_from_app_name(app_name)
-        url_to_app_rest = '{0}/rest/handler/{1}_{2}/{3}'.format(phantom_base_url, app_dir_name, app_json['appid'],
+        url_to_app_rest = '{0}rest/handler/{1}_{2}/{3}'.format(phantom_base_url, app_dir_name, app_json['appid'],
                                                                 asset_name)
         return phantom.APP_SUCCESS, url_to_app_rest
 
@@ -607,7 +607,9 @@ class MattermostConnector(BaseConnector):
         base url of phantom
         """
 
-        url = '{}{}'.format(MATTERMOST_PHANTOM_BASE_URL, MATTERMOST_PHANTOM_SYS_INFO_URL)
+        mattermost_phantom_base_url = self.get_phantom_base_url()
+
+        url = '{}rest{}'.format(mattermost_phantom_base_url, MATTERMOST_PHANTOM_SYS_INFO_URL)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
         if phantom.is_fail(ret_val):
             return ret_val, None
@@ -625,9 +627,11 @@ class MattermostConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message), asset name
         """
 
+        mattermost_phantom_base_url = self.get_phantom_base_url()
+
         asset_id = self.get_asset_id()
         rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
-        url = '{}{}'.format(MATTERMOST_PHANTOM_BASE_URL, rest_endpoint)
+        url = '{}rest{}'.format(mattermost_phantom_base_url, rest_endpoint)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
 
         if phantom.is_fail(ret_val):
