@@ -9,7 +9,7 @@
     "product_name": "Mattermost",
     "product_version_regex": "5.*",
     "publisher": "Phantom",
-    "license": "Copyright (c) 2018 Splunk Inc.",
+    "license": "Copyright (c) 2018-2019 Splunk Inc.",
     "app_version": "1.0.5",
     "utctime_updated": "2018-12-14T01:33:22.000000Z",
     "package_name": "phantom_mattermost",
@@ -972,6 +972,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.props.addedUsername",
+                    "data_type": "string",
+                    "example_values": [
+                        "surbhi"
+                    ],
+                    "contains": [
+                        "user name"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.props.username",
                     "data_type": "string",
                     "example_values": [
@@ -1042,16 +1052,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.props.addedUsername",
-                    "data_type": "string",
-                    "example_values": [
-                        "surbhi"
-                    ],
-                    "contains": [
-                        "user name"
                     ]
                 }
             ],
