@@ -1,5 +1,5 @@
 # File: mattermost_connector.py
-# Copyright (c) 2018 Splunk Inc.
+# Copyright (c) 2018-2019 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -758,7 +758,7 @@ class MattermostConnector(BaseConnector):
                 return action_result.get_status()
 
             if not post_list:
-                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_NO_POSTS_FOUND)
+                return action_result.set_status(phantom.APP_SUCCESS, MATTERMOST_NO_POSTS_FOUND)
 
             for each_post in post_list:
                 action_result.add_data(each_post)
@@ -789,7 +789,7 @@ class MattermostConnector(BaseConnector):
                 return action_result.get_status()
 
             if not post_list:
-                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_NO_POSTS_FOUND)
+                return action_result.set_status(phantom.APP_SUCCESS, MATTERMOST_NO_POSTS_FOUND)
 
             for each_post in post_list:
                 action_result.add_data(each_post)
@@ -807,7 +807,7 @@ class MattermostConnector(BaseConnector):
                 return action_result.get_status()
 
             if not post_list:
-                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_NO_POSTS_FOUND)
+                return action_result.set_status(phantom.APP_SUCCESS, MATTERMOST_NO_POSTS_FOUND)
 
             for each_post in reversed(post_list):
                 if each_post['create_at'] <= end_time:
