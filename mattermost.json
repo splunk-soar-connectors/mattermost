@@ -4,14 +4,14 @@
     "description": "This app integrates with Mattermost to support various investigative actions",
     "type": "information",
     "product_vendor": "Mattermost",
-    "logo": "mattermost.svg",
-    "logo_dark": "mattermost_dark.svg",
+    "logo": "logo_mattermost.svg",
+    "logo_dark": "logo_mattermost_dark.svg",
     "product_name": "Mattermost",
     "product_version_regex": "5.*",
     "publisher": "Phantom",
-    "license": "Copyright (c) 2018 Splunk Inc.",
-    "app_version": "1.0.2",
-    "utctime_updated": "2018-11-29T19:53:06.000000Z",
+    "license": "Copyright (c) 2018-2019 Splunk Inc.",
+    "app_version": "1.0.6",
+    "utctime_updated": "2019-01-04T21:56:15.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.pyc",
     "min_phantom_version": "4.0.1068",
@@ -972,6 +972,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.props.addedUsername",
+                    "data_type": "string",
+                    "example_values": [
+                        "surbhi"
+                    ],
+                    "contains": [
+                        "user name"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.props.username",
                     "data_type": "string",
                     "example_values": [
@@ -1042,16 +1052,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.props.addedUsername",
-                    "data_type": "string",
-                    "example_values": [
-                        "surbhi"
-                    ],
-                    "contains": [
-                        "user name"
                     ]
                 }
             ],
