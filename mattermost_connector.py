@@ -8,6 +8,7 @@
 import re
 import json
 import os
+import sys
 import grp
 import time
 import pwd
@@ -16,6 +17,7 @@ import dateutil.parser
 
 from datetime import datetime
 from bs4 import BeautifulSoup
+from bs4 import UnicodeDammit
 from django.http import HttpResponse
 from mattermost_consts import *
 
@@ -116,9 +118,10 @@ def _save_app_state(state, asset_id, app_connector):
         with open(real_state_file_path, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
-        print 'Unable to save state file: {0}'.format(str(e))
+        print('Unable to save state file: {0}'.format(str(e)))
 
     return phantom.APP_SUCCESS
+
 
 def _handle_login_response(request):
     """ This function is used to get the login response of authorization request from Mattermost.
@@ -364,6 +367,52 @@ class MattermostConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
+    def _handle_py_ver_compat_for_input_str(self, input_str):
+        """
+        This method returns the encoded|original string based on the Python version.
+        :param python_version: Python major version
+        :param input_str: Input string to be processed
+        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str - Python 2')
+        """
+
+        try:
+            if input_str and self._python_version == 2:
+                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
+        except:
+            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
+
+        return input_str
+
+    def _get_error_message_from_exception(self, e):
+        """ This method is used to get appropriate error message from the exception.
+        :param e: Exception object
+        :return: error message
+        """
+
+        try:
+            if e.args:
+                if len(e.args) > 1:
+                    error_code = e.args[0]
+                    error_msg = e.args[1]
+                elif len(e.args) == 1:
+                    error_code = "Error code unavailable"
+                    error_msg = e.args[0]
+            else:
+                error_code = "Error code unavailable"
+                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+        except:
+            error_code = "Error code unavailable"
+            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+
+        try:
+            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
+        except TypeError:
+            error_msg = "Error occurred while connecting to the Mimecast server. Please check the asset configuration and|or the action parameters."
+        except:
+            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+
+        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+
     def _make_rest_call(self, url, action_result, headers=None, params=None, data=None, method="get",
                         verify=False, timeout=None, files=None):
         """ This function is used to make the REST call.
@@ -388,12 +437,12 @@ class MattermostConnector(BaseConnector):
             headers = {}
 
         # Try to encode URL passed
-        try:
-            url = url.encode('utf-8')
-        except:
-            self.debug_print('Error while encoding server URL')
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error while encoding server URL"),
-                          resp_json)
+        # try:
+        #     url = url.encode('utf-8')
+        # except:
+        #     self.debug_print('Error while encoding server URL')
+        #     return RetVal(action_result.set_status(phantom.APP_ERROR, "Error while encoding server URL"),
+        #                   resp_json)
         try:
             request_func = getattr(requests, method)
         except AttributeError:
@@ -623,7 +672,7 @@ class MattermostConnector(BaseConnector):
         app_name = app_json['name']
 
         app_dir_name = _get_dir_name_from_app_name(app_name)
-        url_to_app_rest = '{0}rest/handler/{1}_{2}/{3}'.format(phantom_base_url, app_dir_name, app_json['appid'],
+        url_to_app_rest = '{0}/rest/handler/{1}_{2}/{3}'.format(phantom_base_url.rstrip('/'), app_dir_name, app_json['appid'],
                                                                 asset_name)
         return phantom.APP_SUCCESS, url_to_app_rest
 
@@ -1101,19 +1150,24 @@ class MattermostConnector(BaseConnector):
 
         team = param[MATTERMOST_JSON_TEAM]
         channel = param[MATTERMOST_JSON_CHANNEL]
-        vault_id = param[MATTERMOST_JSON_VAULT_ID]
+        vault_id = self._handle_py_ver_compat_for_input_str(param[MATTERMOST_JSON_VAULT_ID])
         message = param.get(MATTERMOST_JSON_MESSAGE, MATTERMOST_FILE_UPLOAD_MSG)
 
-        # Find vault path  and info for given vault ID
-        vault_path = Vault.get_file_path(vault_id)
-        vault_info = Vault.get_file_info(vault_id)
-
-        # check if vault path is accessible
-        if not vault_path:
+        # Find vault path and info for given vault ID
+        try:
+            vault_path = Vault.get_file_path(vault_id)
+            # check if vault path is accessible
+            if not vault_path:
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
+        except:
             return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
 
-        # check if vault info is accessible
-        if not vault_info:
+        try:
+            vault_info = Vault.get_file_info(vault_id)
+            # check if vault info is accessible
+            if not vault_info:
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
+        except:
             return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
 
         # Verify valid team name or team ID
@@ -1121,7 +1175,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(team_status):
             if team_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
@@ -1129,7 +1183,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
             return action_result.get_status()
 
         file_info = vault_info[0]
@@ -1219,7 +1273,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(team_status):
             if team_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
@@ -1227,7 +1281,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
             return action_result.get_status()
 
         request_data = {
@@ -1344,7 +1398,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(team_status):
             if team_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
@@ -1352,7 +1406,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
             return action_result.get_status()
 
         # Endpoint for fetching posts
@@ -1391,7 +1445,7 @@ class MattermostConnector(BaseConnector):
 
         if phantom.is_fail(team_status):
             if team_id == MATTERMOST_CONST_NOT_FOUND:
-                    return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
+                return action_result.set_status(phantom.APP_ERROR, MATTERMOST_TEAM_NOT_FOUND_MSG)
             return action_result.get_status()
 
         # Fetch list of all channels
@@ -1451,7 +1505,7 @@ class MattermostConnector(BaseConnector):
         action = self.get_action_identifier()
         action_execution_status = phantom.APP_SUCCESS
 
-        if action in action_mapping.keys():
+        if action in list(action_mapping.keys()):
             action_function = action_mapping[action]
             action_execution_status = action_function(param)
 
@@ -1466,10 +1520,16 @@ class MattermostConnector(BaseConnector):
         self._state = self.load_state()
         config = self.get_config()
 
-        self._server_url = config[MATTERMOST_CONFIG_SERVER_URL].strip('/')
+        # Fetching the Python major version
+        try:
+            self._python_version = int(sys.version_info[0])
+        except:
+            return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
+
+        self._server_url = self._handle_py_ver_compat_for_input_str(config[MATTERMOST_CONFIG_SERVER_URL].strip('/'))
         self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, False)
         self._personal_token = config.get(MATTERMOST_CONFIG_PERSONAL_TOKEN)
-        self._client_id = config.get(MATTERMOST_CONFIG_CLIENT_ID)
+        self._client_id = self._handle_py_ver_compat_for_input_str(config.get(MATTERMOST_CONFIG_CLIENT_ID))
         self._client_secret = config.get(MATTERMOST_CONFIG_CLIENT_SECRET)
 
         self._access_token = self._state.get(MATTERMOST_ACCESS_TOKEN, "")
@@ -1516,7 +1576,7 @@ if __name__ == '__main__':
 
     if username and password:
         try:
-            print "Accessing the Login page"
+            print("Accessing the Login page")
             r = requests.get("https://127.0.0.1/login", verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -1529,11 +1589,11 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
             headers['Referer'] = 'https://127.0.0.1/login'
 
-            print "Logging into Platform to get the session id"
+            print("Logging into Platform to get the session id")
             r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platform. Error: {}".format(str(e)))
+            print("Unable to get session id from the platform. Error: {}".format(str(e)))
             exit(1)
 
     with open(args.input_test_json) as f:
@@ -1549,6 +1609,6 @@ if __name__ == '__main__':
             connector._set_csrf_info(csrftoken, headers['Referer'])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
