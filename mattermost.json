@@ -29,31 +29,27 @@
             "description": "Verify server certificate",
             "data_type": "boolean",
             "default": false,
-            "order": 1
+            "order": 4
         },
         "personal_token": {
             "description": "Personal token",
             "data_type": "password",
-            "required": false,
-            "order": 2
+            "order": 1
         },
         "ph_0": {
             "description": "Placeholder",
             "data_type": "ph",
-            "required": false,
-            "order": 3
+            "order": 5
         },
         "client_id": {
             "description": "Client ID",
             "data_type": "string",
-            "required": false,
-            "order": 4
+            "order": 2
         },
         "client_secret": {
             "description": "Client secret",
             "data_type": "password",
-            "required": false,
-            "order": 5
+            "order": 3
         }
     },
     "actions": [
@@ -78,7 +74,6 @@
                 "team": {
                     "description": "ID or name of the team",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "mattermost team"
@@ -334,7 +329,7 @@
             "action": "upload file",
             "identifier": "upload_file",
             "description": "Upload file to a channel",
-            "verbose": "User can upload files to only those channels which user has created or is a member of",
+            "verbose": "User can upload files to only those channels which user has created or is a member of.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -372,8 +367,6 @@
                 "message": {
                     "description": "Message to send",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 3
                 }
             },
@@ -576,7 +569,7 @@
             "action": "send message",
             "identifier": "send_message",
             "description": "Send message to a channel",
-            "verbose": "User can send message to only those channels which user has created or is a member of the team",
+            "verbose": "User can send message to only those channels which user has created or is a member of the team.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -604,7 +597,6 @@
                     "description": "Message to send",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
                     "order": 2
                 }
             },
@@ -701,7 +693,7 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "hey guys hru?"
+                        "hey guys how r u?"
                     ]
                 },
                 {
@@ -816,15 +808,11 @@
                 "start_time": {
                     "description": "Start time in formatted timestamp",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 2
                 },
                 "end_time": {
                     "description": "End time in formatted timestamp",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 3
                 }
             },
@@ -1066,7 +1054,7 @@
             "action": "list channels",
             "identifier": "list_channels",
             "description": "List public channels of a team",
-            "verbose": "A user can view only those channels of a team which he is a member of",
+            "verbose": "A user can view only those channels of a team which he is a member of.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
