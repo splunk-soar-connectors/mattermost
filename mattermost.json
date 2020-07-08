@@ -8,13 +8,16 @@
     "logo_dark": "logo_mattermost_dark.svg",
     "product_name": "Mattermost",
     "product_version_regex": "5.*",
-    "publisher": "Phantom",
-    "license": "Copyright (c) 2018-2019 Splunk Inc.",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2018-2020 Splunk Inc.",
     "app_version": "1.0.6",
     "utctime_updated": "2019-01-04T21:56:15.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.pyc",
-    "min_phantom_version": "4.0.1068",
+    "min_phantom_version": "4.8.24304",
+    "latest_tested_versions": [
+        "v4 API 2020-07-08"
+    ],
     "app_wizard_version": "1.0.0",
     "rest_handler": "mattermost_connector._handle_rest_request",
     "configuration": {
