@@ -454,7 +454,7 @@ class MattermostConnector(BaseConnector):
                                             timeout=timeout, files=files)
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".
-                                                   format(str(e))), resp_json)
+                                                   format(self._get_error_message_from_exception(e))), resp_json)
 
         return self._process_response(request_response, action_result)
 
@@ -1187,7 +1187,7 @@ class MattermostConnector(BaseConnector):
             return action_result.get_status()
 
         file_info = vault_info[0]
-        file_name = file_info['name']
+        file_name = self._handle_py_ver_compat_for_input_str(file_info['name'])
 
         content = None
 
@@ -1198,8 +1198,11 @@ class MattermostConnector(BaseConnector):
         # Recreate field form binary file
         worker_dir = self.get_state_dir()
         file_path = '{}/{}'.format(worker_dir, file_name)
-        with open(file_path, 'wb') as fout:
-            fout.write(content)
+        try:
+            with open(file_path, 'wb') as fout:
+                fout.write(content)
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
 
         # Set channel ID for uploading file
         data = {
@@ -1210,7 +1213,7 @@ class MattermostConnector(BaseConnector):
         file_url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(server_url=self._server_url),
                                    MATTERMOST_FILES_ENDPOINT)
 
-        with open(file_path, 'r') as f:
+        with open(file_path, 'rb') as f:
             # Set file to be uploaded
             files = {
                 'files': f
