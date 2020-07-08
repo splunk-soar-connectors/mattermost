@@ -14,7 +14,10 @@
     "utctime_updated": "2019-01-04T21:56:15.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.pyc",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.8.24304",
+    "latest_tested_versions": [
+        "v4 API 2020-07-08"
+    ],
     "app_wizard_version": "1.0.0",
     "rest_handler": "mattermost_connector._handle_rest_request",
     "configuration": {
