@@ -514,7 +514,9 @@ class MattermostConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        self._state = {}
+        if not self._state:
+            self._state = {}
+
         # If none of the config parameters are present, return error
         if not(self._client_id and self._client_secret) and not self._personal_token:
             self.save_progress(MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
