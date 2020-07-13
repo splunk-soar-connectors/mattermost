@@ -99,9 +99,7 @@
                     ],
                     "contains": [
                         "mattermost team"
-                    ],
-                    "column_name": "Team",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.auth_data",
@@ -139,9 +137,7 @@
                     ],
                     "contains": [
                         "email"
-                    ],
-                    "column_name": "Email",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.email_verified",
@@ -163,27 +159,21 @@
                     "data_type": "string",
                     "example_values": [
                         "test"
-                    ],
-                    "column_name": "First Name",
-                    "column_order": 4
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "pyx8sqe7zfn1dpmtd1s3qzqhfr"
-                    ],
-                    "column_name": "User ID",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_name",
                     "data_type": "string",
                     "example_values": [
                         "user"
-                    ],
-                    "column_name": "Last Name",
-                    "column_order": 5
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_password_update",
@@ -247,9 +237,7 @@
                     "data_type": "string",
                     "example_values": [
                         "system_user system_user_access_token system_post_all"
-                    ],
-                    "column_name": "Roles",
-                    "column_order": 6
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.timezone.automaticTimezone",
@@ -287,9 +275,7 @@
                     ],
                     "contains": [
                         "user name"
-                    ],
-                    "column_name": "User Name",
-                    "column_order": 2
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.total_users",
@@ -321,7 +307,8 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "view": "mattermost_view.display_view"
             },
             "versions": "EQ(*)"
         },
@@ -329,7 +316,7 @@
             "action": "upload file",
             "identifier": "upload_file",
             "description": "Upload file to a channel",
-            "verbose": "User can upload files to only those channels which user has created or is a member of.",
+            "verbose": "User can upload files to only those channels which user has created or is a member of.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -781,7 +768,7 @@
             "action": "list posts",
             "identifier": "list_posts",
             "description": "List posts of a channel",
-            "verbose": "Users can only list the posts of channels they have created or are members of.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
+            "verbose": "Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1086,9 +1073,7 @@
                     ],
                     "contains": [
                         "mattermost team"
-                    ],
-                    "column_name": "Team",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -1116,9 +1101,7 @@
                     "data_type": "string",
                     "example_values": [
                         "Off-Topic"
-                    ],
-                    "column_name": "Display Name",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.extra_update_at",
@@ -1142,9 +1125,7 @@
                     ],
                     "contains": [
                         "mattermost channel"
-                    ],
-                    "column_name": "Channel ID",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_post_at",
@@ -1161,9 +1142,7 @@
                     ],
                     "contains": [
                         "mattermost channel"
-                    ],
-                    "column_name": "Channel Name",
-                    "column_order": 2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.props",
@@ -1201,18 +1180,14 @@
                     "data_type": "numeric",
                     "example_values": [
                         0
-                    ],
-                    "column_name": "Total Message Count",
-                    "column_order": 5
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "example_values": [
                         "O"
-                    ],
-                    "column_name": "Type",
-                    "column_order": 4
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -1251,7 +1226,8 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "view": "mattermost_view.display_view"
             },
             "versions": "EQ(*)"
         },

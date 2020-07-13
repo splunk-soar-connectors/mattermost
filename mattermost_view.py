@@ -88,5 +88,9 @@ def display_view(provides, all_app_runs, context):
         return_page = "mattermost_send_message.html"
     elif provides == "upload file":
         return_page = "mattermost_upload_file.html"
+    elif provides == "list users":
+        return_page = "mattermost_list_users.html"
+    elif provides == "list channels":
+        return_page = "mattermost_list_channels.html"
 
     return return_page
