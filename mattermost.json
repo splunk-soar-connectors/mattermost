@@ -555,7 +555,7 @@
         {
             "action": "send message",
             "identifier": "send_message",
-            "description": "Send message to a channel",
+            "description": "Send a message to a channel",
             "verbose": "User can send message to only those channels which user has created or is a member of the team.",
             "type": "generic",
             "read_only": false,
@@ -768,7 +768,7 @@
             "action": "list posts",
             "identifier": "list_posts",
             "description": "List posts of a channel",
-            "verbose": "Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
+            "verbose": "Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then the current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or a valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
             "type": "investigate",
             "read_only": true,
             "parameters": {

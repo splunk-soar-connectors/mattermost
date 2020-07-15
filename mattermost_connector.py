@@ -514,8 +514,7 @@ class MattermostConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        if not self._state:
-            self._state = {}
+        app_state = {}
 
         # If none of the config parameters are present, return error
         if not(self._client_id and self._client_secret) and not self._personal_token:
@@ -545,7 +544,7 @@ class MattermostConnector(BaseConnector):
 
         if self._client_id and self._client_secret:
             # If client_id and client_secret is provided, go for interactive login
-            ret_val = self._handle_interactive_login(action_result=action_result)
+            ret_val = self._handle_interactive_login(app_state, action_result=action_result)
 
             if phantom.is_fail(ret_val):
                 self.save_progress(MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
@@ -566,7 +565,7 @@ class MattermostConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_ERROR, status_message='Authentication failed')
 
-    def _handle_interactive_login(self, action_result):
+    def _handle_interactive_login(self, app_state, action_result):
         """ This function is used to handle the interactive login during test connectivity
         while client_id and client_secret is provided.
 
@@ -580,7 +579,7 @@ class MattermostConnector(BaseConnector):
 
         # Append /result to create redirect_uri
         redirect_uri = '{0}/result'.format(app_rest_url)
-        self._state['redirect_uri'] = redirect_uri
+        app_state['redirect_uri'] = redirect_uri
 
         self.save_progress(MATTERMOST_OAUTH_URL_MSG)
         self.save_progress(redirect_uri)
@@ -592,11 +591,11 @@ class MattermostConnector(BaseConnector):
         authorization_url = MATTERMOST_AUTHORIZE_URL.format(server_url=self._server_url, client_id=self._client_id,
                                                             redirect_uri=redirect_uri, state=asset_id)
 
-        self._state['authorization_url'] = authorization_url
+        app_state['authorization_url'] = authorization_url
 
         # URL which would be shown to the user
         url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, asset_id)
-        _save_app_state(self._state, asset_id, self)
+        _save_app_state(app_state, asset_id, self)
 
         self.save_progress(MATTERMOST_AUTHORIZE_USER_MSG)
         self.save_progress(url_for_authorize_request)
@@ -649,7 +648,22 @@ class MattermostConnector(BaseConnector):
 
         self._state = response
         self._access_token = response[MATTERMOST_ACCESS_TOKEN]
+        self.save_state(self._state)
         _save_app_state(self._state, asset_id, self)
+
+        self._state = self.load_state()
+
+        # Scenario -
+        #
+        # If the corresponding state file doesn't have correct owner, owner group or permissions,
+        # the newely generated token is not being saved to state file and automatic workflow for token has been stopped.
+        # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
+
+        if self._access_token != self._state.get(MATTERMOST_ACCESS_TOKEN):
+            message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
+            message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
+            message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
+            return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
 
@@ -737,7 +751,7 @@ class MattermostConnector(BaseConnector):
         # wait-time while request is being granted for 105 seconds
         for _ in range(0, 35):
             self.send_progress('Waiting...')
-            self._state = _load_app_state(self.get_asset_id(), self)
+            # self._state = _load_app_state(self.get_asset_id(), self)
             # If file is generated
             if os.path.isfile(auth_status_file_path):
                 os.unlink(auth_status_file_path)
