@@ -11,6 +11,9 @@
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2020 Splunk Inc.",
     "app_version": "2.0.0",
+    "latest_tested_versions": [
+        "On-prem v4.7.1"
+    ],
     "python_version": "3",
     "utctime_updated": "2019-01-04T21:56:15.000000Z",
     "package_name": "phantom_mattermost",
@@ -103,17 +106,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.auth_data",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.auth_service",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -213,24 +210,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.notify_props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.position",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.roles",
@@ -241,17 +229,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.timezone.automaticTimezone",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.timezone.manualTimezone",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.timezone.useAutomaticTimezone",
@@ -444,10 +426,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -501,10 +480,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -656,10 +632,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -713,10 +686,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -894,10 +864,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -927,24 +894,21 @@
                     "data_path": "action_result.data.*.original_id",
                     "data_type": "string",
                     "example_values": [
-                        "uinosfs9a3r9dgay15epdn39qy",
-                        ""
+                        "uinosfs9a3r9dgay15epdn39qy"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.parent_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
-                        ""
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.pending_post_id",
                     "data_type": "string",
                     "example_values": [
-                        "g9rit1zsx3ngzbs1srtx8tu5fe",
-                        ""
+                        "g9rit1zsx3ngzbs1srtx8tu5fe"
                     ]
                 },
                 {
@@ -972,16 +936,14 @@
                     "data_path": "action_result.data.*.root_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
-                        ""
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "example_values": [
-                        "system_join_channel",
-                        ""
+                        "system_join_channel"
                     ]
                 },
                 {
@@ -1084,10 +1046,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.creator_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.delete_at",
@@ -1112,10 +1071,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.header",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -1146,24 +1102,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.purpose",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.scheme_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.team_id",
@@ -1270,10 +1217,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.company_name",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -1291,10 +1235,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.display_name",
@@ -1352,10 +1293,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.scheme_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.type",
