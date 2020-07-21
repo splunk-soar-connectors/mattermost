@@ -10,14 +10,16 @@
     "product_version_regex": "5.*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2020 Splunk Inc.",
-    "app_version": "1.0.7",
-    "utctime_updated": "2020-07-08T20:28:58.000000Z",
-    "package_name": "phantom_mattermost",
-    "main_module": "mattermost_connector.pyc",
-    "min_phantom_version": "4.8.24304",
+    "app_version": "2.0.0",
     "latest_tested_versions": [
+        "On-prem v4.7.1",
         "v4 API 2020-07-08"
     ],
+    "python_version": "3",
+    "utctime_updated": "2019-01-04T21:56:15.000000Z",
+    "package_name": "phantom_mattermost",
+    "main_module": "mattermost_connector.py",
+    "min_phantom_version": "4.8.24304",
     "app_wizard_version": "1.0.0",
     "rest_handler": "mattermost_connector._handle_rest_request",
     "configuration": {
@@ -31,31 +33,27 @@
             "description": "Verify server certificate",
             "data_type": "boolean",
             "default": false,
-            "order": 1
+            "order": 4
         },
         "personal_token": {
             "description": "Personal token",
             "data_type": "password",
-            "required": false,
-            "order": 2
+            "order": 1
         },
         "ph_0": {
             "description": "Placeholder",
             "data_type": "ph",
-            "required": false,
-            "order": 3
+            "order": 5
         },
         "client_id": {
             "description": "Client ID",
             "data_type": "string",
-            "required": false,
-            "order": 4
+            "order": 2
         },
         "client_secret": {
             "description": "Client secret",
             "data_type": "password",
-            "required": false,
-            "order": 5
+            "order": 3
         }
     },
     "actions": [
@@ -80,7 +78,6 @@
                 "team": {
                     "description": "ID or name of the team",
                     "data_type": "string",
-                    "required": false,
                     "primary": true,
                     "contains": [
                         "mattermost team"
@@ -106,23 +103,15 @@
                     ],
                     "contains": [
                         "mattermost team"
-                    ],
-                    "column_name": "Team",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.auth_data",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.auth_service",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -146,9 +135,7 @@
                     ],
                     "contains": [
                         "email"
-                    ],
-                    "column_name": "Email",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.email_verified",
@@ -170,27 +157,21 @@
                     "data_type": "string",
                     "example_values": [
                         "test"
-                    ],
-                    "column_name": "First Name",
-                    "column_order": 4
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "pyx8sqe7zfn1dpmtd1s3qzqhfr"
-                    ],
-                    "column_name": "User ID",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_name",
                     "data_type": "string",
                     "example_values": [
                         "user"
-                    ],
-                    "column_name": "Last Name",
-                    "column_order": 5
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_password_update",
@@ -230,47 +211,30 @@
                 },
                 {
                     "data_path": "action_result.data.*.notify_props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.position",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.roles",
                     "data_type": "string",
                     "example_values": [
                         "system_user system_user_access_token system_post_all"
-                    ],
-                    "column_name": "Roles",
-                    "column_order": 6
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.timezone.automaticTimezone",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.timezone.manualTimezone",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.timezone.useAutomaticTimezone",
@@ -294,9 +258,7 @@
                     ],
                     "contains": [
                         "user name"
-                    ],
-                    "column_name": "User Name",
-                    "column_order": 2
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.total_users",
@@ -328,7 +290,8 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "view": "mattermost_view.display_view"
             },
             "versions": "EQ(*)"
         },
@@ -336,7 +299,7 @@
             "action": "upload file",
             "identifier": "upload_file",
             "description": "Upload file to a channel",
-            "verbose": "User can upload files to only those channels which user has created or is a member of",
+            "verbose": "User can upload files to only those channels which user has created or is a member of.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -374,8 +337,6 @@
                 "message": {
                     "description": "Message to send",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 3
                 }
             },
@@ -466,10 +427,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -523,10 +481,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -577,8 +532,8 @@
         {
             "action": "send message",
             "identifier": "send_message",
-            "description": "Send message to a channel",
-            "verbose": "User can send message to only those channels which user has created or is a member of the team",
+            "description": "Send a message to a channel",
+            "verbose": "User can send message to only those channels which user has created or is a member of the team.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -606,7 +561,6 @@
                     "description": "Message to send",
                     "data_type": "string",
                     "required": true,
-                    "primary": false,
                     "order": 2
                 }
             },
@@ -679,10 +633,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -703,7 +654,7 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "hey guys hru?"
+                        "hey guys how r u?"
                     ]
                 },
                 {
@@ -736,10 +687,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -791,7 +739,7 @@
             "action": "list posts",
             "identifier": "list_posts",
             "description": "List posts of a channel",
-            "verbose": "Users can only list the posts of channels they have created or are members of.<br>If only &quotstart_time&quot is given then current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
+            "verbose": "Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then the current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or a valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -818,15 +766,11 @@
                 "start_time": {
                     "description": "Start time in formatted timestamp",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 2
                 },
                 "end_time": {
                     "description": "End time in formatted timestamp",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
                     "order": 3
                 }
             },
@@ -921,10 +865,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.hashtags",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -954,24 +895,21 @@
                     "data_path": "action_result.data.*.original_id",
                     "data_type": "string",
                     "example_values": [
-                        "uinosfs9a3r9dgay15epdn39qy",
-                        ""
+                        "uinosfs9a3r9dgay15epdn39qy"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.parent_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
-                        ""
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.pending_post_id",
                     "data_type": "string",
                     "example_values": [
-                        "g9rit1zsx3ngzbs1srtx8tu5fe",
-                        ""
+                        "g9rit1zsx3ngzbs1srtx8tu5fe"
                     ]
                 },
                 {
@@ -999,16 +937,14 @@
                     "data_path": "action_result.data.*.root_id",
                     "data_type": "string",
                     "example_values": [
-                        "fsn1bn4nwjdwpmbuqch5fp9xnh",
-                        ""
+                        "fsn1bn4nwjdwpmbuqch5fp9xnh"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "example_values": [
-                        "system_join_channel",
-                        ""
+                        "system_join_channel"
                     ]
                 },
                 {
@@ -1068,7 +1004,7 @@
             "action": "list channels",
             "identifier": "list_channels",
             "description": "List public channels of a team",
-            "verbose": "A user can view only those channels of a team which he is a member of",
+            "verbose": "A user can view only those channels of a team which he is a member of.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1100,9 +1036,7 @@
                     ],
                     "contains": [
                         "mattermost team"
-                    ],
-                    "column_name": "Team",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -1113,10 +1047,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.creator_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.delete_at",
@@ -1130,9 +1061,7 @@
                     "data_type": "string",
                     "example_values": [
                         "Off-Topic"
-                    ],
-                    "column_name": "Display Name",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.extra_update_at",
@@ -1143,10 +1072,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.header",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -1156,9 +1082,7 @@
                     ],
                     "contains": [
                         "mattermost channel"
-                    ],
-                    "column_name": "Channel ID",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.last_post_at",
@@ -1175,30 +1099,19 @@
                     ],
                     "contains": [
                         "mattermost channel"
-                    ],
-                    "column_name": "Channel Name",
-                    "column_order": 2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.props",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.purpose",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.scheme_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.team_id",
@@ -1215,18 +1128,14 @@
                     "data_type": "numeric",
                     "example_values": [
                         0
-                    ],
-                    "column_name": "Total Message Count",
-                    "column_order": 5
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "example_values": [
                         "O"
-                    ],
-                    "column_name": "Type",
-                    "column_order": 4
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.update_at",
@@ -1265,7 +1174,8 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "view": "mattermost_view.display_view"
             },
             "versions": "EQ(*)"
         },
@@ -1308,10 +1218,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.company_name",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.create_at",
@@ -1329,10 +1236,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.display_name",
@@ -1390,10 +1294,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.scheme_id",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.type",
