@@ -9,17 +9,16 @@
     "product_name": "Mattermost",
     "product_version_regex": "5.*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2018-2020 Splunk Inc.",
-    "app_version": "2.0.1",
+    "license": "Copyright (c) 2018-2021 Splunk Inc.",
+    "app_version": "2.1.0",
     "latest_tested_versions": [
-        "On-prem v4.7.1",
-        "v4 API 2020-07-08"
+        "On-prem v4.7.1"
     ],
     "python_version": "3",
     "utctime_updated": "2020-07-21T06:27:29.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.py",
-    "min_phantom_version": "4.8.24304",
+    "min_phantom_version": "4.9.39220",
     "app_wizard_version": "1.0.0",
     "rest_handler": "mattermost_connector._handle_rest_request",
     "configuration": {
@@ -99,7 +98,7 @@
                     "data_type": "string",
                     "example_values": [
                         "396afxwqzbgruxdkft7d8wo5qw",
-                        "phantom-test"
+                        "test-team"
                     ],
                     "contains": [
                         "mattermost team"
@@ -370,7 +369,7 @@
                     "data_path": "action_result.parameter.team",
                     "data_type": "string",
                     "example_values": [
-                        "phantom-test1"
+                        "test-team"
                     ],
                     "contains": [
                         "mattermost team"
@@ -448,7 +447,7 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "Phantom file upload"
+                        "Upload file"
                     ]
                 },
                 {
@@ -587,7 +586,7 @@
                     "data_path": "action_result.parameter.message",
                     "data_type": "string",
                     "example_values": [
-                        "hey guys how r u?"
+                        "Hey, guys how r u?"
                     ]
                 },
                 {
@@ -654,7 +653,7 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "hey guys how r u?"
+                        "Hey, guys how r u?"
                     ]
                 },
                 {
@@ -815,7 +814,7 @@
                     "example_values": [
                         "396afxwqzbgruxdkft7d8wo5qw",
                         "privy-chantest",
-                        "phantomtest"
+                        "test-team"
                     ],
                     "contains": [
                         "mattermost team"
@@ -887,7 +886,7 @@
                     "data_path": "action_result.data.*.message",
                     "data_type": "string",
                     "example_values": [
-                        "this is from test",
+                        "This is for test",
                         "Test"
                     ]
                 },
@@ -916,7 +915,7 @@
                     "data_path": "action_result.data.*.props.addedUsername",
                     "data_type": "string",
                     "example_values": [
-                        "surbhi"
+                        "test-name"
                     ],
                     "contains": [
                         "user name"
