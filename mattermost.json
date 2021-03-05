@@ -10,12 +10,12 @@
     "product_version_regex": "5.*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2021 Splunk Inc.",
-    "app_version": "2.1.1",
+    "app_version": "2.1.2",
     "latest_tested_versions": [
         "On-prem v4.7.1"
     ],
     "python_version": "3",
-    "utctime_updated": "2021-03-05T06:58:52.000000Z",
+    "utctime_updated": "2021-03-05T14:00:34.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.py",
     "min_phantom_version": "4.9.39220",
