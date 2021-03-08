@@ -1,5 +1,5 @@
 # File: mattermost_connector.py
-# Copyright (c) 2018-2020 Splunk Inc.
+# Copyright (c) 2018-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -24,13 +24,13 @@ from mattermost_consts import *
 
 # Phantom App imports
 import phantom.app as phantom
+import phantom.rules as ph_rules
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
-from phantom.vault import Vault
 
 
 def _handle_login_redirect(request, key):
-    """ This function is used to redirect login request to Mattermost login page.
+    """ This function is used to redirect login request to the Mattermost login page.
 
     :param request: Data given to REST endpoint
     :param key: Key to search in state file
@@ -467,7 +467,7 @@ class MattermostConnector(BaseConnector):
         response obtained by making an API call
         """
 
-        # If personal access token is provided
+        # If the personal access token is provided
         if self._personal_token:
 
             headers = {
@@ -650,14 +650,14 @@ class MattermostConnector(BaseConnector):
 
         # Scenario -
         #
-        # If the corresponding state file doesn't have correct owner, owner group or permissions,
-        # the newly generated token is not being saved to state file and automatic workflow for token has been stopped.
-        # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
+        # If the corresponding state file doesn't have the correct owner, owner group or permissions,
+        # the newly generated token is not being saved to the state file and the automatic workflow for the token has been stopped.
+        # So we have to check that token from response and the tokens which are saved to state file after successful generation of the new tokens are same or not.
 
         if self._access_token != self._state.get('token', {}).get(MATTERMOST_ACCESS_TOKEN):
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
+            message += "user should have the correct access rights and ownership for the corresponding state file (refer to the readme file for more information)."
             return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
@@ -996,7 +996,7 @@ class MattermostConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
 
-            # If empty list of channels, then break
+            # If an empty list of channels, then break
             if not response_json:
                 break
 
@@ -1044,6 +1044,8 @@ class MattermostConnector(BaseConnector):
             'page': page_number
         })
 
+        duplicate_entry = 0
+        previous_teams = []
         while True:
             # make rest call
             ret_val, response_json = self._handle_update_request(url=url, action_result=action_result,
@@ -1052,7 +1054,7 @@ class MattermostConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
 
-            # If empty list of teams, then break
+            # If an empty list of teams, then break
             if not response_json:
                 break
 
@@ -1066,11 +1068,19 @@ class MattermostConnector(BaseConnector):
                         return phantom.APP_SUCCESS, team_id
 
             else:
-                for each_team in response_json:
-                    action_result.add_data(each_team)
-
+                new_team = []
+                if previous_teams:
+                    duplicate_entry = len([value for value in response_json if value in previous_teams])
+                    new_team = [value for value in response_json if value not in previous_teams]
+                previous_teams = response_json
+                if not new_team and page_number == 0:
+                    for each_team in response_json:
+                        action_result.add_data(each_team)
+                else:
+                    for each_team in new_team:
+                        action_result.add_data(each_team)
             # Increment page_number for fetching next page in upcoming cycle
-            page_number += 1
+            page_number += 1 + duplicate_entry
             params.update({
                 'page': page_number
             })
@@ -1150,12 +1160,12 @@ class MattermostConnector(BaseConnector):
         vault_meta = None
         # Check for file in vault
         try:
-            vault_meta = Vault.get_file_info(vault_id=vault_id)  # Vault IDs are unique
-
-            if (not vault_meta):
+            success, _, vault_meta = ph_rules.vault_info(vault_id=vault_id)  # Vault IDs are unique
+            if not success:
                 self.debug_print("Error while fetching meta information for vault ID: {}".format(vault_id))
                 action_result.set_status(phantom.APP_ERROR, "Error while fetching meta information for vault ID: {}".format(vault_id))
                 return None
+            vault_meta = list(vault_meta)
 
         except Exception as e:
             self.debug_print("Error while fetching meta information for vault ID: {}. Error Details: {}".format(vault_id, self._get_error_message_from_exception(e)))
@@ -1210,7 +1220,9 @@ class MattermostConnector(BaseConnector):
 
         # Find vault path and info for given vault ID
         try:
-            vault_path = Vault.get_file_path(vault_id)
+            _, _, vault_meta = ph_rules.vault_info(vault_id=vault_id)
+            vault_meta = list(vault_meta)[0]
+            vault_path = vault_meta.get('path')
             # check if vault path is accessible
             if not vault_path:
                 return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
