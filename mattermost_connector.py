@@ -977,50 +977,38 @@ class MattermostConnector(BaseConnector):
         """
 
         channel_id = None
-        params = {}
 
         # Endpoint for fetching channels
         url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(server_url=self._server_url),
                               MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id))
 
-        page_number = 0
-        params.update({
-            'page': page_number
-        })
+        # make rest call
+        ret_val, response_json = self._handle_update_request(url=url, action_result=action_result)
 
-        while True:
-            # make rest call
-            ret_val, response_json = self._handle_update_request(url=url, action_result=action_result,
-                                                                 params=params)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
 
-            if phantom.is_fail(ret_val):
-                return action_result.get_status(), None
+        # If an empty list of channels, then return
+        if not response_json and not self.get_action_identifier() == 'list_channels':
+            return phantom.APP_ERROR, MATTERMOST_CONST_NOT_FOUND
 
-            # If an empty list of channels, then break
-            if not response_json:
-                break
+        # For any action other than list channel
+        if not self.get_action_identifier() == 'list_channels':
+            # Fetch Channel ID from Channel name
+            for each_channel in response_json:
+                # Check if either channel name or channel ID matches
+                if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.\
+                        get('name').lower():
+                    channel_id = each_channel.get('id')
+                    return phantom.APP_SUCCESS, channel_id
 
-            # For any action other than list channel
-            if not self.get_action_identifier() == 'list_channels':
-                # Fetch Channel ID from Channel name
-                for each_channel in response_json:
-                    # Check if either channel name or channel ID matches
-                    if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.\
-                            get('name').lower():
-                        channel_id = each_channel.get('id')
-                        return phantom.APP_SUCCESS, channel_id
-
-            else:
-                for each_channel in response_json:
+        else:
+            for each_channel in response_json:
+                # Allow public(O) and private(P) channels only
+                if each_channel.get('type').lower() in ['o', 'p']:
                     action_result.add_data(each_channel)
 
-            # Increment page_number for fetching next page in upcoming cycle
-            page_number += 1
-            params.update({
-                'page': page_number
-            })
-
-        if not self.get_action_identifier() == 'list_channels':
+        if not channel_id and not self.get_action_identifier() == 'list_channels':
             return phantom.APP_ERROR, MATTERMOST_CONST_NOT_FOUND
 
         return phantom.APP_SUCCESS, channel_id

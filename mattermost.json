@@ -10,15 +10,15 @@
     "product_version_regex": "5.*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2021 Splunk Inc.",
-    "app_version": "2.1.7",
+    "app_version": "2.2.0",
     "latest_tested_versions": [
-        "On-prem v4.7.1"
+        "On-prem v6.0.2"
     ],
     "python_version": "3",
     "utctime_updated": "2021-10-25T07:08:33.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.py",
-    "min_phantom_version": "4.10.0.40961",
+    "min_phantom_version": "5.0.0",
     "app_wizard_version": "1.0.0",
     "rest_handler": "mattermost_connector._handle_rest_request",
     "configuration": {
@@ -260,6 +260,11 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.disable_welcome_email",
+                    "data_type": "boolean",
+                    "example_value": false
+                },
+                {
                     "data_path": "action_result.summary.total_users",
                     "data_type": "numeric",
                     "example_values": [
@@ -497,6 +502,99 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.metadata.files.*.id",
+                    "data_type": "string",
+                    "example_value": "8fgytaxpojn15dchqonjb15enw"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.name",
+                    "data_type": "string",
+                    "example_value": "test.png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.size",
+                    "data_type": "numeric",
+                    "example_value": 211962
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.width",
+                    "data_type": "numeric",
+                    "example_value": 2230
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.height",
+                    "data_type": "numeric",
+                    "example_value": 1220
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.post_id",
+                    "data_type": "string",
+                    "example_value": "k44mtz9ippru7eipruqnthsc9o"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.user_id",
+                    "data_type": "string",
+                    "example_value": "8bfk4fj8gpyofq7qx85tsz97rh"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.create_at",
+                    "data_type": "numeric",
+                    "example_value": 1636961337700
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.delete_at",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.extension",
+                    "data_type": "string",
+                    "example_value": "png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.mime_type",
+                    "data_type": "string",
+                    "example_value": "image/png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.update_at",
+                    "data_type": "numeric",
+                    "example_value": 1636961337700
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.channel_id",
+                    "data_type": "string",
+                    "example_value": "aopx3i38utrfxqyg86tq9xx3qw"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.mini_preview",
+                    "data_type": "string",
+                    "example_value": "/9j/2wCEAAMCAgMCBgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.has_preview_image",
+                    "data_type": "boolean",
+                    "example_value": true
+                },
+                {
+                    "data_path": "action_result.data.*.reply_count",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.last_reply_at",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.remote_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -701,6 +799,20 @@
                     "example_values": [
                         "hrfxwdb7gtdjzbzqscix7edyeh"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.reply_count",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.last_reply_at",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.participants",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary",
@@ -963,6 +1075,99 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.reply_count",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.last_reply_at",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.id",
+                    "data_type": "string",
+                    "example_value": "1nrp7izie7gdz81mwb99azed4w"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.name",
+                    "data_type": "string",
+                    "example_value": "test.png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.size",
+                    "data_type": "numeric",
+                    "example_value": 211962
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.width",
+                    "data_type": "numeric",
+                    "example_value": 2230
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.height",
+                    "data_type": "numeric",
+                    "example_value": 1220
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.post_id",
+                    "data_type": "string",
+                    "example_value": "zn6cs7a4b7y6bmxy4yk4j1dz3y"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.user_id",
+                    "data_type": "string",
+                    "example_value": "8bfk4fj8gpyofq7qx85tsz97rh"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.create_at",
+                    "data_type": "numeric",
+                    "example_value": 1637228792269
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.delete_at",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.extension",
+                    "data_type": "string",
+                    "example_value": "png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.mime_type",
+                    "data_type": "string",
+                    "example_value": "image/png"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.update_at",
+                    "data_type": "numeric",
+                    "example_value": 1637228792269
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.channel_id",
+                    "data_type": "string",
+                    "example_value": "aopx3i38utrfxqyg86tq9xx3wy"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.mini_preview",
+                    "data_type": "string",
+                    "example_value": "/9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.has_preview_image",
+                    "data_type": "boolean",
+                    "example_value": true
+                },
+                {
+                    "data_path": "action_result.data.*.participants",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.metadata.files.*.remote_id",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.summary.total_posts",
                     "data_type": "numeric",
                     "example_values": [
@@ -1002,7 +1207,7 @@
         {
             "action": "list channels",
             "identifier": "list_channels",
-            "description": "List public channels of a team",
+            "description": "List public and private channels of a team",
             "verbose": "A user can view only those channels of a team which he is a member of.",
             "type": "investigate",
             "read_only": true,
@@ -1142,6 +1347,38 @@
                     "example_values": [
                         1535370158299
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.total_msg_count_root",
+                    "data_type": "numeric",
+                    "example_value": 0
+                },
+                {
+                    "data_path": "action_result.data.*.team_name",
+                    "data_type": "string",
+                    "example_value": "test-005"
+                },
+                {
+                    "data_path": "action_result.data.*.team_update_at",
+                    "data_type": "numeric",
+                    "example_value": 1637228653671
+                },
+                {
+                    "data_path": "action_result.data.*.team_display_name",
+                    "data_type": "string",
+                    "example_value": "test-005"
+                },
+                {
+                    "data_path": "action_result.data.*.shared",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.group_constrained",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_channels",
@@ -1311,6 +1548,14 @@
                     "example_values": [
                         1534918716675
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.group_constrained",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_teams",
