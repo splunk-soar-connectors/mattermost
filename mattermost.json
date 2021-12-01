@@ -15,7 +15,8 @@
         "On-prem v6.0.2"
     ],
     "python_version": "3",
-    "utctime_updated": "2021-10-25T07:08:33.000000Z",
+    "fips_compliant": true,
+    "utctime_updated": "2021-12-01T00:24:04.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.py",
     "min_phantom_version": "5.0.0",
