@@ -425,7 +425,8 @@ class MattermostConnector(BaseConnector):
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the Mattermost server. Please check the asset configuration and|or the action parameters."
+            error_msg = "Error occurred while connecting to the Mattermost server. "
+            error_msg += "Please check the asset configuration and|or the action parameters."
         except:
             error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
@@ -1694,7 +1695,7 @@ if __name__ == '__main__':
         try:
             print("Accessing the Login page")
             r = requests.get(
-                BaseConnector._get_phantom_base_url() + "login")
+                BaseConnector._get_phantom_base_url() + "login", timeout=60)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -1709,7 +1710,7 @@ if __name__ == '__main__':
 
             print("Logging into Platform to get the session id")
             r2 = requests.post(BaseConnector._get_phantom_base_url() + "login",
-                               data=data, headers=headers)
+                               data=data, headers=headers, timeout=60)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: {}".format(str(e)))
