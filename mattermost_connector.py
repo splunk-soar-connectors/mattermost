@@ -15,28 +15,27 @@
 #
 #
 # Phantom sample App Connector python file
-import re
+import grp
 import json
 import os
-import sys
-import grp
-import time
 import pwd
-import requests
+import re
+import sys
+import time
+from datetime import datetime
+
 import dateutil
 import dateutil.parser
-
-from datetime import datetime
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
-from django.http import HttpResponse
-from mattermost_consts import *
-
 # Phantom App imports
 import phantom.app as phantom
 import phantom.rules as ph_rules
-from phantom.base_connector import BaseConnector
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
+from django.http import HttpResponse
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+
+from mattermost_consts import *
 
 
 def _handle_login_redirect(request, key):
@@ -1668,8 +1667,9 @@ class MattermostConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
