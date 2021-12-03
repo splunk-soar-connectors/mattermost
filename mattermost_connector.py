@@ -323,16 +323,16 @@ class MattermostConnector(BaseConnector):
 
         # Check if error has detailed error field
         if resp_json.get('detailed_error'):
-            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code,
-                                                                                         self._handle_py_ver_compat_for_input_str(resp_json['detailed_error']))
+            err = self._handle_py_ver_compat_for_input_str(resp_json['detailed_error'])
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, err)
         # Check for message in error
         elif resp_json.get('message'):
-            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code,
-                                                                                         self._handle_py_ver_compat_for_input_str(resp_json['message']))
+            resp_msg = self._handle_py_ver_compat_for_input_str(resp_json['message'])
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, resp_msg)
 
         if not message:
-            message = "Error from server. Status Code: {0} Data from server: {1}"\
-                .format(response.status_code, self._handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}')))
+            resp_txt = self._handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}'))
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, resp_txt)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -672,13 +672,16 @@ class MattermostConnector(BaseConnector):
         # Scenario -
         #
         # If the corresponding state file doesn't have the correct owner, owner group or permissions,
-        # the newly generated token is not being saved to the state file and the automatic workflow for the token has been stopped.
-        # So we have to check that token from response and the tokens which are saved to state file after successful generation of the new tokens are same or not.
+        # the newly generated token is not being saved to the state file
+        # and the automatic workflow for the token has been stopped.
+        # So we have to check that token from response and the tokens
+        # which are saved to state file after successful generation of the new tokens are same or not.
 
         if self._access_token != self._state.get('token', {}).get(MATTERMOST_ACCESS_TOKEN):
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to the readme file for more information)."
+            message += "user should have the correct access rights and ownership for the corresponding state file "
+            message += "(refer to the readme file for more information)."
             return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
@@ -1430,7 +1433,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, start_time = self._convert_time(start_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1446,7 +1450,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, end_time = self._convert_time(end_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify end_time
                 time_status, time_response = self._verify_time(end_time)
@@ -1468,7 +1473,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, start_time = self._convert_time(start_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1485,7 +1491,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, end_time = self._convert_time(end_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify end_time
                 time_status, time_response = self._verify_time(end_time)
@@ -1687,7 +1694,7 @@ if __name__ == '__main__':
         try:
             print("Accessing the Login page")
             r = requests.get(
-                BaseConnector._get_phantom_base_url() + "login", verify=False)
+                BaseConnector._get_phantom_base_url() + "login")
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -1702,7 +1709,7 @@ if __name__ == '__main__':
 
             print("Logging into Platform to get the session id")
             r2 = requests.post(BaseConnector._get_phantom_base_url() + "login",
-                               verify=False, data=data, headers=headers)
+                               data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: {}".format(str(e)))
