@@ -29,7 +29,7 @@ generate personal access tokens"** permission by the system admin.
 To use this method, follow the steps below.
 
 1.  Login to Mattermost server with user credentials in a browser.
-2.  In the upper left corner of the window, click on the username, then click **Account Settings** .
+2.  In the upper left corner of the window, click on the app button, then click **Account Settings** .
 3.  Select **Security** and click on **Personal Access Tokens** .
 4.  Click on **Create New Token** and provide a description for your token.
 5.  A pair of **Token ID** and **Token** would be generated.
@@ -45,7 +45,7 @@ option to &quottrue&quot.
 System Admin should register the app on Mattermost using the steps given below:
 
 1.  Login to the Mattermost server with admin credentials in a browser.
-2.  In the upper left corner of the window, click on the username, then click **Integrations** .
+2.  In the upper left corner of the window, click on the app button, then click **Integrations** .
 3.  Select **OAuth 2.0 Applications** and click on **Add OAuth 2.0 Application** .
 4.  Set &quotIs Trusted" to **true** .
 5.  Provide any display name to your application and give a description.
