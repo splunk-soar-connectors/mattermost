@@ -1,3 +1,15 @@
+[comment]: # "Auto-generated SOAR connector documentation"
+# Mattermost
+
+Publisher: Splunk  
+Connector Version: 2\.2\.1  
+Product Vendor: Mattermost  
+Product Name: Mattermost  
+Product Version Supported (regex): "5\.\*"  
+Minimum Product Version: 5\.0\.0  
+
+This app integrates with Mattermost to support various investigative actions
+
 [comment]: # " File: readme.md"
 [comment]: # "  Copyright (c) 2018-2021 Splunk Inc."
 [comment]: # ""
@@ -29,7 +41,8 @@ generate personal access tokens"** permission by the system admin.
 To use this method, follow the steps below.
 
 1.  Login to Mattermost server with user credentials in a browser.
-2.  In the upper left corner of the window, click on the app button, then click **Account Settings** .
+2.  In the upper left corner of the window, click on the app button, then click **Account Settings**
+    .
 3.  Select **Security** and click on **Personal Access Tokens** .
 4.  Click on **Create New Token** and provide a description for your token.
 5.  A pair of **Token ID** and **Token** would be generated.
@@ -119,3 +132,342 @@ Please check the permissions for the state file as mentioned below.
 -   File rights: rw-rw-r-- (664) (The phantom user should have read and write access for the state
     file)
 -   File owner: Appropriate phantom user
+
+
+### Configuration Variables
+The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Mattermost asset in SOAR.
+
+VARIABLE | REQUIRED | TYPE | DESCRIPTION
+-------- | -------- | ---- | -----------
+**server\_url** |  required  | string | Server URL \(e\.g\. http\://10\.10\.10\.10\:8080\)
+**verify\_server\_cert** |  optional  | boolean | Verify server certificate
+**personal\_token** |  optional  | password | Personal token
+**ph\_0** |  optional  | ph | Placeholder
+**client\_id** |  optional  | string | Client ID
+**client\_secret** |  optional  | password | Client secret
+
+### Supported Actions  
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
+[list users](#action-list-users) - List users of a team  
+[upload file](#action-upload-file) - Upload file to a channel  
+[send message](#action-send-message) - Send a message to a channel  
+[list posts](#action-list-posts) - List posts of a channel  
+[list channels](#action-list-channels) - List public and private channels of a team  
+[list teams](#action-list-teams) - List teams  
+
+## action: 'test connectivity'
+Validate the asset configuration for connectivity using supplied configuration
+
+Type: **test**  
+Read only: **True**
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+No Output  
+
+## action: 'list users'
+List users of a team
+
+Type: **investigate**  
+Read only: **True**
+
+While listing users from a specific team, the user should have created the team or be a member of that team\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**team** |  optional  | ID or name of the team | string |  `mattermost team` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.team | string |  `mattermost team` 
+action\_result\.data\.\*\.auth\_data | string | 
+action\_result\.data\.\*\.auth\_service | string | 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.email | string |  `email` 
+action\_result\.data\.\*\.email\_verified | boolean | 
+action\_result\.data\.\*\.failed\_attempts | numeric | 
+action\_result\.data\.\*\.first\_name | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.last\_name | string | 
+action\_result\.data\.\*\.last\_password\_update | numeric | 
+action\_result\.data\.\*\.last\_picture\_update | numeric | 
+action\_result\.data\.\*\.locale | string | 
+action\_result\.data\.\*\.mfa\_active | boolean | 
+action\_result\.data\.\*\.nickname | string | 
+action\_result\.data\.\*\.notify\_props | string | 
+action\_result\.data\.\*\.position | string | 
+action\_result\.data\.\*\.props | string | 
+action\_result\.data\.\*\.roles | string | 
+action\_result\.data\.\*\.timezone\.automaticTimezone | string | 
+action\_result\.data\.\*\.timezone\.manualTimezone | string | 
+action\_result\.data\.\*\.timezone\.useAutomaticTimezone | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.username | string |  `user name` 
+action\_result\.data\.\*\.disable\_welcome\_email | boolean | 
+action\_result\.summary\.total\_users | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'upload file'
+Upload file to a channel
+
+Type: **generic**  
+Read only: **False**
+
+User can upload files to only those channels which user has created or is a member of\.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**team** |  required  | ID or name of the team | string |  `mattermost team` 
+**channel** |  required  | ID or name of the channel | string |  `mattermost channel` 
+**vault\_id** |  required  | Vault ID | string |  `vault id`  `sha1` 
+**message** |  optional  | Message to send | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.channel | string |  `mattermost channel` 
+action\_result\.parameter\.message | string | 
+action\_result\.parameter\.team | string |  `mattermost team` 
+action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
+action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.edit\_at | numeric | 
+action\_result\.data\.\*\.file\_ids | string | 
+action\_result\.data\.\*\.hashtags | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.is\_pinned | boolean | 
+action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.original\_id | string | 
+action\_result\.data\.\*\.parent\_id | string | 
+action\_result\.data\.\*\.pending\_post\_id | string | 
+action\_result\.data\.\*\.root\_id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.user\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.name | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.size | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.width | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.height | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.post\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.user\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.extension | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.mime\_type | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.channel\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.mini\_preview | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.has\_preview\_image | boolean | 
+action\_result\.data\.\*\.reply\_count | numeric | 
+action\_result\.data\.\*\.last\_reply\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.remote\_id | string | 
+action\_result\.data\.\*\.participants | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'send message'
+Send a message to a channel
+
+Type: **generic**  
+Read only: **False**
+
+User can send message to only those channels which user has created or is a member of the team\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**team** |  required  | ID or name of the team | string |  `mattermost team` 
+**channel** |  required  | ID or name of the channel | string |  `mattermost channel` 
+**message** |  required  | Message to send | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.channel | string |  `mattermost channel` 
+action\_result\.parameter\.message | string | 
+action\_result\.parameter\.team | string |  `mattermost team` 
+action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.edit\_at | numeric | 
+action\_result\.data\.\*\.hashtags | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.is\_pinned | boolean | 
+action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.original\_id | string | 
+action\_result\.data\.\*\.parent\_id | string | 
+action\_result\.data\.\*\.pending\_post\_id | string | 
+action\_result\.data\.\*\.root\_id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.user\_id | string | 
+action\_result\.data\.\*\.reply\_count | numeric | 
+action\_result\.data\.\*\.last\_reply\_at | numeric | 
+action\_result\.data\.\*\.participants | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'list posts'
+List posts of a channel
+
+Type: **investigate**  
+Read only: **True**
+
+Users can only list the posts of channels they have created or are members of\.<br> If &quotstart\_time&quot or &quotend\_time&quot is specified, the action will also list the deleted post\(s\) within the specified time\.<br>If only &quotstart\_time&quot is given then the current time would be taken as &quotend\_time&quot\.<br>If only &quotend\_time&quot is given then all the posts before that time would be displayed\.<br>The timestamp should be entered in <b>YYYY\-MM\-DD</b> or a valid &quotISO 8601 timestamp&quot format\.<br>Some examples of valid time formats are\:<ul><li>2018\-09\-24</li><li>2018\-09\-23T14\:40\:44Z</li><li>2018\-09\-23T14\:40\:44\+05\:30</li><li>2020\-08\-30T01\:45\:36\.123Z</li><li>2021\-12\-13T21\:20\:37\.593194\+05\:30</li></ul>
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**team** |  required  | ID or name of the team | string |  `mattermost team` 
+**channel** |  required  | ID or name of the channel | string |  `mattermost channel` 
+**start\_time** |  optional  | Start time in formatted timestamp | string | 
+**end\_time** |  optional  | End time in formatted timestamp | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.channel | string |  `mattermost channel` 
+action\_result\.parameter\.end\_time | numeric | 
+action\_result\.parameter\.start\_time | numeric | 
+action\_result\.parameter\.team | string |  `mattermost team` 
+action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.edit\_at | numeric | 
+action\_result\.data\.\*\.file\_ids | string | 
+action\_result\.data\.\*\.hashtags | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.is\_pinned | boolean | 
+action\_result\.data\.\*\.message | string | 
+action\_result\.data\.\*\.original\_id | string | 
+action\_result\.data\.\*\.parent\_id | string | 
+action\_result\.data\.\*\.pending\_post\_id | string | 
+action\_result\.data\.\*\.props\.addedUsername | string |  `user name` 
+action\_result\.data\.\*\.props\.username | string |  `user name` 
+action\_result\.data\.\*\.root\_id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.user\_id | string | 
+action\_result\.data\.\*\.reply\_count | numeric | 
+action\_result\.data\.\*\.last\_reply\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.name | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.size | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.width | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.height | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.post\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.user\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.extension | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.mime\_type | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.metadata\.files\.\*\.channel\_id | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.mini\_preview | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.has\_preview\_image | boolean | 
+action\_result\.data\.\*\.participants | string | 
+action\_result\.data\.\*\.metadata\.files\.\*\.remote\_id | string | 
+action\_result\.summary\.total\_posts | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'list channels'
+List public and private channels of a team
+
+Type: **investigate**  
+Read only: **True**
+
+A user can view only those channels of a team which he is a member of\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**team** |  required  | ID or name of the team | string |  `mattermost team` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.team | string |  `mattermost team` 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.creator\_id | string | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.display\_name | string | 
+action\_result\.data\.\*\.extra\_update\_at | numeric | 
+action\_result\.data\.\*\.header | string | 
+action\_result\.data\.\*\.id | string |  `mattermost channel` 
+action\_result\.data\.\*\.last\_post\_at | numeric | 
+action\_result\.data\.\*\.name | string |  `mattermost channel` 
+action\_result\.data\.\*\.props | string | 
+action\_result\.data\.\*\.purpose | string | 
+action\_result\.data\.\*\.scheme\_id | string | 
+action\_result\.data\.\*\.team\_id | string |  `mattermost team` 
+action\_result\.data\.\*\.total\_msg\_count | numeric | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.total\_msg\_count\_root | numeric | 
+action\_result\.data\.\*\.team\_name | string | 
+action\_result\.data\.\*\.team\_update\_at | numeric | 
+action\_result\.data\.\*\.team\_display\_name | string | 
+action\_result\.data\.\*\.shared | string | 
+action\_result\.data\.\*\.policy\_id | string | 
+action\_result\.data\.\*\.group\_constrained | string | 
+action\_result\.summary\.total\_channels | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'list teams'
+List teams
+
+Type: **investigate**  
+Read only: **True**
+
+While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users\.
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.data\.\*\.allow\_open\_invite | boolean | 
+action\_result\.data\.\*\.allowed\_domains | string |  `domain` 
+action\_result\.data\.\*\.company\_name | string | 
+action\_result\.data\.\*\.create\_at | numeric | 
+action\_result\.data\.\*\.delete\_at | numeric | 
+action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.display\_name | string | 
+action\_result\.data\.\*\.email | string |  `email` 
+action\_result\.data\.\*\.id | string |  `mattermost team` 
+action\_result\.data\.\*\.invite\_id | string | 
+action\_result\.data\.\*\.name | string |  `mattermost team` 
+action\_result\.data\.\*\.scheme\_id | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.update\_at | numeric | 
+action\_result\.data\.\*\.policy\_id | string | 
+action\_result\.data\.\*\.group\_constrained | string | 
+action\_result\.summary\.total\_teams | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
