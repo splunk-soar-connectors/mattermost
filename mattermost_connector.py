@@ -203,7 +203,7 @@ def _handle_rest_request(request, path_parts):
                 gid = grp.getgrnam('phantom').gr_gid
                 os.chown(auth_status_file_path, uid, gid)
                 os.chmod(auth_status_file_path, '0664')
-            except:
+            except Exception:
                 pass
 
         return return_val
@@ -279,7 +279,7 @@ class MattermostConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(
@@ -394,7 +394,7 @@ class MattermostConnector(BaseConnector):
             if input_str and self._python_version == 2:
                 input_str = UnicodeDammit(
                     input_str).unicode_markup.encode('utf-8')
-        except:
+        except Exception:
             self.debug_print(
                 "Error occurred while handling python 2to3 compatibility for the input string")
 
@@ -417,7 +417,7 @@ class MattermostConnector(BaseConnector):
             else:
                 error_code = "Error code unavailable"
                 error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-        except:
+        except Exception:
             error_code = "Error code unavailable"
             error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
@@ -426,7 +426,7 @@ class MattermostConnector(BaseConnector):
         except TypeError:
             error_msg = "Error occurred while connecting to the Mattermost server. "
             error_msg += "Please check the asset configuration and|or the action parameters."
-        except:
+        except Exception:
             error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
@@ -731,8 +731,7 @@ class MattermostConnector(BaseConnector):
 
         phantom_base_url = resp_json.get('base_url')
         if not phantom_base_url:
-            return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_BASE_URL_NOT_FOUND_MSG), \
-                None
+            return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_BASE_URL_NOT_FOUND_MSG), None
         return phantom.APP_SUCCESS, phantom_base_url
 
     def _get_asset_name(self, action_result):
@@ -801,7 +800,7 @@ class MattermostConnector(BaseConnector):
                 return phantom.APP_SUCCESS
             elif datetime.strptime(date_timestamp, '%Y-%m-%d'):
                 return phantom.APP_SUCCESS
-        except:
+        except Exception:
             return phantom.APP_ERROR
 
         return phantom.APP_ERROR
@@ -839,7 +838,7 @@ class MattermostConnector(BaseConnector):
         # Validate time parameter
         try:
             time_value = int(float(time_value))
-        except:
+        except Exception:
             self.debug_print(MATTERMOST_INVALID_TIME)
             return phantom.APP_ERROR, MATTERMOST_INVALID_TIME
 
@@ -1031,8 +1030,7 @@ class MattermostConnector(BaseConnector):
             # Fetch Channel ID from Channel name
             for each_channel in response_json:
                 # Check if either channel name or channel ID matches
-                if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.\
-                        get('name').lower():
+                if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.get('name').lower():
                     channel_id = each_channel.get('id')
                     return phantom.APP_SUCCESS, channel_id
 
@@ -1215,7 +1213,7 @@ class MattermostConnector(BaseConnector):
                 self.debug_print("Unable to find a file for the vault ID: '{0}' in the container ID: '{1}'".format(
                     vault_id, self.get_container_id()))
 
-        except:
+        except Exception:
             self.debug_print("Error occurred while finding a file for the vault ID: '{0}' in the container ID: '{1}'".format(
                 vault_id, self.get_container_id()))
             self.debug_print("Considering the first file as the required file")
@@ -1264,7 +1262,7 @@ class MattermostConnector(BaseConnector):
             # check if vault path is accessible
             if not vault_path:
                 return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
-        except:
+        except Exception:
             return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
 
         # Verify valid team name or team ID
@@ -1540,8 +1538,7 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(
-            self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1634,7 +1631,7 @@ class MattermostConnector(BaseConnector):
         # Fetching the Python major version
         try:
             self._python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         self._server_url = self._handle_py_ver_compat_for_input_str(
@@ -1678,12 +1675,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -1694,8 +1693,8 @@ if __name__ == '__main__':
     if username and password:
         try:
             print("Accessing the Login page")
-            r = requests.get(
-                BaseConnector._get_phantom_base_url() + "login", timeout=60)
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r = requests.get(login_url, verify=verify, timeout=60)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -1705,16 +1704,14 @@ if __name__ == '__main__':
 
             headers = dict()
             headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
-            headers['Referer'] = BaseConnector._get_phantom_base_url() + \
-                "login"
+            headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(BaseConnector._get_phantom_base_url() + "login",
-                               data=data, headers=headers, timeout=60)
+            r2 = requests.post(login_url, data=data, headers=headers, verify=verify, timeout=60)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: {}".format(str(e)))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -1731,4 +1728,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
