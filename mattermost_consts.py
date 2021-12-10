@@ -1,9 +1,17 @@
 # File: mattermost_consts.py
+#
 # Copyright (c) 2018-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 MATTERMOST_API_BASE_URL = '{server_url}/api/v4'
 MATTERMOST_CONFIG_SERVER_URL = 'server_url'
 MATTERMOST_CONFIG_VERIFY_SERVER_CERT = 'verify_server_cert'
@@ -19,7 +27,7 @@ MATTERMOST_ACCESS_TOKEN_URL = '{server_url}/oauth/access_token'
 MATTERMOST_CURRENT_USER_ENDPOINT = '/users/me'
 MATTERMOST_USERS_ENDPOINT = '/users'
 MATTERMOST_TEAMS_ENDPOINT = '/teams'
-MATTERMOST_LIST_CHANNELS_ENDPOINT = '/teams/{team}/channels'
+MATTERMOST_LIST_CHANNELS_ENDPOINT = '/users/me/teams/{team}/channels'
 MATTERMOST_LIST_POSTS_ENDPOINT = '/channels/{channel}/posts'
 MATTERMOST_SEND_MESSAGE_ENDPOINT = '/posts'
 MATTERMOST_FILES_ENDPOINT = '/files'

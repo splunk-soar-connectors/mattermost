@@ -1,0 +1,498 @@
+{
+	"info": {
+		"_postman_id": "d3b3a070-fd1f-428b-961c-267f64c2d746",
+		"name": "Mattermost",
+		"description": "# Postman Collection of Endpoints for Mattermost App on Splunk SOAR.\n\n- ### Prerequisite\n\nThe below mentioned are the required fields to use this collection. So, make sure that all these fields are set before running the request.\n\n| **Variable Name** | **Description** |\n| ------ | ------ |\n| personal_token  | Personal token ( in environment variables) |\n| base_url | Instance URL ( in environment variables) |",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List Users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var base_url = pm.environment.get(\"base_url\")",
+							"var list_users_team_id = pm.variables.get(\"list_users_team_id\")",
+							"const req = {",
+							"    url: base_url + \"api/v4/teams\",",
+							"    method: \"get\",",
+							"    body: {",
+							"        'page' : 0 ",
+							"    },",
+							"    header: {",
+							"        'Authorization': 'Bearer '+ pm.environment.get(\"personal_token\"),",
+							"    }",
+							"}",
+							"pm.sendRequest(req, function (err, response) {",
+							"    if (err) throw new Error(JSON.stringify(err))",
+							"    var r = response.json()",
+							"    pm.variables.set(\"list_users_in_team\", r[0][\"id\"])",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}api/v4/users?page=0&in_team={{list_users_in_team}}",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "in_team",
+							"value": "{{list_users_in_team}}"
+						}
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| list_users_team_id | ID of the team |\n| list_users_in_team | Set automatically |\n"
+			},
+			"response": []
+		},
+		{
+			"name": "List Teams",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var base_url = pm.environment.get(\"base_url\")",
+							"const req = {",
+							"    url: base_url + \"api/v4/teams\",",
+							"    method: \"get\",",
+							"    body: {",
+							"        'page' : 0",
+							"    },",
+							"    header: {",
+							"        'Authorization': 'Bearer '+ pm.environment.get(\"personal_token\"),",
+							"    }",
+							"}",
+							"pm.sendRequest(req, function (err, response) {",
+							"    if (err) throw new Error(JSON.stringify(err))",
+							"    var r = response.json()",
+							"    pm.variables.set(\"list_team_page\", r.length+1)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": {{list_team_page}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/teams",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"teams"
+					]
+				},
+				"description": "The variable and it's example value for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| list_team_page | Set automatically |"
+			},
+			"response": []
+		},
+		{
+			"name": "List Channels",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": {{list_channels_page}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/teams/{{list_channels_team_id}}/channels",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"teams",
+						"{{list_channels_team_id}}",
+						"channels"
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| list_channels_team_id | ID of the team |\n| list_channels_page | Page size eg.0 |\n"
+			},
+			"response": []
+		},
+		{
+			"name": "List Posts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// This request is used for Verifying valid channel name or channel ID ",
+							"var base_url = pm.environment.get(\"base_url\")",
+							"var list_post_team_id = pm.variables.get(\"list_post_team_id\")",
+							"const req = {",
+							"    url: base_url + \"api/v4/teams/\" + list_post_team_id + \"/channels\",",
+							"    method: \"get\",",
+							"    body: {",
+							"        'page' : 0",
+							"    },",
+							"    header: {",
+							"        'Authorization': 'Bearer '+ pm.environment.get(\"personal_token\"),",
+							"    }",
+							"}",
+							"pm.sendRequest(req, function (err, response) {",
+							"    if (err) throw new Error(JSON.stringify(err))",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"page\": {{list_post_page}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/channels/{{list_post_channel_id}}/posts",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"channels",
+						"{{list_post_channel_id}}",
+						"posts"
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| list_post_team_id  | ID of the team |\n| list_post_channel_id  | ID or name of the channel |\n| list_post_page | Page size eg.0 |\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Send Message",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// This request is used for Verifying valid channel name or channel ID ",
+							"var base_url = pm.environment.get(\"base_url\")",
+							"var send_message_team_id = pm.variables.get(\"send_message_team_id\")",
+							"const req = {",
+							"    url: base_url + \"api/v4/teams/\" + send_message_team_id + \"/channels\",",
+							"    method: \"get\",",
+							"    body: {",
+							"        'page' : 0",
+							"    },",
+							"    header: {",
+							"        'Authorization': 'Bearer '+ pm.environment.get(\"personal_token\"),",
+							"    }",
+							"}",
+							"pm.sendRequest(req, function (err, response) {",
+							"    if (err) throw new Error(JSON.stringify(err))",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"channel_id\" : \"{{send_message_channel_id}}\",\n    \"message\" : \"{{send_message_content}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/posts",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"posts"
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| send_message_team_id  | ID of the team |\n| send_message_channel_id | ID or name of the channel |\n| send_message_content | Message to send |\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// This request is used for Verifying valid channel name or channel ID ",
+							"var base_url = pm.environment.get(\"base_url\")",
+							"var upload_file_team_id = pm.variables.get(\"upload_file_team_id\")",
+							"const req = {",
+							"    url: base_url + \"api/v4/teams/\" + upload_file_team_id + \"/channels\",",
+							"    method: \"get\",",
+							"    body: {",
+							"        'page' : 0",
+							"    },",
+							"    header: {",
+							"        'Authorization': 'Bearer '+ pm.environment.get(\"personal_token\"),",
+							"    }",
+							"}",
+							"pm.sendRequest(req, function (err, response) {",
+							"    if (err) throw new Error(JSON.stringify(err))",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var r = pm.response.json()",
+							"pm.variables.set(\"upload_file_id\", r.file_infos[0].id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/Users/mmomin/Desktop/mattermost_postman"
+						},
+						{
+							"key": "channel_id",
+							"value": "{{upload_file_channel_id}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/files",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"files"
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| upload_file_team_id | ID of the team |\n| upload_file_channel_id | ID or name of the channel |\n| files | Take file |"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"channel_id\": \"{{upload_file_channel_id}}\",\n    \"message\": \"{{upload_file_message}}\",\n    \"file_ids\" :[\"{{upload_file_id}}\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}api/v4/posts",
+					"host": [
+						"{{base_url}}api"
+					],
+					"path": [
+						"v4",
+						"posts"
+					]
+				},
+				"description": "The variables and their example values for the action are mentioned below.\n\n| **Variable Name** | **Example Value** |\n| ------ | ------ |\n| upload_file_channel_id | ID or name of the channel |\n| upload_file_message | Message to send |\n| upload_file_id | Set automatically from Upload file |"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{personal_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "list_users_team_id",
+			"value": ""
+		},
+		{
+			"key": "list_users_in_team",
+			"value": ""
+		},
+		{
+			"key": "list_channels_team_id",
+			"value": ""
+		},
+		{
+			"key": "list_channels_page",
+			"value": ""
+		},
+		{
+			"key": "list_team_page",
+			"value": ""
+		},
+		{
+			"key": "list_post_team_id",
+			"value": ""
+		},
+		{
+			"key": "list_post_channel_id",
+			"value": ""
+		},
+		{
+			"key": "list_post_page",
+			"value": ""
+		},
+		{
+			"key": "send_message_channel_id",
+			"value": ""
+		},
+		{
+			"key": "send_message_team_id",
+			"value": ""
+		},
+		{
+			"key": "send_message_content",
+			"value": "Phantom message send"
+		},
+		{
+			"key": "upload_file_channel_id",
+			"value": ""
+		},
+		{
+			"key": "upload_file_message",
+			"value": "Phantom file upload"
+		},
+		{
+			"key": "upload_file_id",
+			"value": ""
+		},
+		{
+			"key": "upload_file_team_id",
+			"value": ""
+		}
+	]
+}

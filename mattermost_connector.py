@@ -1,32 +1,41 @@
 # File: mattermost_connector.py
+#
 # Copyright (c) 2018-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom sample App Connector python file
-
-import re
+import grp
 import json
 import os
-import sys
-import grp
-import time
 import pwd
-import requests
+import re
+import sys
+import time
+from datetime import datetime
+
 import dateutil
 import dateutil.parser
-
-from datetime import datetime
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
-from django.http import HttpResponse
-from mattermost_consts import *
-
 # Phantom App imports
 import phantom.app as phantom
 import phantom.rules as ph_rules
-from phantom.base_connector import BaseConnector
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
+from django.http import HttpResponse
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+
+from mattermost_consts import *
 
 
 def _handle_login_redirect(request, key):
@@ -80,7 +89,8 @@ def _load_app_state(asset_id, app_connector=None):
             state = json.loads(state_file_data)
     except Exception as e:
         if app_connector:
-            app_connector.debug_print('In _load_app_state: Exception: {0}'.format(str(e)))
+            app_connector.debug_print(
+                'In _load_app_state: Exception: {0}'.format(str(e)))
 
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
@@ -182,7 +192,8 @@ def _handle_rest_request(request, path_parts):
         asset_id = request.GET.get('state')
         if asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
-            auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, asset_id, MATTERMOST_TC_FILE)
+            auth_status_file_path = '{0}/{1}_{2}'.format(
+                app_dir, asset_id, MATTERMOST_TC_FILE)
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
             if not os.path.dirname(real_auth_status_file_path) == app_dir:
                 return HttpResponse("Error: Invalid asset_id", content_type="text/plain", status=400)
@@ -192,7 +203,7 @@ def _handle_rest_request(request, path_parts):
                 gid = grp.getgrnam('phantom').gr_gid
                 os.chown(auth_status_file_path, uid, gid)
                 os.chmod(auth_status_file_path, '0664')
-            except:
+            except Exception:
                 pass
 
         return return_val
@@ -268,10 +279,11 @@ class MattermostConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, self._handle_py_ver_compat_for_input_str(error_text))
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(
+            status_code, self._handle_py_ver_compat_for_input_str(error_text))
 
         # For successful status_codes, HTML pages are retrieved in response
         success_status_codes = [200, 201, 204]
@@ -310,16 +322,16 @@ class MattermostConnector(BaseConnector):
 
         # Check if error has detailed error field
         if resp_json.get('detailed_error'):
-            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code,
-                                                                        self._handle_py_ver_compat_for_input_str(resp_json['detailed_error']))
+            err = self._handle_py_ver_compat_for_input_str(resp_json['detailed_error'])
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, err)
         # Check for message in error
         elif resp_json.get('message'):
-            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code,
-                                                                        self._handle_py_ver_compat_for_input_str(resp_json['message']))
+            resp_msg = self._handle_py_ver_compat_for_input_str(resp_json['message'])
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, resp_msg)
 
         if not message:
-            message = "Error from server. Status Code: {0} Data from server: {1}"\
-                .format(response.status_code, self._handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}')))
+            resp_txt = self._handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}'))
+            message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, resp_txt)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -333,7 +345,8 @@ class MattermostConnector(BaseConnector):
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
         if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': response.status_code})
+            action_result.add_debug_data(
+                {'r_status_code': response.status_code})
             action_result.add_debug_data({'r_text': response.text})
             action_result.add_debug_data({'r_headers': response.headers})
 
@@ -364,7 +377,8 @@ class MattermostConnector(BaseConnector):
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".\
-            format(response.status_code, self._handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}')))
+            format(response.status_code, self._handle_py_ver_compat_for_input_str(
+                response.text.replace('{', '{{').replace('}', '}}')))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -378,9 +392,11 @@ class MattermostConnector(BaseConnector):
 
         try:
             if input_str and self._python_version == 2:
-                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except:
-            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
+                input_str = UnicodeDammit(
+                    input_str).unicode_markup.encode('utf-8')
+        except Exception:
+            self.debug_print(
+                "Error occurred while handling python 2to3 compatibility for the input string")
 
         return input_str
 
@@ -401,15 +417,16 @@ class MattermostConnector(BaseConnector):
             else:
                 error_code = "Error code unavailable"
                 error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-        except:
+        except Exception:
             error_code = "Error code unavailable"
             error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the Mattermost server. Please check the asset configuration and|or the action parameters."
-        except:
+            error_msg = "Error occurred while connecting to the Mattermost server. "
+            error_msg += "Please check the asset configuration and|or the action parameters."
+        except Exception:
             error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
@@ -525,7 +542,8 @@ class MattermostConnector(BaseConnector):
             headers = {
                 'Authorization': 'Bearer {}'.format(self._personal_token)
             }
-            ret_val, _ = self._make_rest_call(url=url, action_result=action_result, headers=headers)
+            ret_val, _ = self._make_rest_call(
+                url=url, action_result=action_result, headers=headers)
 
             if phantom.is_fail(ret_val):
                 # If error is not 401 or other config parameters are not provided, return error
@@ -538,7 +556,8 @@ class MattermostConnector(BaseConnector):
 
         if self._client_id and self._client_secret:
             # If client_id and client_secret is provided, go for interactive login
-            ret_val = self._handle_interactive_login(app_state, action_result=action_result)
+            ret_val = self._handle_interactive_login(
+                app_state, action_result=action_result)
 
             if phantom.is_fail(ret_val):
                 self.save_progress(MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
@@ -548,7 +567,8 @@ class MattermostConnector(BaseConnector):
             headers = {
                 'Authorization': 'Bearer {}'.format(self._access_token)
             }
-            ret_val, _ = self._make_rest_call(url=url, action_result=action_result, headers=headers)
+            ret_val, _ = self._make_rest_call(
+                url=url, action_result=action_result, headers=headers)
 
             if phantom.is_fail(ret_val):
                 self.save_progress(MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
@@ -588,7 +608,8 @@ class MattermostConnector(BaseConnector):
         app_state['authorization_url'] = authorization_url
 
         # URL which would be shown to the user
-        url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, asset_id)
+        url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(
+            app_rest_url, asset_id)
         _save_app_state(app_state, asset_id, self)
 
         self.save_progress(MATTERMOST_AUTHORIZE_USER_MSG)
@@ -651,13 +672,16 @@ class MattermostConnector(BaseConnector):
         # Scenario -
         #
         # If the corresponding state file doesn't have the correct owner, owner group or permissions,
-        # the newly generated token is not being saved to the state file and the automatic workflow for the token has been stopped.
-        # So we have to check that token from response and the tokens which are saved to state file after successful generation of the new tokens are same or not.
+        # the newly generated token is not being saved to the state file
+        # and the automatic workflow for the token has been stopped.
+        # So we have to check that token from response and the tokens
+        # which are saved to state file after successful generation of the new tokens are same or not.
 
         if self._access_token != self._state.get('token', {}).get(MATTERMOST_ACCESS_TOKEN):
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to the readme file for more information)."
+            message += "user should have the correct access rights and ownership for the corresponding state file "
+            message += "(refer to the readme file for more information)."
             return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
@@ -678,7 +702,8 @@ class MattermostConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
-        self.save_progress('Using Phantom base URL as: {0}'.format(phantom_base_url))
+        self.save_progress(
+            'Using Phantom base URL as: {0}'.format(phantom_base_url))
         app_json = self.get_app_json()
         app_name = app_json['name']
 
@@ -697,15 +722,16 @@ class MattermostConnector(BaseConnector):
 
         mattermost_phantom_base_url = self.get_phantom_base_url()
 
-        url = '{}rest{}'.format(mattermost_phantom_base_url, MATTERMOST_PHANTOM_SYS_INFO_URL)
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        url = '{}rest{}'.format(
+            mattermost_phantom_base_url, MATTERMOST_PHANTOM_SYS_INFO_URL)
+        ret_val, resp_json = self._make_rest_call(
+            action_result=action_result, url=url, verify=False)
         if phantom.is_fail(ret_val):
             return ret_val, None
 
         phantom_base_url = resp_json.get('base_url')
         if not phantom_base_url:
-            return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_BASE_URL_NOT_FOUND_MSG), \
-                   None
+            return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_BASE_URL_NOT_FOUND_MSG), None
         return phantom.APP_SUCCESS, phantom_base_url
 
     def _get_asset_name(self, action_result):
@@ -718,9 +744,11 @@ class MattermostConnector(BaseConnector):
         mattermost_phantom_base_url = self.get_phantom_base_url()
 
         asset_id = self.get_asset_id()
-        rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
+        rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(
+            asset_id=asset_id)
         url = '{}rest{}'.format(mattermost_phantom_base_url, rest_endpoint)
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        ret_val, resp_json = self._make_rest_call(
+            action_result=action_result, url=url, verify=False)
 
         if phantom.is_fail(ret_val):
             return ret_val, None
@@ -732,7 +760,6 @@ class MattermostConnector(BaseConnector):
         return phantom.APP_SUCCESS, asset_name
 
     def _wait(self, action_result):
-
         """ This function is used to hold the action till user login for 105 seconds.
 
         :param action_result: Object of ActionResult class
@@ -741,7 +768,8 @@ class MattermostConnector(BaseConnector):
 
         app_dir = os.path.dirname(os.path.abspath(__file__))
         # file to check whether the request has been granted or not
-        auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, self.get_asset_id(), MATTERMOST_TC_FILE)
+        auth_status_file_path = '{0}/{1}_{2}'.format(
+            app_dir, self.get_asset_id(), MATTERMOST_TC_FILE)
 
         # wait-time while request is being granted for 105 seconds
         for _ in range(0, 35):
@@ -772,7 +800,7 @@ class MattermostConnector(BaseConnector):
                 return phantom.APP_SUCCESS
             elif datetime.strptime(date_timestamp, '%Y-%m-%d'):
                 return phantom.APP_SUCCESS
-        except:
+        except Exception:
             return phantom.APP_ERROR
 
         return phantom.APP_ERROR
@@ -810,7 +838,7 @@ class MattermostConnector(BaseConnector):
         # Validate time parameter
         try:
             time_value = int(float(time_value))
-        except:
+        except Exception:
             self.debug_print(MATTERMOST_INVALID_TIME)
             return phantom.APP_ERROR, MATTERMOST_INVALID_TIME
 
@@ -840,7 +868,8 @@ class MattermostConnector(BaseConnector):
                 })
 
             # Get posts for given channel
-            post_status, post_list = self._get_posts(action_result, url, params)
+            post_status, post_list = self._get_posts(
+                action_result, url, params)
 
             if phantom.is_fail(post_status):
                 return action_result.get_status()
@@ -858,7 +887,8 @@ class MattermostConnector(BaseConnector):
             })
 
             # Get posts for given channel
-            post_status, post_list = self._get_posts(action_result, url, params)
+            post_status, post_list = self._get_posts(
+                action_result, url, params)
 
             if phantom.is_fail(post_status):
                 return action_result.get_status()
@@ -871,7 +901,8 @@ class MattermostConnector(BaseConnector):
                 })
 
             # Get posts for given channel
-            post_status, post_list = self._get_posts(action_result, url, params)
+            post_status, post_list = self._get_posts(
+                action_result, url, params)
 
             if phantom.is_fail(post_status):
                 return action_result.get_status()
@@ -889,7 +920,8 @@ class MattermostConnector(BaseConnector):
             })
 
             # Get posts for given channel
-            post_status, post_list = self._get_posts(action_result, url, params)
+            post_status, post_list = self._get_posts(
+                action_result, url, params)
 
             if phantom.is_fail(post_status):
                 return action_result.get_status()
@@ -977,50 +1009,38 @@ class MattermostConnector(BaseConnector):
         """
 
         channel_id = None
-        params = {}
 
         # Endpoint for fetching channels
         url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(server_url=self._server_url),
                               MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id))
 
-        page_number = 0
-        params.update({
-            'page': page_number
-        })
+        # make rest call
+        ret_val, response_json = self._handle_update_request(
+            url=url, action_result=action_result)
 
-        while True:
-            # make rest call
-            ret_val, response_json = self._handle_update_request(url=url, action_result=action_result,
-                                                                 params=params)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
 
-            if phantom.is_fail(ret_val):
-                return action_result.get_status(), None
+        # If an empty list of channels, then return
+        if not response_json and not self.get_action_identifier() == 'list_channels':
+            return phantom.APP_ERROR, MATTERMOST_CONST_NOT_FOUND
 
-            # If an empty list of channels, then break
-            if not response_json:
-                break
+        # For any action other than list channel
+        if not self.get_action_identifier() == 'list_channels':
+            # Fetch Channel ID from Channel name
+            for each_channel in response_json:
+                # Check if either channel name or channel ID matches
+                if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.get('name').lower():
+                    channel_id = each_channel.get('id')
+                    return phantom.APP_SUCCESS, channel_id
 
-            # For any action other than list channel
-            if not self.get_action_identifier() == 'list_channels':
-                # Fetch Channel ID from Channel name
-                for each_channel in response_json:
-                    # Check if either channel name or channel ID matches
-                    if channel.lower() == each_channel.get('id').lower() or channel.lower() == each_channel.\
-                            get('name').lower():
-                        channel_id = each_channel.get('id')
-                        return phantom.APP_SUCCESS, channel_id
-
-            else:
-                for each_channel in response_json:
+        else:
+            for each_channel in response_json:
+                # Allow public(O) and private(P) channels only
+                if each_channel.get('type').lower() in ['o', 'p']:
                     action_result.add_data(each_channel)
 
-            # Increment page_number for fetching next page in upcoming cycle
-            page_number += 1
-            params.update({
-                'page': page_number
-            })
-
-        if not self.get_action_identifier() == 'list_channels':
+        if not channel_id and not self.get_action_identifier() == 'list_channels':
             return phantom.APP_ERROR, MATTERMOST_CONST_NOT_FOUND
 
         return phantom.APP_SUCCESS, channel_id
@@ -1070,8 +1090,10 @@ class MattermostConnector(BaseConnector):
             else:
                 new_team = []
                 if previous_teams:
-                    duplicate_entry = len([value for value in response_json if value in previous_teams])
-                    new_team = [value for value in response_json if value not in previous_teams]
+                    duplicate_entry = len(
+                        [value for value in response_json if value in previous_teams])
+                    new_team = [
+                        value for value in response_json if value not in previous_teams]
                 previous_teams = response_json
                 if not new_team and page_number == 0:
                     for each_team in response_json:
@@ -1097,7 +1119,8 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1122,7 +1145,8 @@ class MattermostConnector(BaseConnector):
             })
 
         # Endpoint for fetching users
-        url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(server_url=self._server_url), MATTERMOST_USERS_ENDPOINT)
+        url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(
+            server_url=self._server_url), MATTERMOST_USERS_ENDPOINT)
 
         page_number = 0
         params.update({
@@ -1131,7 +1155,8 @@ class MattermostConnector(BaseConnector):
 
         while True:
             # make rest call
-            ret_val, response_json = self._handle_update_request(url=url, action_result=action_result, params=params)
+            ret_val, response_json = self._handle_update_request(
+                url=url, action_result=action_result, params=params)
 
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
@@ -1160,17 +1185,22 @@ class MattermostConnector(BaseConnector):
         vault_meta = None
         # Check for file in vault
         try:
-            success, _, vault_meta = ph_rules.vault_info(vault_id=vault_id)  # Vault IDs are unique
+            success, _, vault_meta = ph_rules.vault_info(
+                vault_id=vault_id)  # Vault IDs are unique
             if not success:
-                self.debug_print("Error while fetching meta information for vault ID: {}".format(vault_id))
-                action_result.set_status(phantom.APP_ERROR, "Error while fetching meta information for vault ID: {}".format(vault_id))
+                self.debug_print(
+                    "Error while fetching meta information for vault ID: {}".format(vault_id))
+                action_result.set_status(
+                    phantom.APP_ERROR, "Error while fetching meta information for vault ID: {}".format(vault_id))
                 return None
             vault_meta = list(vault_meta)
 
         except Exception as e:
-            self.debug_print("Error while fetching meta information for vault ID: {}. Error Details: {}".format(vault_id, self._get_error_message_from_exception(e)))
-            action_result.set_status(phantom.APP_ERROR, "Error while fetching meta information for vault ID: {}. Error Details: {}".format(vault_id,
-                                                                                                                                    self._get_error_message_from_exception(e)))
+            self.debug_print("Error while fetching meta information for vault ID: {}. Error Details: {}".format(
+                vault_id, self._get_error_message_from_exception(e)))
+            msg = "Error while fetching meta information for vault ID: {}. Error Details: {}".format(
+                vault_id, self._get_error_message_from_exception(e))
+            action_result.set_status(phantom.APP_ERROR, msg)
             return None
 
         file_meta = None
@@ -1180,15 +1210,18 @@ class MattermostConnector(BaseConnector):
                     file_meta = meta
                     break
             else:
-                self.debug_print("Unable to find a file for the vault ID: '{0}' in the container ID: '{1}'".format(vault_id, self.get_container_id()))
+                self.debug_print("Unable to find a file for the vault ID: '{0}' in the container ID: '{1}'".format(
+                    vault_id, self.get_container_id()))
 
-        except:
-            self.debug_print("Error occurred while finding a file for the vault ID: '{0}' in the container ID: '{1}'".format(vault_id, self.get_container_id()))
+        except Exception:
+            self.debug_print("Error occurred while finding a file for the vault ID: '{0}' in the container ID: '{1}'".format(
+                vault_id, self.get_container_id()))
             self.debug_print("Considering the first file as the required file")
             file_meta = vault_meta[0]
 
         if not file_meta:
-            self.debug_print("Unable to find a file for the vault ID: '{0}' in the container ID: '{1}'".format(vault_id, self.get_container_id()))
+            self.debug_print("Unable to find a file for the vault ID: '{0}' in the container ID: '{1}'".format(
+                vault_id, self.get_container_id()))
             self.debug_print("Considering the first file as the required file")
             file_meta = vault_meta[0]
 
@@ -1201,7 +1234,8 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1210,8 +1244,10 @@ class MattermostConnector(BaseConnector):
 
         team = param[MATTERMOST_JSON_TEAM]
         channel = param[MATTERMOST_JSON_CHANNEL]
-        vault_id = self._handle_py_ver_compat_for_input_str(param[MATTERMOST_JSON_VAULT_ID])
-        message = param.get(MATTERMOST_JSON_MESSAGE, MATTERMOST_FILE_UPLOAD_MSG)
+        vault_id = self._handle_py_ver_compat_for_input_str(
+            param[MATTERMOST_JSON_VAULT_ID])
+        message = param.get(MATTERMOST_JSON_MESSAGE,
+                            MATTERMOST_FILE_UPLOAD_MSG)
 
         file_info = self._get_vault_info(vault_id, action_result)
 
@@ -1226,7 +1262,7 @@ class MattermostConnector(BaseConnector):
             # check if vault path is accessible
             if not vault_path:
                 return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
-        except:
+        except Exception:
             return action_result.set_status(phantom.APP_ERROR, MATTERMOST_VAULT_ID_NOT_FOUND)
 
         # Verify valid team name or team ID
@@ -1238,7 +1274,8 @@ class MattermostConnector(BaseConnector):
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
-        channel_status, channel_id = self._verify_channel(action_result, team_id, channel)
+        channel_status, channel_id = self._verify_channel(
+            action_result, team_id, channel)
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
@@ -1318,7 +1355,8 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1338,7 +1376,8 @@ class MattermostConnector(BaseConnector):
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
-        channel_status, channel_id = self._verify_channel(action_result, team_id, channel)
+        channel_status, channel_id = self._verify_channel(
+            action_result, team_id, channel)
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
@@ -1367,7 +1406,8 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1391,7 +1431,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, start_time = self._convert_time(start_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1407,7 +1448,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, end_time = self._convert_time(end_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify end_time
                 time_status, time_response = self._verify_time(end_time)
@@ -1429,7 +1471,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, start_time = self._convert_time(start_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, start_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify start_time
                 time_status, time_response = self._verify_time(start_time)
@@ -1446,7 +1489,8 @@ class MattermostConnector(BaseConnector):
                 convert_status, end_time = self._convert_time(end_time)
 
                 if phantom.is_fail(convert_status):
-                    return action_result.set_status(phantom.APP_ERROR, "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time))
+                    msg = "{}. Error Details: {}".format(MATTERMOST_TIMESTAMP_CONVERSION_FAILED_MSG, end_time)
+                    return action_result.set_status(phantom.APP_ERROR, msg)
 
                 # verify end_time
                 time_status, time_response = self._verify_time(end_time)
@@ -1463,7 +1507,8 @@ class MattermostConnector(BaseConnector):
             return action_result.get_status()
 
         # Verify valid channel name or channel ID
-        channel_status, channel_id = self._verify_channel(action_result, team_id, channel)
+        channel_status, channel_id = self._verify_channel(
+            action_result, team_id, channel)
 
         if phantom.is_fail(channel_status):
             if channel_id == MATTERMOST_CONST_NOT_FOUND:
@@ -1475,7 +1520,8 @@ class MattermostConnector(BaseConnector):
                               MATTERMOST_LIST_POSTS_ENDPOINT.format(channel=channel_id))
 
         # Get posts for given channel
-        post_status = self._process_posts(action_result, url, params, start_time, end_time)
+        post_status = self._process_posts(
+            action_result, url, params, start_time, end_time)
 
         if phantom.is_fail(post_status):
             return action_result.get_status()
@@ -1527,7 +1573,8 @@ class MattermostConnector(BaseConnector):
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress("In action handler for: {0}".format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # If neither personal token nor access token are present, action fails
@@ -1584,16 +1631,20 @@ class MattermostConnector(BaseConnector):
         # Fetching the Python major version
         try:
             self._python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
-        self._server_url = self._handle_py_ver_compat_for_input_str(config[MATTERMOST_CONFIG_SERVER_URL].strip('/'))
-        self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, False)
+        self._server_url = self._handle_py_ver_compat_for_input_str(
+            config[MATTERMOST_CONFIG_SERVER_URL].strip('/'))
+        self._verify_server_cert = config.get(
+            MATTERMOST_CONFIG_VERIFY_SERVER_CERT, False)
         self._personal_token = config.get(MATTERMOST_CONFIG_PERSONAL_TOKEN)
-        self._client_id = self._handle_py_ver_compat_for_input_str(config.get(MATTERMOST_CONFIG_CLIENT_ID))
+        self._client_id = self._handle_py_ver_compat_for_input_str(
+            config.get(MATTERMOST_CONFIG_CLIENT_ID))
         self._client_secret = config.get(MATTERMOST_CONFIG_CLIENT_SECRET)
 
-        self._access_token = self._state.get('token', {}).get(MATTERMOST_ACCESS_TOKEN, "")
+        self._access_token = self._state.get(
+            'token', {}).get(MATTERMOST_ACCESS_TOKEN, "")
         return phantom.APP_SUCCESS
 
     def finalize(self):
@@ -1613,8 +1664,9 @@ class MattermostConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
@@ -1623,12 +1675,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -1639,7 +1693,8 @@ if __name__ == '__main__':
     if username and password:
         try:
             print("Accessing the Login page")
-            r = requests.get("https://127.0.0.1/login", verify=False)
+            login_url = BaseConnector._get_phantom_base_url() + "login"
+            r = requests.get(login_url, verify=verify, timeout=60)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -1649,14 +1704,14 @@ if __name__ == '__main__':
 
             headers = dict()
             headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
-            headers['Referer'] = 'https://127.0.0.1/login'
+            headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, data=data, headers=headers, verify=verify, timeout=60)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: {}".format(str(e)))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -1673,4 +1728,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
