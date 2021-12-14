@@ -10,13 +10,13 @@
     "product_version_regex": "5.*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2021 Splunk Inc.",
-    "app_version": "2.2.3",
+    "app_version": "2.2.4",
     "latest_tested_versions": [
         "On-prem v6.0.2"
     ],
     "python_version": "3",
     "fips_compliant": true,
-    "utctime_updated": "2021-12-10T07:21:16.000000Z",
+    "utctime_updated": "2021-12-13T23:54:07.000000Z",
     "package_name": "phantom_mattermost",
     "main_module": "mattermost_connector.py",
     "min_phantom_version": "5.0.0",
@@ -1597,7 +1597,7 @@
         "wheel": [
             {
                 "module": "Django",
-                "input_file": "wheels/Django-3.2.5-py3-none-any.whl"
+                "input_file": "wheels/Django-3.2.10-py3-none-any.whl"
             },
             {
                 "module": "asgiref",
