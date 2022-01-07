@@ -2,7 +2,7 @@
 # Mattermost
 
 Publisher: Splunk  
-Connector Version: 2\.2\.1  
+Connector Version: 2\.2\.4  
 Product Vendor: Mattermost  
 Product Name: Mattermost  
 Product Version Supported (regex): "5\.\*"  
@@ -132,6 +132,16 @@ Please check the permissions for the state file as mentioned below.
 -   File rights: rw-rw-r-- (664) (The phantom user should have read and write access for the state
     file)
 -   File owner: Appropriate phantom user
+
+## Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the Mattermost server. Below are the
+default ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
 
 
 ### Configuration Variables
