@@ -10,7 +10,7 @@
 {% block widget_content %} <!-- Main Start Block -->
 
 <!-- File: mattermost_list_posts.html
-  Copyright (c) 2018-2021 Splunk Inc.
+  Copyright (c) 2018-2022 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ and limitations under the License.
             <tr>
                 <td>Team</td>
                 <td>
-                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['mattermost team'], 
+                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['mattermost team'],
                     'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
                         {{ result.param.team }}
                         &nbsp;
@@ -95,7 +95,7 @@ and limitations under the License.
             <tr>
                 <td>Channel</td>
                 <td>
-                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['mattermost channel'], 
+                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['mattermost channel'],
                     'value':'{{ result.param.channel }}' }], 0, {{ container.id }}, null, false);">
                         {{ result.param.channel }}
                         &nbsp;
@@ -118,7 +118,7 @@ and limitations under the License.
                     {{ result.param.end_time }}
                 </td>
             </tr>
-            {% endif %}            
+            {% endif %}
         </table>
         </div>
         <div class="mattermost">
