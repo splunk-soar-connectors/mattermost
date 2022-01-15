@@ -2,7 +2,7 @@
 # Mattermost
 
 Publisher: Splunk  
-Connector Version: 2\.2\.1  
+Connector Version: 2\.2\.6  
 Product Vendor: Mattermost  
 Product Name: Mattermost  
 Product Version Supported (regex): "5\.\*"  
@@ -10,8 +10,8 @@ Minimum Product Version: 5\.0\.0
 
 This app integrates with Mattermost to support various investigative actions
 
-[comment]: # " File: readme.md"
-[comment]: # "  Copyright (c) 2018-2021 Splunk Inc."
+[comment]: # " File: README.md"
+[comment]: # "  Copyright (c) 2018-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
@@ -132,6 +132,16 @@ Please check the permissions for the state file as mentioned below.
 -   File rights: rw-rw-r-- (664) (The phantom user should have read and write access for the state
     file)
 -   File owner: Appropriate phantom user
+
+## Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the Mattermost server. Below are the
+default ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
 
 
 ### Configuration Variables
