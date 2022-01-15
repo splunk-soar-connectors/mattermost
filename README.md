@@ -2,7 +2,7 @@
 # Mattermost
 
 Publisher: Splunk  
-Connector Version: 2\.2\.4  
+Connector Version: 2\.2\.6  
 Product Vendor: Mattermost  
 Product Name: Mattermost  
 Product Version Supported (regex): "5\.\*"  
@@ -10,7 +10,7 @@ Minimum Product Version: 5\.0\.0
 
 This app integrates with Mattermost to support various investigative actions
 
-[comment]: # " File: readme.md"
+[comment]: # " File: README.md"
 [comment]: # "  Copyright (c) 2018-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
