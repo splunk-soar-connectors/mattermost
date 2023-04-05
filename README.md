@@ -2,11 +2,11 @@
 # Mattermost
 
 Publisher: Splunk  
-Connector Version: 2\.2\.7  
+Connector Version: 2.3.7  
 Product Vendor: Mattermost  
 Product Name: Mattermost  
-Product Version Supported (regex): "5\.\*"  
-Minimum Product Version: 5\.1\.0  
+Product Version Supported (regex): "5.\*"  
+Minimum Product Version: 5.5.0  
 
 This app integrates with Mattermost to support various investigative actions
 
@@ -149,12 +149,12 @@ The below configuration variables are required for this Connector to operate.  T
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
-**server\_url** |  required  | string | Server URL \(e\.g\. http\://10\.10\.10\.10\:8080\)
-**verify\_server\_cert** |  optional  | boolean | Verify server certificate
-**personal\_token** |  optional  | password | Personal token
-**ph\_0** |  optional  | ph | Placeholder
-**client\_id** |  optional  | string | Client ID
-**client\_secret** |  optional  | password | Client secret
+**server_url** |  required  | string | Server URL (e.g. http://10.10.10.10:8080)
+**verify_server_cert** |  optional  | boolean | Verify server certificate
+**personal_token** |  optional  | password | Personal token
+**ph_0** |  optional  | ph | Placeholder
+**client_id** |  optional  | string | Client ID
+**client_secret** |  optional  | password | Client secret
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -183,7 +183,7 @@ List users of a team
 Type: **investigate**  
 Read only: **True**
 
-While listing users from a specific team, the user should have created the team or be a member of that team\.
+While listing users from a specific team, the user should have created the team or be a member of that team.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -191,39 +191,39 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **team** |  optional  | ID or name of the team | string |  `mattermost team` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.team | string |  `mattermost team` 
-action\_result\.data\.\*\.auth\_data | string | 
-action\_result\.data\.\*\.auth\_service | string | 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.email | string |  `email` 
-action\_result\.data\.\*\.email\_verified | boolean | 
-action\_result\.data\.\*\.failed\_attempts | numeric | 
-action\_result\.data\.\*\.first\_name | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.last\_name | string | 
-action\_result\.data\.\*\.last\_password\_update | numeric | 
-action\_result\.data\.\*\.last\_picture\_update | numeric | 
-action\_result\.data\.\*\.locale | string | 
-action\_result\.data\.\*\.mfa\_active | boolean | 
-action\_result\.data\.\*\.nickname | string | 
-action\_result\.data\.\*\.notify\_props | string | 
-action\_result\.data\.\*\.position | string | 
-action\_result\.data\.\*\.props | string | 
-action\_result\.data\.\*\.roles | string | 
-action\_result\.data\.\*\.timezone\.automaticTimezone | string | 
-action\_result\.data\.\*\.timezone\.manualTimezone | string | 
-action\_result\.data\.\*\.timezone\.useAutomaticTimezone | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.username | string |  `user name` 
-action\_result\.data\.\*\.disable\_welcome\_email | boolean | 
-action\_result\.summary\.total\_users | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.team | string |  `mattermost team`  |   test-team 
+action_result.data.\*.auth_data | string |  |  
+action_result.data.\*.auth_service | string |  |  
+action_result.data.\*.create_at | numeric |  |   1535004134292 
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.email | string |  `email`  |   test.user@mattermost.com 
+action_result.data.\*.email_verified | boolean |  |   True  False 
+action_result.data.\*.failed_attempts | numeric |  |   0 
+action_result.data.\*.first_name | string |  |   test 
+action_result.data.\*.id | string |  |   pyx8sqe7zfn1dpmtd1s3qzqhfr 
+action_result.data.\*.last_name | string |  |   user 
+action_result.data.\*.last_password_update | numeric |  |   0 
+action_result.data.\*.last_picture_update | numeric |  |   0 
+action_result.data.\*.locale | string |  |   en 
+action_result.data.\*.mfa_active | boolean |  |   True  False 
+action_result.data.\*.nickname | string |  |   test 
+action_result.data.\*.notify_props | string |  |  
+action_result.data.\*.position | string |  |  
+action_result.data.\*.props | string |  |  
+action_result.data.\*.roles | string |  |   system_user system_user_access_token system_post_all 
+action_result.data.\*.timezone.automaticTimezone | string |  |  
+action_result.data.\*.timezone.manualTimezone | string |  |  
+action_result.data.\*.timezone.useAutomaticTimezone | string |  |   true 
+action_result.data.\*.update_at | numeric |  |   1535105717458 
+action_result.data.\*.username | string |  `user name`  |   test.user 
+action_result.data.\*.disable_welcome_email | boolean |  |  
+action_result.summary.total_users | numeric |  |   9 
+action_result.message | string |  |   Total users: 9 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'upload file'
 Upload file to a channel
@@ -231,63 +231,63 @@ Upload file to a channel
 Type: **generic**  
 Read only: **False**
 
-User can upload files to only those channels which user has created or is a member of\.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>\.
+User can upload files to only those channels which user has created or is a member of.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **team** |  required  | ID or name of the team | string |  `mattermost team` 
 **channel** |  required  | ID or name of the channel | string |  `mattermost channel` 
-**vault\_id** |  required  | Vault ID | string |  `vault id`  `sha1` 
+**vault_id** |  required  | Vault ID | string |  `vault id`  `sha1` 
 **message** |  optional  | Message to send | string | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.channel | string |  `mattermost channel` 
-action\_result\.parameter\.message | string | 
-action\_result\.parameter\.team | string |  `mattermost team` 
-action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
-action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.edit\_at | numeric | 
-action\_result\.data\.\*\.file\_ids | string | 
-action\_result\.data\.\*\.hashtags | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.is\_pinned | boolean | 
-action\_result\.data\.\*\.message | string | 
-action\_result\.data\.\*\.original\_id | string | 
-action\_result\.data\.\*\.parent\_id | string | 
-action\_result\.data\.\*\.pending\_post\_id | string | 
-action\_result\.data\.\*\.root\_id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.user\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.name | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.size | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.width | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.height | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.post\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.user\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.extension | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.mime\_type | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.channel\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.mini\_preview | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.has\_preview\_image | boolean | 
-action\_result\.data\.\*\.reply\_count | numeric | 
-action\_result\.data\.\*\.last\_reply\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.remote\_id | string | 
-action\_result\.data\.\*\.participants | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.channel | string |  `mattermost channel`  |   town-square 
+action_result.parameter.message | string |  |   hi 
+action_result.parameter.team | string |  `mattermost team`  |   test-team 
+action_result.parameter.vault_id | string |  `vault id`  `sha1`  |   c8f39b293cbc5dfb9e61140a36a1685adea492e2 
+action_result.data.\*.channel_id | string |  `mattermost channel`  |   ofond1t88jbr8e6cbwb7ogk98h 
+action_result.data.\*.create_at | numeric |  |   1535533720541 
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.edit_at | numeric |  |   1535533798521 
+action_result.data.\*.file_ids | string |  |   1ioo54wdtpnq7eddp9yc5jikhy 
+action_result.data.\*.hashtags | string |  |  
+action_result.data.\*.id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.is_pinned | boolean |  |   True  False 
+action_result.data.\*.message | string |  |   Upload file 
+action_result.data.\*.original_id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.parent_id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.pending_post_id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.root_id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.type | string |  |  
+action_result.data.\*.update_at | numeric |  |   1535533720541 
+action_result.data.\*.user_id | string |  |   nj9wemswb7f4zykdetw9egbwuo 
+action_result.data.\*.metadata.files.\*.id | string |  |  
+action_result.data.\*.metadata.files.\*.name | string |  |  
+action_result.data.\*.metadata.files.\*.size | numeric |  |  
+action_result.data.\*.metadata.files.\*.width | numeric |  |  
+action_result.data.\*.metadata.files.\*.height | numeric |  |  
+action_result.data.\*.metadata.files.\*.post_id | string |  |  
+action_result.data.\*.metadata.files.\*.user_id | string |  |  
+action_result.data.\*.metadata.files.\*.create_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.delete_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.extension | string |  |  
+action_result.data.\*.metadata.files.\*.mime_type | string |  |  
+action_result.data.\*.metadata.files.\*.update_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.channel_id | string |  |  
+action_result.data.\*.metadata.files.\*.mini_preview | string |  |  
+action_result.data.\*.metadata.files.\*.has_preview_image | boolean |  |  
+action_result.data.\*.reply_count | numeric |  |  
+action_result.data.\*.last_reply_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.remote_id | string |  |  
+action_result.data.\*.participants | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   File uploaded successfully 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'send message'
 Send a message to a channel
@@ -295,7 +295,7 @@ Send a message to a channel
 Type: **generic**  
 Read only: **False**
 
-User can send message to only those channels which user has created or is a member of the team\.
+User can send message to only those channels which user has created or is a member of the team.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -305,34 +305,34 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **message** |  required  | Message to send | string | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.channel | string |  `mattermost channel` 
-action\_result\.parameter\.message | string | 
-action\_result\.parameter\.team | string |  `mattermost team` 
-action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.edit\_at | numeric | 
-action\_result\.data\.\*\.hashtags | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.is\_pinned | boolean | 
-action\_result\.data\.\*\.message | string | 
-action\_result\.data\.\*\.original\_id | string | 
-action\_result\.data\.\*\.parent\_id | string | 
-action\_result\.data\.\*\.pending\_post\_id | string | 
-action\_result\.data\.\*\.root\_id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.user\_id | string | 
-action\_result\.data\.\*\.reply\_count | numeric | 
-action\_result\.data\.\*\.last\_reply\_at | numeric | 
-action\_result\.data\.\*\.participants | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.channel | string |  `mattermost channel`  |   test2-user-channel 
+action_result.parameter.message | string |  |   Hey, guys how r u? 
+action_result.parameter.team | string |  `mattermost team`  |   privy-chantest 
+action_result.data.\*.channel_id | string |  `mattermost channel`  |   9fm7epgq9b8x3ekb3frhid5kaw 
+action_result.data.\*.create_at | numeric |  |   1535458197064 
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.edit_at | numeric |  |   1535458199241 
+action_result.data.\*.hashtags | string |  |  
+action_result.data.\*.id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.is_pinned | boolean |  |   True  False 
+action_result.data.\*.message | string |  |   Hey, guys how r u? 
+action_result.data.\*.original_id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.parent_id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.pending_post_id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.root_id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.type | string |  |  
+action_result.data.\*.update_at | numeric |  |   1535458197064 
+action_result.data.\*.user_id | string |  |   hrfxwdb7gtdjzbzqscix7edyeh 
+action_result.data.\*.reply_count | numeric |  |  
+action_result.data.\*.last_reply_at | numeric |  |  
+action_result.data.\*.participants | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   Message sent successfully 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list posts'
 List posts of a channel
@@ -340,65 +340,65 @@ List posts of a channel
 Type: **investigate**  
 Read only: **True**
 
-Users can only list the posts of channels they have created or are members of\.<br> If &quotstart\_time&quot or &quotend\_time&quot is specified, the action will also list the deleted post\(s\) within the specified time\.<br>If only &quotstart\_time&quot is given then the current time would be taken as &quotend\_time&quot\.<br>If only &quotend\_time&quot is given then all the posts before that time would be displayed\.<br>The timestamp should be entered in <b>YYYY\-MM\-DD</b> or a valid &quotISO 8601 timestamp&quot format\.<br>Some examples of valid time formats are\:<ul><li>2018\-09\-24</li><li>2018\-09\-23T14\:40\:44Z</li><li>2018\-09\-23T14\:40\:44\+05\:30</li><li>2020\-08\-30T01\:45\:36\.123Z</li><li>2021\-12\-13T21\:20\:37\.593194\+05\:30</li></ul>
+Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then the current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or a valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **team** |  required  | ID or name of the team | string |  `mattermost team` 
 **channel** |  required  | ID or name of the channel | string |  `mattermost channel` 
-**start\_time** |  optional  | Start time in formatted timestamp | string | 
-**end\_time** |  optional  | End time in formatted timestamp | string | 
+**start_time** |  optional  | Start time in formatted timestamp | string | 
+**end_time** |  optional  | End time in formatted timestamp | string | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.channel | string |  `mattermost channel` 
-action\_result\.parameter\.end\_time | numeric | 
-action\_result\.parameter\.start\_time | numeric | 
-action\_result\.parameter\.team | string |  `mattermost team` 
-action\_result\.data\.\*\.channel\_id | string |  `mattermost channel` 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.edit\_at | numeric | 
-action\_result\.data\.\*\.file\_ids | string | 
-action\_result\.data\.\*\.hashtags | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.is\_pinned | boolean | 
-action\_result\.data\.\*\.message | string | 
-action\_result\.data\.\*\.original\_id | string | 
-action\_result\.data\.\*\.parent\_id | string | 
-action\_result\.data\.\*\.pending\_post\_id | string | 
-action\_result\.data\.\*\.props\.addedUsername | string |  `user name` 
-action\_result\.data\.\*\.props\.username | string |  `user name` 
-action\_result\.data\.\*\.root\_id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.user\_id | string | 
-action\_result\.data\.\*\.reply\_count | numeric | 
-action\_result\.data\.\*\.last\_reply\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.name | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.size | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.width | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.height | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.post\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.user\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.extension | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.mime\_type | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.metadata\.files\.\*\.channel\_id | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.mini\_preview | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.has\_preview\_image | boolean | 
-action\_result\.data\.\*\.participants | string | 
-action\_result\.data\.\*\.metadata\.files\.\*\.remote\_id | string | 
-action\_result\.summary\.total\_posts | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.channel | string |  `mattermost channel`  |   test2-second-channel 
+action_result.parameter.end_time | numeric |  |   1535007904568 
+action_result.parameter.start_time | numeric |  |   1535007703337 
+action_result.parameter.team | string |  `mattermost team`  |   test-team 
+action_result.data.\*.channel_id | string |  `mattermost channel`  |   ectpw8kdeir4589wu61ijp77tc 
+action_result.data.\*.create_at | numeric |  |   1541079654322 
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.edit_at | numeric |  |   1535007704567 
+action_result.data.\*.file_ids | string |  |   e4yq14jxd3ra5pmcsjeqjw3j7o 
+action_result.data.\*.hashtags | string |  |  
+action_result.data.\*.id | string |  |   rb19t6ggfj81bk1txxtcw13kir 
+action_result.data.\*.is_pinned | boolean |  |   True  False 
+action_result.data.\*.message | string |  |   Test 
+action_result.data.\*.original_id | string |  |   uinosfs9a3r9dgay15epdn39qy 
+action_result.data.\*.parent_id | string |  |   fsn1bn4nwjdwpmbuqch5fp9xnh 
+action_result.data.\*.pending_post_id | string |  |   g9rit1zsx3ngzbs1srtx8tu5fe 
+action_result.data.\*.props.addedUsername | string |  `user name`  |   test-name 
+action_result.data.\*.props.username | string |  `user name`  |   admin 
+action_result.data.\*.root_id | string |  |   fsn1bn4nwjdwpmbuqch5fp9xnh 
+action_result.data.\*.type | string |  |   system_join_channel 
+action_result.data.\*.update_at | numeric |  |   1541079654322 
+action_result.data.\*.user_id | string |  |   zxutg6e6ibgyxjmpee7wjsmc5a 
+action_result.data.\*.reply_count | numeric |  |  
+action_result.data.\*.last_reply_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.id | string |  |  
+action_result.data.\*.metadata.files.\*.name | string |  |  
+action_result.data.\*.metadata.files.\*.size | numeric |  |  
+action_result.data.\*.metadata.files.\*.width | numeric |  |  
+action_result.data.\*.metadata.files.\*.height | numeric |  |  
+action_result.data.\*.metadata.files.\*.post_id | string |  |  
+action_result.data.\*.metadata.files.\*.user_id | string |  |  
+action_result.data.\*.metadata.files.\*.create_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.delete_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.extension | string |  |  
+action_result.data.\*.metadata.files.\*.mime_type | string |  |  
+action_result.data.\*.metadata.files.\*.update_at | numeric |  |  
+action_result.data.\*.metadata.files.\*.channel_id | string |  |  
+action_result.data.\*.metadata.files.\*.mini_preview | string |  |  
+action_result.data.\*.metadata.files.\*.has_preview_image | boolean |  |  
+action_result.data.\*.participants | string |  |  
+action_result.data.\*.metadata.files.\*.remote_id | string |  |  
+action_result.summary.total_posts | numeric |  |   5 
+action_result.message | string |  |   Total posts: 5 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list channels'
 List public and private channels of a team
@@ -406,7 +406,7 @@ List public and private channels of a team
 Type: **investigate**  
 Read only: **True**
 
-A user can view only those channels of a team which he is a member of\.
+A user can view only those channels of a team which he is a member of.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -414,37 +414,37 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **team** |  required  | ID or name of the team | string |  `mattermost team` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.team | string |  `mattermost team` 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.creator\_id | string | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.display\_name | string | 
-action\_result\.data\.\*\.extra\_update\_at | numeric | 
-action\_result\.data\.\*\.header | string | 
-action\_result\.data\.\*\.id | string |  `mattermost channel` 
-action\_result\.data\.\*\.last\_post\_at | numeric | 
-action\_result\.data\.\*\.name | string |  `mattermost channel` 
-action\_result\.data\.\*\.props | string | 
-action\_result\.data\.\*\.purpose | string | 
-action\_result\.data\.\*\.scheme\_id | string | 
-action\_result\.data\.\*\.team\_id | string |  `mattermost team` 
-action\_result\.data\.\*\.total\_msg\_count | numeric | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.total\_msg\_count\_root | numeric | 
-action\_result\.data\.\*\.team\_name | string | 
-action\_result\.data\.\*\.team\_update\_at | numeric | 
-action\_result\.data\.\*\.team\_display\_name | string | 
-action\_result\.data\.\*\.shared | string | 
-action\_result\.data\.\*\.policy\_id | string | 
-action\_result\.data\.\*\.group\_constrained | string | 
-action\_result\.summary\.total\_channels | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.team | string |  `mattermost team`  |   privy-chantest 
+action_result.data.\*.create_at | numeric |  |   1535370158299 
+action_result.data.\*.creator_id | string |  |  
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.display_name | string |  |   Off-Topic 
+action_result.data.\*.extra_update_at | numeric |  |   0 
+action_result.data.\*.header | string |  |  
+action_result.data.\*.id | string |  `mattermost channel`  |   bm5dwbhditgxxxd5z4qkawgxha 
+action_result.data.\*.last_post_at | numeric |  |   1535370232524 
+action_result.data.\*.name | string |  `mattermost channel`  |   off-topic 
+action_result.data.\*.props | string |  |  
+action_result.data.\*.purpose | string |  |  
+action_result.data.\*.scheme_id | string |  |  
+action_result.data.\*.team_id | string |  `mattermost team`  |   suico8q897yyiraqdekxspfjma 
+action_result.data.\*.total_msg_count | numeric |  |   0 
+action_result.data.\*.type | string |  |   O 
+action_result.data.\*.update_at | numeric |  |   1535370158299 
+action_result.data.\*.total_msg_count_root | numeric |  |  
+action_result.data.\*.team_name | string |  |  
+action_result.data.\*.team_update_at | numeric |  |  
+action_result.data.\*.team_display_name | string |  |  
+action_result.data.\*.shared | string |  |  
+action_result.data.\*.policy_id | string |  |  
+action_result.data.\*.group_constrained | string |  |  
+action_result.summary.total_channels | numeric |  |   6 
+action_result.message | string |  |   Total channels: 6 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list teams'
 List teams
@@ -452,32 +452,32 @@ List teams
 Type: **investigate**  
 Read only: **True**
 
-While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users\.
+While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users.
 
 #### Action Parameters
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data\.\*\.allow\_open\_invite | boolean | 
-action\_result\.data\.\*\.allowed\_domains | string |  `domain` 
-action\_result\.data\.\*\.company\_name | string | 
-action\_result\.data\.\*\.create\_at | numeric | 
-action\_result\.data\.\*\.delete\_at | numeric | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.display\_name | string | 
-action\_result\.data\.\*\.email | string |  `email` 
-action\_result\.data\.\*\.id | string |  `mattermost team` 
-action\_result\.data\.\*\.invite\_id | string | 
-action\_result\.data\.\*\.name | string |  `mattermost team` 
-action\_result\.data\.\*\.scheme\_id | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.update\_at | numeric | 
-action\_result\.data\.\*\.policy\_id | string | 
-action\_result\.data\.\*\.group\_constrained | string | 
-action\_result\.summary\.total\_teams | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.data.\*.allow_open_invite | boolean |  |   True  False 
+action_result.data.\*.allowed_domains | string |  `domain`  |   example.com 
+action_result.data.\*.company_name | string |  |  
+action_result.data.\*.create_at | numeric |  |   1534856540543 
+action_result.data.\*.delete_at | numeric |  |   0 
+action_result.data.\*.description | string |  |  
+action_result.data.\*.display_name | string |  |   test2 sample 
+action_result.data.\*.email | string |  `email`  |   sampleteam@mattermost.com 
+action_result.data.\*.id | string |  `mattermost team`  |   396afxwqzbgruxdkft7d8wo5qw 
+action_result.data.\*.invite_id | string |  |   xo3gnntbfbg5bnirx7zi1uqujc 
+action_result.data.\*.name | string |  `mattermost team`  |   test2-sample 
+action_result.data.\*.scheme_id | string |  |  
+action_result.data.\*.type | string |  |   O 
+action_result.data.\*.update_at | numeric |  |   1534918716675 
+action_result.data.\*.policy_id | string |  |  
+action_result.data.\*.group_constrained | string |  |  
+action_result.summary.total_teams | numeric |  |   7 
+action_result.message | string |  |   Total teams: 7 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 
