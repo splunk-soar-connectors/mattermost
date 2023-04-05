@@ -988,7 +988,7 @@ class MattermostConnector(BaseConnector):
         """
         # Endpoint for creating post
         url = '{0}{1}'.format(MATTERMOST_API_BASE_URL.format(server_url=self._server_url),
-                              MATTERMOST_SEND_MESSAGE_ENDPOINT)
+                              MATTERMOST_SEND_MSG_ENDPOINT)
 
         # make rest call
         ret_val, response_json = self._handle_update_request(url=url, action_result=action_result,
@@ -1246,7 +1246,7 @@ class MattermostConnector(BaseConnector):
         channel = param[MATTERMOST_JSON_CHANNEL]
         vault_id = self._handle_py_ver_compat_for_input_str(
             param[MATTERMOST_JSON_VAULT_ID])
-        message = param.get(MATTERMOST_JSON_MESSAGE,
+        message = param.get(MATTERMOST_JSON_MSG,
                             MATTERMOST_FILE_UPLOAD_MSG)
 
         file_info = self._get_vault_info(vault_id, action_result)
@@ -1365,7 +1365,7 @@ class MattermostConnector(BaseConnector):
 
         team = param[MATTERMOST_JSON_TEAM]
         channel = param[MATTERMOST_JSON_CHANNEL]
-        message = param[MATTERMOST_JSON_MESSAGE]
+        message = param[MATTERMOST_JSON_MSG]
 
         # Verify valid team name or team ID
         team_status, team_id = self._verify_team(action_result, team)
@@ -1397,7 +1397,7 @@ class MattermostConnector(BaseConnector):
 
         action_result.add_data(response_json)
 
-        return action_result.set_status(phantom.APP_SUCCESS, MATTERMOST_SEND_MESSAGE_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, MATTERMOST_SEND_MSG_SUCCESS)
 
     def _handle_list_posts(self, param):
         """ This function is used to handle list posts action.
