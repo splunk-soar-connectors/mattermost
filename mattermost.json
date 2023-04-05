@@ -10,7 +10,7 @@
     "product_version_regex": "5.*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2018-2023 Splunk Inc.",
-    "app_version": "2.3.7",
+    "app_version": "2.3.0",
     "latest_tested_versions": [
         "On-prem v6.0.2"
     ],
