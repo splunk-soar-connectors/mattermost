@@ -1,6 +1,6 @@
 # File: mattermost_consts.py
 #
-# Copyright (c) 2018-2022 Splunk Inc.
+# Copyright (c) 2018-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ MATTERMOST_USERS_ENDPOINT = '/users'
 MATTERMOST_TEAMS_ENDPOINT = '/teams'
 MATTERMOST_LIST_CHANNELS_ENDPOINT = '/users/me/teams/{team}/channels'
 MATTERMOST_LIST_POSTS_ENDPOINT = '/channels/{channel}/posts'
-MATTERMOST_SEND_MESSAGE_ENDPOINT = '/posts'
+MATTERMOST_SEND_MSG_ENDPOINT = '/posts'
 MATTERMOST_FILES_ENDPOINT = '/files'
 MATTERMOST_JSON_TEAM = 'team'
 MATTERMOST_JSON_CHANNEL = 'channel'
-MATTERMOST_JSON_MESSAGE = 'message'
+MATTERMOST_JSON_MSG = 'message'
 MATTERMOST_JSON_VAULT_ID = 'vault_id'
 MATTERMOST_JSON_START_TIME = 'start_time'
 MATTERMOST_JSON_END_TIME = 'end_time'
@@ -41,7 +41,7 @@ MATTERMOST_CONST_NOT_FOUND = 'Not found'
 MATTERMOST_NO_POSTS_FOUND = 'No posts found'
 MATTERMOST_TEAM_NOT_FOUND_MSG = 'Team with given name or ID not found'
 MATTERMOST_CHANNEL_NOT_FOUND_MSG = 'Channel with given name or ID not found'
-MATTERMOST_SEND_MESSAGE_SUCCESS = 'Message sent successfully'
+MATTERMOST_SEND_MSG_SUCCESS = 'Message sent successfully'
 MATTERMOST_FILE_UPLOAD_MSG = 'Phantom file upload'
 MATTERMOST_FILE_UPLOAD_SUCCESS = 'File uploaded successfully'
 MATTERMOST_VAULT_ID_NOT_FOUND = 'Vault ID not found'
