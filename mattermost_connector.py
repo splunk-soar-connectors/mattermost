@@ -197,7 +197,7 @@ def _handle_rest_request(request, path_parts):
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
             if not os.path.dirname(real_auth_status_file_path) == app_dir:
                 return HttpResponse("Error: Invalid asset_id", content_type="text/plain", status=400)
-            open(auth_status_file_path, 'w').close()
+            open(auth_status_file_path, 'w').close()  # nosemgrep
             try:
                 uid = pwd.getpwnam('apache').pw_uid
                 gid = grp.getgrnam('phantom').gr_gid
