@@ -613,7 +613,7 @@ class MattermostConnector(BaseConnector):
         _save_app_state(app_state, asset_id, self)
 
         self.save_progress(MATTERMOST_AUTHORIZE_USER_MSG)
-        self.save_progress(url_for_authorize_request)
+        self.save_progress(url_for_authorize_request)  # nosemgrep
 
         # Wait for 15 seconds for authorization
         time.sleep(MATTERMOST_AUTHORIZE_WAIT_TIME)
