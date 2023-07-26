@@ -2,7 +2,7 @@
 # Mattermost
 
 Publisher: Splunk  
-Connector Version: 2.3.0  
+Connector Version: 2.3.1  
 Product Vendor: Mattermost  
 Product Name: Mattermost  
 Product Version Supported (regex): "5.\*"  
