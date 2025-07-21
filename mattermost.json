@@ -14,7 +14,7 @@
     "latest_tested_versions": [
         "On-prem v6.0.2"
     ],
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "fips_compliant": true,
     "utctime_updated": "2022-01-12T17:35:32.000000Z",
     "package_name": "phantom_mattermost",
