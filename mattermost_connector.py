@@ -400,20 +400,18 @@ class MattermostConnector(BaseConnector):
         :return: error message
         """
 
+        error_code = "Error code unavailable"
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = "Error code unavailable"
                     error_msg = e.args[0]
-            else:
-                error_code = "Error code unavailable"
-                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
         except Exception:
-            error_code = "Error code unavailable"
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            pass
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)

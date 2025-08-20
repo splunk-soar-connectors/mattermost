@@ -90,6 +90,8 @@ def display_view(provides, all_app_runs, context):
                 continue
             results.append(ctx_result)
 
+    return_page = None
+
     if provides == "list posts":
         return_page = "mattermost_list_posts.html"
     elif provides == "send message":
