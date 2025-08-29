@@ -1,9 +1,9 @@
 # Mattermost
 
-Publisher: Splunk \
-Connector Version: 2.3.1 \
-Product Vendor: Mattermost \
-Product Name: Mattermost \
+Publisher: Splunk <br>
+Connector Version: 2.3.1 <br>
+Product Vendor: Mattermost <br>
+Product Name: Mattermost <br>
 Minimum Product Version: 5.5.0
 
 This app integrates with Mattermost to support various investigative actions
@@ -22,19 +22,19 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[list users](#action-list-users) - List users of a team \
-[upload file](#action-upload-file) - Upload file to a channel \
-[send message](#action-send-message) - Send a message to a channel \
-[list posts](#action-list-posts) - List posts of a channel \
-[list channels](#action-list-channels) - List public and private channels of a team \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[list users](#action-list-users) - List users of a team <br>
+[upload file](#action-upload-file) - Upload file to a channel <br>
+[send message](#action-send-message) - Send a message to a channel <br>
+[list posts](#action-list-posts) - List posts of a channel <br>
+[list channels](#action-list-channels) - List public and private channels of a team <br>
 [list teams](#action-list-teams) - List teams
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -49,7 +49,7 @@ No Output
 
 List users of a team
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 While listing users from a specific team, the user should have created the team or be a member of that team.
@@ -100,7 +100,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Upload file to a channel
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 User can upload files to only those channels which user has created or is a member of.<br><br>The default value for the <b>message</b> parameter is <b>Phantom file upload</b>.
@@ -167,7 +167,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Send a message to a channel
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 User can send message to only those channels which user has created or is a member of the team.
@@ -215,7 +215,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List posts of a channel
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Users can only list the posts of channels they have created or are members of.<br> If &quotstart_time&quot or &quotend_time&quot is specified, the action will also list the deleted post(s) within the specified time.<br>If only &quotstart_time&quot is given then the current time would be taken as &quotend_time&quot.<br>If only &quotend_time&quot is given then all the posts before that time would be displayed.<br>The timestamp should be entered in <b>YYYY-MM-DD</b> or a valid &quotISO 8601 timestamp&quot format.<br>Some examples of valid time formats are:<ul><li>2018-09-24</li><li>2018-09-23T14:40:44Z</li><li>2018-09-23T14:40:44+05:30</li><li>2020-08-30T01:45:36.123Z</li><li>2021-12-13T21:20:37.593194+05:30</li></ul>
@@ -284,7 +284,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List public and private channels of a team
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 A user can view only those channels of a team which he is a member of.
@@ -333,7 +333,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List teams
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 While creating a team, the user should have set &quotAllow any user with an account on this server to join this team&quot under <b>Team Settings</b> to <b>YES</b> to allow the team to be displayed for all users.
