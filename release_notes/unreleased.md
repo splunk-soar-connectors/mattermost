@@ -1,3 +1,3 @@
 **Unreleased**
-
 * chore(ci): update pre-commit config
+* fix: adding 3.9 3.13 to python_version & removed outdated wheels
