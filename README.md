@@ -1,7 +1,7 @@
 # Mattermost
 
 Publisher: Splunk <br>
-Connector Version: 2.3.1 <br>
+Connector Version: 2.3.2 <br>
 Product Vendor: Mattermost <br>
 Product Name: Mattermost <br>
 Minimum Product Version: 6.3.0
