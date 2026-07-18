@@ -931,7 +931,8 @@ class MattermostConnector(BaseConnector):
         params.update({"page": page_number})
 
         post_list = []
-        while True:
+        seen_post_ids = set()
+        while page_number < MATTERMOST_MAX_POST_PAGES and len(post_list) < MATTERMOST_MAX_POSTS:
             # make rest call
             ret_val, response_json = self._handle_update_request(url=url, action_result=action_result, params=params)
 
@@ -942,9 +943,16 @@ class MattermostConnector(BaseConnector):
             if not response_json["posts"]:
                 break
 
-            # Add post to the post list
-            for each_post in response_json["order"]:
+            page_post_ids = [post_id for post_id in response_json["order"] if post_id not in seen_post_ids]
+            if not page_post_ids:
+                return action_result.set_status(phantom.APP_ERROR, "Mattermost post pagination stopped making progress"), post_list
+
+            # Add posts up to the campaign safety limit.
+            for each_post in page_post_ids:
+                seen_post_ids.add(each_post)
                 post_list.append(response_json.get("posts", "")[each_post])
+                if len(post_list) >= MATTERMOST_MAX_POSTS:
+                    break
 
             # Increment page_number for fetching next page in upcoming cycle
             if not params.get("since"):
@@ -952,6 +960,9 @@ class MattermostConnector(BaseConnector):
                 params.update({"page": page_number})
             else:
                 break
+
+        if page_number >= MATTERMOST_MAX_POST_PAGES or len(post_list) >= MATTERMOST_MAX_POSTS:
+            return action_result.set_status(phantom.APP_ERROR, "Mattermost post pagination exceeded the safety limit"), post_list
 
         return phantom.APP_SUCCESS, post_list
 

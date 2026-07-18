@@ -6,3 +6,4 @@
 * Bind OAuth callbacks to a single-use cryptographic state nonce.
 * Exclude OAuth token responses from action debug data.
 * Encrypt OAuth access tokens in connector state with cleartext migration support.
+* Bound post pagination and stop repeated pages that make no progress.
