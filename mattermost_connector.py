@@ -349,7 +349,9 @@ class MattermostConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, "add_debug_data"):
+        token_url = MATTERMOST_ACCESS_TOKEN_URL.format(server_url=self._server_url)
+        is_token_response = getattr(response, "url", "").rstrip("/") == token_url.rstrip("/")
+        if hasattr(action_result, "add_debug_data") and not is_token_response:
             action_result.add_debug_data({"r_status_code": response.status_code})
             action_result.add_debug_data({"r_text": response.text})
             action_result.add_debug_data({"r_headers": response.headers})
