@@ -1205,22 +1205,9 @@ class MattermostConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
             return action_result.get_status()
 
-        file_name = self._handle_py_ver_compat_for_input_str(file_info["name"])
-
-        content = None
-
-        with open(vault_path, "rb") as fin:
-            # Set file to be uploaded
-            content = fin.read()
-
-        # Recreate field form binary file
-        worker_dir = self.get_state_dir()
-        file_path = f"{worker_dir}/{file_name}"
-        try:
-            with open(file_path, "wb") as fout:
-                fout.write(content)
-        except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
+        file_name = os.path.basename(self._handle_py_ver_compat_for_input_str(file_info["name"]))
+        if not file_name:
+            return action_result.set_status(phantom.APP_ERROR, "Vault file name is invalid")
 
         # Set channel ID for uploading file
         data = {"channel_id": channel_id}
@@ -1228,17 +1215,14 @@ class MattermostConnector(BaseConnector):
         # Endpoint for uploading file
         file_url = f"{MATTERMOST_API_BASE_URL.format(server_url=self._server_url)}{MATTERMOST_FILES_ENDPOINT}"
 
-        with open(file_path, "rb") as f:
+        with open(vault_path, "rb") as f:
             # Set file to be uploaded
-            files = {"files": f}
+            files = {"files": (file_name, f)}
 
             # make rest call
             file_ret_val, file_response_json = self._handle_update_request(
                 url=file_url, action_result=action_result, data=data, method="post", files=files
             )
-
-        # Remove the file
-        os.remove(file_path)
 
         if phantom.is_fail(file_ret_val):
             return action_result.get_status()
