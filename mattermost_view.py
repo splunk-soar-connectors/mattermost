@@ -1,6 +1,6 @@
 # File: mattermost_view.py
 #
-# Copyright (c) 2018-2025 Splunk Inc.
+# Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -90,15 +90,10 @@ def display_view(provides, all_app_runs, context):
                 continue
             results.append(ctx_result)
 
-    if provides == "list posts":
-        return_page = "mattermost_list_posts.html"
-    elif provides == "send message":
-        return_page = "mattermost_send_message.html"
-    elif provides == "upload file":
-        return_page = "mattermost_upload_file.html"
-    elif provides == "list users":
-        return_page = "mattermost_list_users.html"
-    elif provides == "list channels":
-        return_page = "mattermost_list_channels.html"
-
-    return return_page
+    return {
+        "list posts": "mattermost_list_posts.html",
+        "send message": "mattermost_send_message.html",
+        "upload file": "mattermost_upload_file.html",
+        "list users": "mattermost_list_users.html",
+        "list channels": "mattermost_list_channels.html",
+    }.get(provides, "")

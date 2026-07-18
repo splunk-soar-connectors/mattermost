@@ -1,6 +1,6 @@
 # File: mattermost_connector.py
 #
-# Copyright (c) 2018-2025 Splunk Inc.
+# Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -411,6 +411,8 @@ class MattermostConnector(BaseConnector):
         :return: error message
         """
 
+        error_code = "Error code unavailable"
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
@@ -419,12 +421,8 @@ class MattermostConnector(BaseConnector):
                 elif len(e.args) == 1:
                     error_code = "Error code unavailable"
                     error_msg = e.args[0]
-            else:
-                error_code = "Error code unavailable"
-                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
         except Exception:
-            error_code = "Error code unavailable"
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            pass
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
