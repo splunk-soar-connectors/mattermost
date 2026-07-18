@@ -425,7 +425,7 @@ class MattermostConnector(BaseConnector):
 
         return f"Error Code: {error_code}. Error Message: {error_msg}"
 
-    def _make_rest_call(self, url, action_result, headers=None, params=None, data=None, method="get", verify=False, timeout=None, files=None):
+    def _make_rest_call(self, url, action_result, headers=None, params=None, data=None, method="get", verify=None, timeout=None, files=None):
         """This function is used to make the REST call.
 
         :param url: url for making REST call
@@ -446,6 +446,8 @@ class MattermostConnector(BaseConnector):
         # If no headers are passed, set empty headers
         if not headers:
             headers = {}
+        if verify is None:
+            verify = self._verify_server_cert
 
         try:
             request_func = getattr(requests, method)
@@ -462,7 +464,7 @@ class MattermostConnector(BaseConnector):
 
         return self._process_response(request_response, action_result)
 
-    def _handle_update_request(self, url, action_result, params=None, data=None, verify=False, method="get", files=None):
+    def _handle_update_request(self, url, action_result, params=None, data=None, verify=None, method="get", files=None):
         """This method is used to call maker_rest_call using different authentication methods.
 
         :param url: REST URL that needs to be called
@@ -699,7 +701,7 @@ class MattermostConnector(BaseConnector):
         mattermost_phantom_base_url = self.get_phantom_base_url()
 
         url = f"{mattermost_phantom_base_url}rest{MATTERMOST_PHANTOM_SYS_INFO_URL}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url)
         if phantom.is_fail(ret_val):
             return ret_val, None
 
@@ -720,7 +722,7 @@ class MattermostConnector(BaseConnector):
         asset_id = self.get_asset_id()
         rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
         url = f"{mattermost_phantom_base_url}rest{rest_endpoint}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url)
 
         if phantom.is_fail(ret_val):
             return ret_val, None
@@ -1537,7 +1539,7 @@ class MattermostConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         self._server_url = self._handle_py_ver_compat_for_input_str(config[MATTERMOST_CONFIG_SERVER_URL].strip("/"))
-        self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, False)
+        self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, True)
         self._personal_token = config.get(MATTERMOST_CONFIG_PERSONAL_TOKEN)
         self._client_id = self._handle_py_ver_compat_for_input_str(config.get(MATTERMOST_CONFIG_CLIENT_ID))
         self._client_secret = config.get(MATTERMOST_CONFIG_CLIENT_SECRET)
