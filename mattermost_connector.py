@@ -28,6 +28,7 @@ from datetime import datetime
 
 import dateutil
 import dateutil.parser
+import encryption_helper
 
 # Phantom App imports
 import phantom.app as phantom
@@ -628,7 +629,7 @@ class MattermostConnector(BaseConnector):
         if not self._state or not self._state.get("code"):
             return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
 
-        current_code = self._state["code"]
+        current_code = self._state.pop("code")
         self.save_state(self._state)
         _save_app_state(self._state, asset_id, self)
 
@@ -657,12 +658,14 @@ class MattermostConnector(BaseConnector):
 
             return action_result.set_status(phantom.APP_ERROR, status_message="Error while generating access_token")
 
-        self._state["token"] = response
         self._access_token = response[MATTERMOST_ACCESS_TOKEN]
+        self._state["token"] = dict(response)
+        self._state["token"][MATTERMOST_ACCESS_TOKEN] = encryption_helper.encrypt(self._access_token, asset_id)
+        self._state["token"]["is_encrypted"] = True
         self.save_state(self._state)
         _save_app_state(self._state, asset_id, self)
 
-        self._state = self.load_state()
+        saved_state = self.load_state() or {}
 
         # Scenario -
         #
@@ -672,7 +675,11 @@ class MattermostConnector(BaseConnector):
         # So we have to check that token from response and the tokens
         # which are saved to state file after successful generation of the new tokens are same or not.
 
-        if self._access_token != self._state.get("token", {}).get(MATTERMOST_ACCESS_TOKEN):
+        saved_token = saved_state.get("token", {})
+        saved_access_token = saved_token.get(MATTERMOST_ACCESS_TOKEN, "")
+        if saved_token.get("is_encrypted"):
+            saved_access_token = encryption_helper.decrypt(saved_access_token, asset_id)
+        if self._access_token != saved_access_token:
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
             message += "user should have the correct access rights and ownership for the corresponding state file "
@@ -1528,7 +1535,7 @@ class MattermostConnector(BaseConnector):
         extra initialization of any internal modules. This function MUST return a value of either phantom.APP_SUCCESS.
         """
 
-        self._state = self.load_state()
+        self._state = self.load_state() or {}
         config = self.get_config()
 
         # Fetching the Python major version
@@ -1543,7 +1550,13 @@ class MattermostConnector(BaseConnector):
         self._client_id = self._handle_py_ver_compat_for_input_str(config.get(MATTERMOST_CONFIG_CLIENT_ID))
         self._client_secret = config.get(MATTERMOST_CONFIG_CLIENT_SECRET)
 
-        self._access_token = self._state.get("token", {}).get(MATTERMOST_ACCESS_TOKEN, "")
+        token_state = self._state.get("token", {})
+        self._access_token = token_state.get(MATTERMOST_ACCESS_TOKEN, "")
+        if self._access_token and token_state.get("is_encrypted"):
+            self._access_token = encryption_helper.decrypt(self._access_token, self.get_asset_id())
+        elif self._access_token:
+            token_state[MATTERMOST_ACCESS_TOKEN] = encryption_helper.encrypt(self._access_token, self.get_asset_id())
+            token_state["is_encrypted"] = True
         return phantom.APP_SUCCESS
 
     def finalize(self):

@@ -5,3 +5,4 @@
 * Escape dynamic values embedded in widget JavaScript handlers.
 * Bind OAuth callbacks to a single-use cryptographic state nonce.
 * Exclude OAuth token responses from action debug data.
+* Encrypt OAuth access tokens in connector state with cleartext migration support.
