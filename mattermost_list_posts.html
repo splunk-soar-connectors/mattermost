@@ -88,7 +88,7 @@ and limitations under the License.
               <td>Team</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                   {{ result.param.team }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -99,7 +99,7 @@ and limitations under the License.
               <td>Channel</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ result.param.channel }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ result.param.channel|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                   {{ result.param.channel }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -145,7 +145,7 @@ and limitations under the License.
                   <td class="widget-td">{{ posts.user_id }}</td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['user name'], 'value':'{{ posts.props.username }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['user name'], 'value':'{{ posts.props.username|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ posts.props.username }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -153,7 +153,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ posts.channel_id }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ posts.channel_id|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ posts.channel_id }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>

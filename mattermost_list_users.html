@@ -85,7 +85,7 @@ and limitations under the License.
                 <tr>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ result.param.team }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -94,7 +94,7 @@ and limitations under the License.
                   <td class="widget-td">{{ users.id }}</td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['user name'], 'value':'{{ users.username }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['user name'], 'value':'{{ users.username|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ users.username }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -102,7 +102,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['email'], 'value':'{{ users.email }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['email'], 'value':'{{ users.email|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ users.email }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
