@@ -16,10 +16,12 @@
 #
 # Phantom sample App Connector python file
 import grp
+import hmac
 import json
 import os
 import pwd
 import re
+import secrets
 import sys
 import time
 from datetime import datetime
@@ -141,9 +143,16 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state", "")
+    try:
+        asset_id, presented_nonce = oauth_state.rsplit(":", 1)
+    except ValueError:
         return HttpResponse(f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
+
+    state = _load_app_state(asset_id)
+    expected_nonce = state.pop("oauth_state", "")
+    if not expected_nonce or not hmac.compare_digest(expected_nonce, presented_nonce):
+        return HttpResponse("Error: Invalid OAuth state", content_type="text/plain", status=400)
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -162,7 +171,6 @@ def _handle_login_response(request):
     if not code:
         return HttpResponse(f"Error while authenticating\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
 
-    state = _load_app_state(asset_id)
     state["code"] = code
     _save_app_state(state, asset_id, None)
 
@@ -189,8 +197,8 @@ def _handle_rest_request(request, path_parts):
     # To handle response from Mattermost
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")  # nosemgrep
-        if asset_id and asset_id.isalnum():
+        asset_id = request.GET.get("state", "").partition(":")[0]  # nosemgrep
+        if return_val.status_code == 200 and asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
             auth_status_file_path = f"{app_dir}/{asset_id}_{MATTERMOST_TC_FILE}"
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -580,10 +588,15 @@ class MattermostConnector(BaseConnector):
 
         # Get asset ID
         asset_id = self.get_asset_id()
+        oauth_state = secrets.token_hex(32)
+        app_state["oauth_state"] = oauth_state
 
         # Authorization URL used to make request for getting code which is used to generate access token
         authorization_url = MATTERMOST_AUTHORIZE_URL.format(
-            server_url=self._server_url, client_id=self._client_id, redirect_uri=redirect_uri, state=asset_id
+            server_url=self._server_url,
+            client_id=self._client_id,
+            redirect_uri=redirect_uri,
+            state=f"{asset_id}:{oauth_state}",
         )
 
         app_state["authorization_url"] = authorization_url
