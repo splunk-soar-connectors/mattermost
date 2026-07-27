@@ -10,8 +10,8 @@
 {% block custom_tools %}{% endblock %}
 {% block widget_content %}
   <!-- Main Start Block -->
-  <!-- File: mattermost_list_posts.html
-  Copyright (c) 2018-2025 Splunk Inc.
+  <!-- File: mattermost_upload_file.html
+  Copyright (c) 2018-2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -106,34 +106,36 @@ and limitations under the License.
                 </a>
               </td>
             </tr>
-            {% if result.param.start_time %}
+            <tr>
+              <td>Vault ID</td>
+              <td>
+                <a href="javascript:;"
+                   onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.param.vault_id }}' }], 0, {{ container.id }}, null, false);">
+                  {{ result.param.vault_id }}
+                  &nbsp;
+                  <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                </a>
+              </td>
+            </tr>
+            {% if result.param.message %}
               <tr>
-                <td>Start time</td>
-                <td>{{ result.param.start_time }}</td>
-              </tr>
-            {% endif %}
-            {% if result.param.end_time %}
-              <tr>
-                <td>End time</td>
-                <td>{{ result.param.end_time }}</td>
+                <td>Message</td>
+                <td>{{ result.param.message }}</td>
               </tr>
             {% endif %}
           </table>
         </div>
         <div class="mattermost">
           &nbsp;
-          <h4 class="wf-h4-style">Posts</h4>
+          <h4 class="wf-h4-style">Message</h4>
           <table class="phantom-table dataTable">
             <thead>
-              <th class="widget-th">Post ID</th>
+              <th class="widget-th">Message ID</th>
               <th class="widget-th">Message</th>
-              <th class="widget-th">Type</th>
               <th class="widget-th">User ID</th>
-              <th class="widget-th">User Name</th>
               <th class="widget-th">Channel ID</th>
               <th class="widget-th">File ID</th>
               <th class="widget-th">Created At</th>
-              <th class="widget-th">Edited At</th>
               <th class="widget-th">Updated At</th>
             </thead>
             <tbody>
@@ -141,16 +143,7 @@ and limitations under the License.
                 <tr>
                   <td class="widget-td">{{ posts.id }}</td>
                   <td class="widget-td">{{ posts.message }}</td>
-                  <td class="widget-td">{{ posts.type }}</td>
                   <td class="widget-td">{{ posts.user_id }}</td>
-                  <td class="widget-td">
-                    <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['user name'], 'value':'{{ posts.props.username }}' }], 0, {{ container.id }}, null, false);">
-                      {{ posts.props.username }}
-                      &nbsp;
-                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                    </a>
-                  </td>
                   <td class="widget-td">
                     <a href="javascript:;"
                        onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ posts.channel_id }}' }], 0, {{ container.id }}, null, false);">
@@ -167,7 +160,6 @@ and limitations under the License.
                     {% endfor %}
                   </td>
                   <td class="widget-td">{{ posts|by_key:"create_at" }}</td>
-                  <td class="widget-td">{{ posts|by_key:"edit_at" }}</td>
                   <td class="widget-td">{{ posts|by_key:"update_at" }}</td>
                 </tr>
               {% endfor %}
