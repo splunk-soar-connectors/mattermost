@@ -1,10 +1,10 @@
 # Mattermost
 
 Publisher: Splunk <br>
-Connector Version: 2.3.2 <br>
+Connector Version: 2.3.3 <br>
 Product Vendor: Mattermost <br>
 Product Name: Mattermost <br>
-Minimum Product Version: 6.3.0
+Minimum Product Version: 7.0.0
 
 This app integrates with Mattermost to support various investigative actions
 
@@ -22,7 +22,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[test connectivity](#action-test-connectivity) - test connectivity <br>
 [list users](#action-list-users) - List users of a team <br>
 [upload file](#action-upload-file) - Upload file to a channel <br>
 [send message](#action-send-message) - Send a message to a channel <br>
@@ -32,10 +32,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ## action: 'test connectivity'
 
-Validate the asset configuration for connectivity using supplied configuration
+test connectivity
 
 Type: **test** <br>
 Read only: **True**
+
+Basic test for app.
 
 #### Action Parameters
 
@@ -43,7 +45,12 @@ No parameters are required for this action
 
 #### Action Output
 
-No Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list users'
 
@@ -64,8 +71,9 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.team | string | `mattermost team` | test-team |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.team | string | `mattermost team` | |
 action_result.data.\*.auth_data | string | | |
 action_result.data.\*.auth_service | string | | |
 action_result.data.\*.create_at | numeric | | 1535004134292 |
@@ -90,9 +98,8 @@ action_result.data.\*.timezone.manualTimezone | string | | |
 action_result.data.\*.timezone.useAutomaticTimezone | string | | true |
 action_result.data.\*.update_at | numeric | | 1535105717458 |
 action_result.data.\*.username | string | `user name` | test.user |
-action_result.data.\*.disable_welcome_email | boolean | | |
-action_result.summary.total_users | numeric | | 9 |
-action_result.message | string | | Total users: 9 |
+action_result.data.\*.disable_welcome_email | boolean | | True False |
+action_result.summary.total_users | numeric | | 10 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -118,11 +125,12 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.channel | string | `mattermost channel` | town-square |
-action_result.parameter.message | string | | hi |
-action_result.parameter.team | string | `mattermost team` | test-team |
-action_result.parameter.vault_id | string | `vault id` `sha1` | c8f39b293cbc5dfb9e61140a36a1685adea492e2 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.team | string | `mattermost team` | |
+action_result.parameter.channel | string | `mattermost channel` | |
+action_result.parameter.vault_id | string | `vault id` `sha1` | |
+action_result.parameter.message | string | | |
 action_result.data.\*.channel_id | string | `mattermost channel` | ofond1t88jbr8e6cbwb7ogk98h |
 action_result.data.\*.create_at | numeric | | 1535533720541 |
 action_result.data.\*.delete_at | numeric | | 0 |
@@ -139,27 +147,25 @@ action_result.data.\*.root_id | string | | uinosfs9a3r9dgay15epdn39qy |
 action_result.data.\*.type | string | | |
 action_result.data.\*.update_at | numeric | | 1535533720541 |
 action_result.data.\*.user_id | string | | nj9wemswb7f4zykdetw9egbwuo |
-action_result.data.\*.metadata.files.\*.id | string | | |
-action_result.data.\*.metadata.files.\*.name | string | | |
-action_result.data.\*.metadata.files.\*.size | numeric | | |
-action_result.data.\*.metadata.files.\*.width | numeric | | |
-action_result.data.\*.metadata.files.\*.height | numeric | | |
-action_result.data.\*.metadata.files.\*.post_id | string | | |
-action_result.data.\*.metadata.files.\*.user_id | string | | |
-action_result.data.\*.metadata.files.\*.create_at | numeric | | |
-action_result.data.\*.metadata.files.\*.delete_at | numeric | | |
-action_result.data.\*.metadata.files.\*.extension | string | | |
-action_result.data.\*.metadata.files.\*.mime_type | string | | |
-action_result.data.\*.metadata.files.\*.update_at | numeric | | |
-action_result.data.\*.metadata.files.\*.channel_id | string | | |
-action_result.data.\*.metadata.files.\*.mini_preview | string | | |
-action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
+action_result.data.\*.metadata.files.\*.id | string | | 8fgytaxpojn15dchqonjb15enw |
+action_result.data.\*.metadata.files.\*.name | string | | test.png |
+action_result.data.\*.metadata.files.\*.size | numeric | | 211962 |
+action_result.data.\*.metadata.files.\*.width | numeric | | 2230 |
+action_result.data.\*.metadata.files.\*.height | numeric | | 1220 |
+action_result.data.\*.metadata.files.\*.post_id | string | | k44mtz9ippru7eipruqnthsc9o |
+action_result.data.\*.metadata.files.\*.user_id | string | | 8bfk4fj8gpyofq7qx85tsz97rh |
+action_result.data.\*.metadata.files.\*.create_at | numeric | | 1636961337700 |
+action_result.data.\*.metadata.files.\*.delete_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.extension | string | | png |
+action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
+action_result.data.\*.metadata.files.\*.update_at | numeric | | 1636961337700 |
+action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3qw |
+action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCBgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
+action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants | string | | |
-action_result.summary | string | | |
-action_result.message | string | | File uploaded successfully |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -184,10 +190,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.channel | string | `mattermost channel` | test2-user-channel |
-action_result.parameter.message | string | | Hey, guys how r u? |
-action_result.parameter.team | string | `mattermost team` | privy-chantest |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.team | string | `mattermost team` | |
+action_result.parameter.channel | string | `mattermost channel` | |
+action_result.parameter.message | string | | |
 action_result.data.\*.channel_id | string | `mattermost channel` | 9fm7epgq9b8x3ekb3frhid5kaw |
 action_result.data.\*.create_at | numeric | | 1535458197064 |
 action_result.data.\*.delete_at | numeric | | 0 |
@@ -203,11 +210,9 @@ action_result.data.\*.root_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
 action_result.data.\*.type | string | | |
 action_result.data.\*.update_at | numeric | | 1535458197064 |
 action_result.data.\*.user_id | string | | hrfxwdb7gtdjzbzqscix7edyeh |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants | string | | |
-action_result.summary | string | | |
-action_result.message | string | | Message sent successfully |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -233,11 +238,12 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.channel | string | `mattermost channel` | test2-second-channel |
-action_result.parameter.end_time | numeric | | 1535007904568 |
-action_result.parameter.start_time | numeric | | 1535007703337 |
-action_result.parameter.team | string | `mattermost team` | test-team |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.team | string | `mattermost team` | |
+action_result.parameter.channel | string | `mattermost channel` | |
+action_result.parameter.start_time | string | | |
+action_result.parameter.end_time | string | | |
 action_result.data.\*.channel_id | string | `mattermost channel` | ectpw8kdeir4589wu61ijp77tc |
 action_result.data.\*.create_at | numeric | | 1541079654322 |
 action_result.data.\*.delete_at | numeric | | 0 |
@@ -256,27 +262,26 @@ action_result.data.\*.root_id | string | | fsn1bn4nwjdwpmbuqch5fp9xnh |
 action_result.data.\*.type | string | | system_join_channel |
 action_result.data.\*.update_at | numeric | | 1541079654322 |
 action_result.data.\*.user_id | string | | zxutg6e6ibgyxjmpee7wjsmc5a |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
-action_result.data.\*.metadata.files.\*.id | string | | |
-action_result.data.\*.metadata.files.\*.name | string | | |
-action_result.data.\*.metadata.files.\*.size | numeric | | |
-action_result.data.\*.metadata.files.\*.width | numeric | | |
-action_result.data.\*.metadata.files.\*.height | numeric | | |
-action_result.data.\*.metadata.files.\*.post_id | string | | |
-action_result.data.\*.metadata.files.\*.user_id | string | | |
-action_result.data.\*.metadata.files.\*.create_at | numeric | | |
-action_result.data.\*.metadata.files.\*.delete_at | numeric | | |
-action_result.data.\*.metadata.files.\*.extension | string | | |
-action_result.data.\*.metadata.files.\*.mime_type | string | | |
-action_result.data.\*.metadata.files.\*.update_at | numeric | | |
-action_result.data.\*.metadata.files.\*.channel_id | string | | |
-action_result.data.\*.metadata.files.\*.mini_preview | string | | |
-action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | |
-action_result.data.\*.participants | string | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.id | string | | 1nrp7izie7gdz81mwb99azed4w |
+action_result.data.\*.metadata.files.\*.name | string | | test.png |
+action_result.data.\*.metadata.files.\*.size | numeric | | 211962 |
+action_result.data.\*.metadata.files.\*.width | numeric | | 2230 |
+action_result.data.\*.metadata.files.\*.height | numeric | | 1220 |
+action_result.data.\*.metadata.files.\*.post_id | string | | zn6cs7a4b7y6bmxy4yk4j1dz3y |
+action_result.data.\*.metadata.files.\*.user_id | string | | 8bfk4fj8gpyofq7qx85tsz97rh |
+action_result.data.\*.metadata.files.\*.create_at | numeric | | 1637228792269 |
+action_result.data.\*.metadata.files.\*.delete_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.extension | string | | png |
+action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
+action_result.data.\*.metadata.files.\*.update_at | numeric | | 1637228792269 |
+action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3wy |
+action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
+action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
-action_result.summary.total_posts | numeric | | 5 |
-action_result.message | string | | Total posts: 5 |
+action_result.data.\*.participants | string | | |
+action_result.summary.total_posts | numeric | | 10 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -299,8 +304,9 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.team | string | `mattermost team` | privy-chantest |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.team | string | `mattermost team` | |
 action_result.data.\*.create_at | numeric | | 1535370158299 |
 action_result.data.\*.creator_id | string | | |
 action_result.data.\*.delete_at | numeric | | 0 |
@@ -317,15 +323,14 @@ action_result.data.\*.team_id | string | `mattermost team` | suico8q897yyiraqdek
 action_result.data.\*.total_msg_count | numeric | | 0 |
 action_result.data.\*.type | string | | O |
 action_result.data.\*.update_at | numeric | | 1535370158299 |
-action_result.data.\*.total_msg_count_root | numeric | | |
-action_result.data.\*.team_name | string | | |
-action_result.data.\*.team_update_at | numeric | | |
-action_result.data.\*.team_display_name | string | | |
+action_result.data.\*.total_msg_count_root | numeric | | 0 |
+action_result.data.\*.team_name | string | | test-005 |
+action_result.data.\*.team_update_at | numeric | | 1637228653671 |
+action_result.data.\*.team_display_name | string | | test-005 |
 action_result.data.\*.shared | string | | |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | string | | |
-action_result.summary.total_channels | numeric | | 6 |
-action_result.message | string | | Total channels: 6 |
+action_result.summary.total_channels | numeric | | 10 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -346,7 +351,8 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.data.\*.allow_open_invite | boolean | | True False |
 action_result.data.\*.allowed_domains | string | `domain` | example.com |
 action_result.data.\*.company_name | string | | |
@@ -363,8 +369,7 @@ action_result.data.\*.type | string | | O |
 action_result.data.\*.update_at | numeric | | 1534918716675 |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | string | | |
-action_result.summary.total_teams | numeric | | 7 |
-action_result.message | string | | Total teams: 7 |
+action_result.summary.total_teams | numeric | | 10 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -372,7 +377,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

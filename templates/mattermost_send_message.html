@@ -10,8 +10,8 @@
 {% block custom_tools %}{% endblock %}
 {% block widget_content %}
   <!-- Main Start Block -->
-  <!-- File: mattermost_list_channels.html
-  Copyright (c) 2018-2025 Splunk Inc.
+  <!-- File: mattermost_send_message.html
+  Copyright (c) 2018-2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -31,6 +31,20 @@ and limitations under the License.
 
     .mattermost .wf-h4-style {
         font-size : 20px;
+    }
+
+    .mattermost .wf-table-vertical {
+        width: initial;
+        font-size: 12px;
+    }
+
+    .mattermost .wf-table-vertical td{
+        padding: 5px;
+        border: 1px solid !important;
+    }
+
+    .mattermost .wf-table-vertical tr td:first-child {
+        font-weight: bold;
     }
 
     .mattermost .dataTable th.widget-th {
@@ -67,48 +81,65 @@ and limitations under the License.
       {% if not result.data %}
         <h4 class="wf-h4-style">No data found</h4>
       {% else %}
+        <div class="info">
+          <h4 class="wf-h4-style">Info</h4>
+          <table class="wf-table-vertical">
+            <tr>
+              <td>Team</td>
+              <td>
+                <a href="javascript:;"
+                   onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
+                  {{ result.param.team }}
+                  &nbsp;
+                  <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>Channel</td>
+              <td>
+                <a href="javascript:;"
+                   onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ result.param.channel }}' }], 0, {{ container.id }}, null, false);">
+                  {{ result.param.channel }}
+                  &nbsp;
+                  <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>Message</td>
+              <td>{{ result.param.message }}</td>
+            </tr>
+          </table>
+        </div>
         <div class="mattermost">
           &nbsp;
-          <h4 class="wf-h4-style">Channels</h4>
+          <h4 class="wf-h4-style">Message</h4>
           <table class="phantom-table dataTable">
             <thead>
-              <th class="widget-th">Team</th>
+              <th class="widget-th">Message ID</th>
+              <th class="widget-th">Message</th>
+              <th class="widget-th">User ID</th>
               <th class="widget-th">Channel ID</th>
-              <th class="widget-th">Channel Name</th>
-              <th class="widget-th">Display Name</th>
-              <th class="widget-th">Type</th>
-              <th class="widget-th">Total Message Count</th>
+              <th class="widget-th">Created At</th>
+              <th class="widget-th">Updated At</th>
             </thead>
             <tbody>
-              {% for channels in result.data %}
+              {% for posts in result.data %}
                 <tr>
+                  <td class="widget-td">{{ posts.id }}</td>
+                  <td class="widget-td">{{ posts.message }}</td>
+                  <td class="widget-td">{{ posts.user_id }}</td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
-                      {{ result.param.team }}
+                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ posts.channel_id }}' }], 0, {{ container.id }}, null, false);">
+                      {{ posts.channel_id }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                     </a>
                   </td>
-                  <td class="widget-td">
-                    <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.id }}' }], 0, {{ container.id }}, null, false);">
-                      {{ channels.id }}
-                      &nbsp;
-                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                    </a>
-                  </td>
-                  <td class="widget-td">
-                    <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.name }}' }], 0, {{ container.id }}, null, false);">
-                      {{ channels.name }}
-                      &nbsp;
-                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                    </a>
-                  </td>
-                  <td class="widget-td">{{ channels.display_name }}</td>
-                  <td class="widget-td">{{ channels.type }}</td>
-                  <td class="widget-td">{{ channels.total_msg_count }}</td>
+                  <td class="widget-td">{{ posts|by_key:"create_at" }}</td>
+                  <td class="widget-td">{{ posts|by_key:"update_at" }}</td>
                 </tr>
               {% endfor %}
             </tbody>
