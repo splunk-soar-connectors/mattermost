@@ -1,6 +1,6 @@
 # File: mattermost_connector.py
 #
-# Copyright (c) 2018-2025 Splunk Inc.
+# Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 #
 # Phantom sample App Connector python file
 import grp
+import hmac
 import json
 import os
 import pwd
 import re
+import secrets
 import sys
 import time
 from datetime import datetime
 
 import dateutil
 import dateutil.parser
+import encryption_helper
 
 # Phantom App imports
 import phantom.app as phantom
@@ -141,9 +144,16 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state", "")
+    try:
+        asset_id, presented_nonce = oauth_state.rsplit(":", 1)
+    except ValueError:
         return HttpResponse(f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
+
+    state = _load_app_state(asset_id)
+    expected_nonce = state.pop("oauth_state", "")
+    if not expected_nonce or not hmac.compare_digest(expected_nonce, presented_nonce):
+        return HttpResponse("Error: Invalid OAuth state", content_type="text/plain", status=400)
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -162,7 +172,6 @@ def _handle_login_response(request):
     if not code:
         return HttpResponse(f"Error while authenticating\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
 
-    state = _load_app_state(asset_id)
     state["code"] = code
     _save_app_state(state, asset_id, None)
 
@@ -189,8 +198,8 @@ def _handle_rest_request(request, path_parts):
     # To handle response from Mattermost
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")  # nosemgrep
-        if asset_id and asset_id.isalnum():
+        asset_id = request.GET.get("state", "").partition(":")[0]  # nosemgrep
+        if return_val.status_code == 200 and asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
             auth_status_file_path = f"{app_dir}/{asset_id}_{MATTERMOST_TC_FILE}"
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -341,7 +350,9 @@ class MattermostConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, "add_debug_data"):
+        token_url = MATTERMOST_ACCESS_TOKEN_URL.format(server_url=self._server_url)
+        is_token_response = getattr(response, "url", "").rstrip("/") == token_url.rstrip("/")
+        if hasattr(action_result, "add_debug_data") and not is_token_response:
             action_result.add_debug_data({"r_status_code": response.status_code})
             action_result.add_debug_data({"r_text": response.text})
             action_result.add_debug_data({"r_headers": response.headers})
@@ -400,6 +411,8 @@ class MattermostConnector(BaseConnector):
         :return: error message
         """
 
+        error_code = "Error code unavailable"
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
@@ -408,12 +421,8 @@ class MattermostConnector(BaseConnector):
                 elif len(e.args) == 1:
                     error_code = "Error code unavailable"
                     error_msg = e.args[0]
-            else:
-                error_code = "Error code unavailable"
-                error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
         except Exception:
-            error_code = "Error code unavailable"
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+            pass
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
@@ -425,7 +434,7 @@ class MattermostConnector(BaseConnector):
 
         return f"Error Code: {error_code}. Error Message: {error_msg}"
 
-    def _make_rest_call(self, url, action_result, headers=None, params=None, data=None, method="get", verify=False, timeout=None, files=None):
+    def _make_rest_call(self, url, action_result, headers=None, params=None, data=None, method="get", verify=None, timeout=None, files=None):
         """This function is used to make the REST call.
 
         :param url: url for making REST call
@@ -446,6 +455,8 @@ class MattermostConnector(BaseConnector):
         # If no headers are passed, set empty headers
         if not headers:
             headers = {}
+        if verify is None:
+            verify = self._verify_server_cert
 
         try:
             request_func = getattr(requests, method)
@@ -462,7 +473,7 @@ class MattermostConnector(BaseConnector):
 
         return self._process_response(request_response, action_result)
 
-    def _handle_update_request(self, url, action_result, params=None, data=None, verify=False, method="get", files=None):
+    def _handle_update_request(self, url, action_result, params=None, data=None, verify=None, method="get", files=None):
         """This method is used to call maker_rest_call using different authentication methods.
 
         :param url: REST URL that needs to be called
@@ -578,10 +589,15 @@ class MattermostConnector(BaseConnector):
 
         # Get asset ID
         asset_id = self.get_asset_id()
+        oauth_state = secrets.token_hex(32)
+        app_state["oauth_state"] = oauth_state
 
         # Authorization URL used to make request for getting code which is used to generate access token
         authorization_url = MATTERMOST_AUTHORIZE_URL.format(
-            server_url=self._server_url, client_id=self._client_id, redirect_uri=redirect_uri, state=asset_id
+            server_url=self._server_url,
+            client_id=self._client_id,
+            redirect_uri=redirect_uri,
+            state=f"{asset_id}:{oauth_state}",
         )
 
         app_state["authorization_url"] = authorization_url
@@ -611,7 +627,7 @@ class MattermostConnector(BaseConnector):
         if not self._state or not self._state.get("code"):
             return action_result.set_status(phantom.APP_ERROR, status_message=MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG)
 
-        current_code = self._state["code"]
+        current_code = self._state.pop("code")
         self.save_state(self._state)
         _save_app_state(self._state, asset_id, self)
 
@@ -640,12 +656,14 @@ class MattermostConnector(BaseConnector):
 
             return action_result.set_status(phantom.APP_ERROR, status_message="Error while generating access_token")
 
-        self._state["token"] = response
         self._access_token = response[MATTERMOST_ACCESS_TOKEN]
+        self._state["token"] = dict(response)
+        self._state["token"][MATTERMOST_ACCESS_TOKEN] = encryption_helper.encrypt(self._access_token, asset_id)
+        self._state["token"]["is_encrypted"] = True
         self.save_state(self._state)
         _save_app_state(self._state, asset_id, self)
 
-        self._state = self.load_state()
+        saved_state = self.load_state() or {}
 
         # Scenario -
         #
@@ -655,7 +673,11 @@ class MattermostConnector(BaseConnector):
         # So we have to check that token from response and the tokens
         # which are saved to state file after successful generation of the new tokens are same or not.
 
-        if self._access_token != self._state.get("token", {}).get(MATTERMOST_ACCESS_TOKEN):
+        saved_token = saved_state.get("token", {})
+        saved_access_token = saved_token.get(MATTERMOST_ACCESS_TOKEN, "")
+        if saved_token.get("is_encrypted"):
+            saved_access_token = encryption_helper.decrypt(saved_access_token, asset_id)
+        if self._access_token != saved_access_token:
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
             message += "user should have the correct access rights and ownership for the corresponding state file "
@@ -699,7 +721,7 @@ class MattermostConnector(BaseConnector):
         mattermost_phantom_base_url = self.get_phantom_base_url()
 
         url = f"{mattermost_phantom_base_url}rest{MATTERMOST_PHANTOM_SYS_INFO_URL}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url)
         if phantom.is_fail(ret_val):
             return ret_val, None
 
@@ -720,7 +742,7 @@ class MattermostConnector(BaseConnector):
         asset_id = self.get_asset_id()
         rest_endpoint = MATTERMOST_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
         url = f"{mattermost_phantom_base_url}rest{rest_endpoint}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url, verify=False)
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, url=url)
 
         if phantom.is_fail(ret_val):
             return ret_val, None
@@ -907,7 +929,8 @@ class MattermostConnector(BaseConnector):
         params.update({"page": page_number})
 
         post_list = []
-        while True:
+        seen_post_ids = set()
+        while page_number < MATTERMOST_MAX_POST_PAGES and len(post_list) < MATTERMOST_MAX_POSTS:
             # make rest call
             ret_val, response_json = self._handle_update_request(url=url, action_result=action_result, params=params)
 
@@ -918,9 +941,16 @@ class MattermostConnector(BaseConnector):
             if not response_json["posts"]:
                 break
 
-            # Add post to the post list
-            for each_post in response_json["order"]:
+            page_post_ids = [post_id for post_id in response_json["order"] if post_id not in seen_post_ids]
+            if not page_post_ids:
+                return action_result.set_status(phantom.APP_ERROR, "Mattermost post pagination stopped making progress"), post_list
+
+            # Add posts up to the campaign safety limit.
+            for each_post in page_post_ids:
+                seen_post_ids.add(each_post)
                 post_list.append(response_json.get("posts", "")[each_post])
+                if len(post_list) >= MATTERMOST_MAX_POSTS:
+                    break
 
             # Increment page_number for fetching next page in upcoming cycle
             if not params.get("since"):
@@ -928,6 +958,9 @@ class MattermostConnector(BaseConnector):
                 params.update({"page": page_number})
             else:
                 break
+
+        if page_number >= MATTERMOST_MAX_POST_PAGES or len(post_list) >= MATTERMOST_MAX_POSTS:
+            return action_result.set_status(phantom.APP_ERROR, "Mattermost post pagination exceeded the safety limit"), post_list
 
         return phantom.APP_SUCCESS, post_list
 
@@ -1203,22 +1236,9 @@ class MattermostConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, MATTERMOST_CHANNEL_NOT_FOUND_MSG)
             return action_result.get_status()
 
-        file_name = self._handle_py_ver_compat_for_input_str(file_info["name"])
-
-        content = None
-
-        with open(vault_path, "rb") as fin:
-            # Set file to be uploaded
-            content = fin.read()
-
-        # Recreate field form binary file
-        worker_dir = self.get_state_dir()
-        file_path = f"{worker_dir}/{file_name}"
-        try:
-            with open(file_path, "wb") as fout:
-                fout.write(content)
-        except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
+        file_name = os.path.basename(self._handle_py_ver_compat_for_input_str(file_info["name"]))
+        if not file_name:
+            return action_result.set_status(phantom.APP_ERROR, "Vault file name is invalid")
 
         # Set channel ID for uploading file
         data = {"channel_id": channel_id}
@@ -1226,17 +1246,14 @@ class MattermostConnector(BaseConnector):
         # Endpoint for uploading file
         file_url = f"{MATTERMOST_API_BASE_URL.format(server_url=self._server_url)}{MATTERMOST_FILES_ENDPOINT}"
 
-        with open(file_path, "rb") as f:
+        with open(vault_path, "rb") as f:
             # Set file to be uploaded
-            files = {"files": f}
+            files = {"files": (file_name, f)}
 
             # make rest call
             file_ret_val, file_response_json = self._handle_update_request(
                 url=file_url, action_result=action_result, data=data, method="post", files=files
             )
-
-        # Remove the file
-        os.remove(file_path)
 
         if phantom.is_fail(file_ret_val):
             return action_result.get_status()
@@ -1527,7 +1544,7 @@ class MattermostConnector(BaseConnector):
         extra initialization of any internal modules. This function MUST return a value of either phantom.APP_SUCCESS.
         """
 
-        self._state = self.load_state()
+        self._state = self.load_state() or {}
         config = self.get_config()
 
         # Fetching the Python major version
@@ -1537,12 +1554,18 @@ class MattermostConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         self._server_url = self._handle_py_ver_compat_for_input_str(config[MATTERMOST_CONFIG_SERVER_URL].strip("/"))
-        self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, False)
+        self._verify_server_cert = config.get(MATTERMOST_CONFIG_VERIFY_SERVER_CERT, True)
         self._personal_token = config.get(MATTERMOST_CONFIG_PERSONAL_TOKEN)
         self._client_id = self._handle_py_ver_compat_for_input_str(config.get(MATTERMOST_CONFIG_CLIENT_ID))
         self._client_secret = config.get(MATTERMOST_CONFIG_CLIENT_SECRET)
 
-        self._access_token = self._state.get("token", {}).get(MATTERMOST_ACCESS_TOKEN, "")
+        token_state = self._state.get("token", {})
+        self._access_token = token_state.get(MATTERMOST_ACCESS_TOKEN, "")
+        if self._access_token and token_state.get("is_encrypted"):
+            self._access_token = encryption_helper.decrypt(self._access_token, self.get_asset_id())
+        elif self._access_token:
+            token_state[MATTERMOST_ACCESS_TOKEN] = encryption_helper.encrypt(self._access_token, self.get_asset_id())
+            token_state["is_encrypted"] = True
         return phantom.APP_SUCCESS
 
     def finalize(self):

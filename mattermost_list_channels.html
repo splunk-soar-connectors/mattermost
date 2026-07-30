@@ -11,7 +11,7 @@
 {% block widget_content %}
   <!-- Main Start Block -->
   <!-- File: mattermost_list_channels.html
-  Copyright (c) 2018-2025 Splunk Inc.
+  Copyright (c) 2018-2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ and limitations under the License.
                 <tr>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['mattermost team'], 'value':'{{ result.param.team|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ result.param.team }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -92,7 +92,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.id }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.id|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ channels.id }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -100,7 +100,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.name }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['mattermost channel'], 'value':'{{ channels.name|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ channels.name }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>

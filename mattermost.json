@@ -9,7 +9,7 @@
     "product_name": "Mattermost",
     "product_version_regex": "5.*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2018-2025 Splunk Inc.",
+    "license": "Copyright (c) 2018-2026 Splunk Inc.",
     "app_version": "2.3.2",
     "latest_tested_versions": [
         "On-prem v6.0.2"
@@ -32,7 +32,7 @@
         "verify_server_cert": {
             "description": "Verify server certificate",
             "data_type": "boolean",
-            "default": false,
+            "default": true,
             "order": 4
         },
         "personal_token": {

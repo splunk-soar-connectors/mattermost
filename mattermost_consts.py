@@ -1,6 +1,6 @@
 # File: mattermost_consts.py
 #
-# Copyright (c) 2018-2025 Splunk Inc.
+# Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,3 +64,5 @@ MATTERMOST_TEST_CONNECTIVITY_PASSED_MSG = "Test connectivity passed"
 MATTERMOST_TC_FILE = "oauth_task.out"
 MATTERMOST_TC_STATUS_SLEEP = 3
 MATTERMOST_AUTHORIZE_WAIT_TIME = 15
+MATTERMOST_MAX_POST_PAGES = 1000
+MATTERMOST_MAX_POSTS = 10000
