@@ -1,1 +1,4 @@
 **Unreleased**
+
+* Require the pending OAuth nonce before returning a Mattermost authorization redirect.
+* Suppress token-response debug data based on the requested endpoint, including redirected responses.

@@ -24,6 +24,7 @@ import re
 import secrets
 import sys
 import time
+import urllib.parse
 from datetime import datetime
 
 import dateutil
@@ -56,6 +57,10 @@ def _handle_login_redirect(request, key):
     state = _load_app_state(asset_id)
     if not state:
         return HttpResponse("ERROR: Invalid asset_id", content_type="text/plain", status=400)
+    presented_nonce = request.GET.get("state_nonce", "")
+    stored_nonce = state.get("oauth_state", "")
+    if not stored_nonce or not hmac.compare_digest(stored_nonce, presented_nonce):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
     url = state.get(key)
     if not url:
         return HttpResponse(f"App state is invalid, {key} not found.", content_type="text/plain", status=400)
@@ -341,7 +346,7 @@ class MattermostConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _process_response(self, response, action_result):
+    def _process_response(self, response, action_result, suppress_debug=False):
         """This function is used to process html response.
 
         :param response: Response data
@@ -350,9 +355,7 @@ class MattermostConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        token_url = MATTERMOST_ACCESS_TOKEN_URL.format(server_url=self._server_url)
-        is_token_response = getattr(response, "url", "").rstrip("/") == token_url.rstrip("/")
-        if hasattr(action_result, "add_debug_data") and not is_token_response:
+        if hasattr(action_result, "add_debug_data") and not suppress_debug:
             action_result.add_debug_data({"r_status_code": response.status_code})
             action_result.add_debug_data({"r_text": response.text})
             action_result.add_debug_data({"r_headers": response.headers})
@@ -471,7 +474,9 @@ class MattermostConnector(BaseConnector):
                 resp_json,
             )
 
-        return self._process_response(request_response, action_result)
+        token_url = MATTERMOST_ACCESS_TOKEN_URL.format(server_url=self._server_url)
+        suppress_debug = url.rstrip("/") == token_url.rstrip("/")
+        return self._process_response(request_response, action_result, suppress_debug=suppress_debug)
 
     def _handle_update_request(self, url, action_result, params=None, data=None, verify=None, method="get", files=None):
         """This method is used to call maker_rest_call using different authentication methods.
@@ -603,7 +608,8 @@ class MattermostConnector(BaseConnector):
         app_state["authorization_url"] = authorization_url
 
         # URL which would be shown to the user
-        url_for_authorize_request = f"{app_rest_url}/start_oauth?asset_id={asset_id}&"
+        start_query = urllib.parse.urlencode({"asset_id": asset_id, "state_nonce": oauth_state})
+        url_for_authorize_request = f"{app_rest_url}/start_oauth?{start_query}"
         _save_app_state(app_state, asset_id, self)
 
         self.save_progress(MATTERMOST_AUTHORIZE_USER_MSG)
