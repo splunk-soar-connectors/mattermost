@@ -1,0 +1,42 @@
+<!--
+ Copyright (c) 2026 Splunk Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+{% extends "_base.html" %}
+{% block content %}
+  {% for result in results %}
+    {% if not result.data %}<p class="empty">No data found</p>{% else %}
+      <div class="info">
+        <h4>Info</h4>
+        <p>Team: {{ result.param.team }} | Channel: {{ result.param.channel }}</p>
+        {% if result.param.start_time %}<p>Start time: {{ result.param.start_time }}</p>{% endif %}
+        {% if result.param.end_time %}<p>End time: {{ result.param.end_time }}</p>{% endif %}
+      </div>
+      <h4>Posts</h4>
+      <table>
+        <thead><tr><th>Post ID</th><th>Message</th><th>Type</th><th>User ID</th><th>User Name</th><th>Channel ID</th><th>File IDs</th><th>Created At</th><th>Edited At</th><th>Updated At</th></tr></thead>
+        <tbody>
+          {% for post in result.data %}
+            <tr>
+              <td>{{ post.id }}</td><td>{{ post.message }}</td><td>{{ post.type }}</td><td>{{ post.user_id }}</td>
+              <td>{{ post.props.username if post.props else "" }}</td><td>{{ post.channel_id }}</td>
+              <td>{{ post.file_ids|join(", ") if post.file_ids else "" }}</td>
+              <td>{{ post.create_at }}</td><td>{{ post.edit_at }}</td><td>{{ post.update_at }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
