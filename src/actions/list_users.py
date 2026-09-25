@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+from typing import Any
+
 from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Param, Params
@@ -20,6 +22,17 @@ from soar_sdk.params import Param, Params
 from ..asset import Asset
 from ..consts import MATTERMOST_USERS_ENDPOINT
 from ._helpers import _paginate_all, _resolve_team_id, _stringify_legacy_fields
+
+
+def _normalize_user_output(user: dict[str, Any]) -> dict[str, Any]:
+    """Normalize legacy string fields, including nested timezone values."""
+    output = _stringify_legacy_fields(user, {"auth_data", "notify_props", "props"})
+    timezone = output.get("timezone")
+    if isinstance(timezone, dict):
+        output["timezone"] = _stringify_legacy_fields(
+            timezone, {"useAutomaticTimezone"}
+        )
+    return output
 
 
 class ListUsersParams(Params):
@@ -96,9 +109,7 @@ def list_users(
     users = _paginate_all(MATTERMOST_USERS_ENDPOINT, asset, extra_params)
     output = [
         ListUsersOutput(
-            **_stringify_legacy_fields(
-                user, {"auth_data", "notify_props", "props"}
-            )
+            **_normalize_user_output(user)
         )
         for user in users
     ]

@@ -133,9 +133,22 @@ def parse_json_response(response: httpx.Response) -> Any:
         message = message or response.text or "No response body"
         raise ActionFailure(f"Mattermost API error {response.status_code}: {message}")
 
+    if response.status_code == 204:
+        return None
+
+    if not response.content.strip():
+        raise ActionFailure(
+            f"Mattermost API returned an empty response body for HTTP "
+            f"{response.status_code}"
+        )
+
     try:
         return response.json()
     except ValueError as exc:
+        content_type = response.headers.get("content-type", "unknown")
+        response_body = response.text.strip()[:500] or "<empty>"
         raise ActionFailure(
-            f"Unable to parse Mattermost API JSON response: {exc}"
+            "Unable to parse Mattermost API JSON response: "
+            f"HTTP {response.status_code}, content-type {content_type!r}, "
+            f"body {response_body!r}. Error: {exc}"
         ) from exc

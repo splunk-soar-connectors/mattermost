@@ -19,7 +19,7 @@ from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ..client import call_mattermost, parse_json_response
+from ..client import call_mattermost
 from ..consts import (
     MATTERMOST_FILE_UPLOAD_FAILED,
     MATTERMOST_FILE_UPLOAD_MSG,
@@ -28,6 +28,7 @@ from ..consts import (
 )
 from ._helpers import (
     _create_post,
+    _check_response,
     _resolve_channel_id,
     _resolve_team_id,
     _stringify_legacy_fields,
@@ -137,7 +138,7 @@ def upload_file(
         data={"channel_id": channel_id},
         files={"files": (attachment.name, content)},
     )
-    upload_response = parse_json_response(response)
+    upload_response = _check_response(response, dict)
     file_infos = upload_response.get("file_infos", [])
     if not file_infos:
         raise ActionFailure(MATTERMOST_FILE_UPLOAD_FAILED)
