@@ -18,7 +18,12 @@ from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
+from ._helpers import (
+    _create_post,
+    _resolve_channel_id,
+    _resolve_team_id,
+    _stringify_legacy_fields,
+)
 
 
 class SendMessageParams(Params):
@@ -59,6 +64,7 @@ class SendMessageOutput(ActionOutput):
     user_id: str | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
+    participants: str | None = None
 
 
 def send_message(
@@ -68,5 +74,8 @@ def send_message(
     team_id = _resolve_team_id(params.team, asset)
     channel_id = _resolve_channel_id(team_id, params.channel, asset)
     return SendMessageOutput(
-        **_create_post({"channel_id": channel_id, "message": params.message}, asset)
+        **_stringify_legacy_fields(
+            _create_post({"channel_id": channel_id, "message": params.message}, asset),
+            {"participants"},
+        )
     )

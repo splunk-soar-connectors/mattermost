@@ -24,6 +24,7 @@ from ._helpers import (
     _process_posts,
     _resolve_channel_id,
     _resolve_team_id,
+    _stringify_legacy_fields,
     _validate_and_convert_time,
 )
 
@@ -92,7 +93,7 @@ class ListPostsOutput(ActionOutput):
     create_at: float | None = None
     delete_at: float | None = None
     edit_at: float | None = None
-    file_ids: list[str] | None = None
+    file_ids: str | None = None
     hashtags: str | None = None
     id: str | None = None
     is_pinned: bool | None = None
@@ -108,6 +109,7 @@ class ListPostsOutput(ActionOutput):
     reply_count: float | None = None
     last_reply_at: float | None = None
     metadata: MetadataOutput | None = None
+    participants: str | None = None
 
 
 class ListPostsSummary(ActionOutput):
@@ -131,6 +133,11 @@ def list_posts(
     channel_id = _resolve_channel_id(team_id, params.channel, asset)
     endpoint = MATTERMOST_LIST_POSTS_ENDPOINT.format(channel=channel_id)
     posts = _process_posts(endpoint, asset, start_time, end_time)
-    output = [ListPostsOutput(**post) for post in posts]
+    output = [
+        ListPostsOutput(
+            **_stringify_legacy_fields(post, {"file_ids", "participants"})
+        )
+        for post in posts
+    ]
     soar.set_summary(ListPostsSummary(total_posts=len(output)))
     return output

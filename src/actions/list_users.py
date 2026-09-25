@@ -19,7 +19,7 @@ from soar_sdk.params import Param, Params
 
 from ..asset import Asset
 from ..consts import MATTERMOST_USERS_ENDPOINT
-from ._helpers import _paginate_all, _resolve_team_id
+from ._helpers import _paginate_all, _resolve_team_id, _stringify_legacy_fields
 
 
 class ListUsersParams(Params):
@@ -45,6 +45,8 @@ class TimezoneOutput(ActionOutput):
 class ListUsersOutput(ActionOutput):
     """A Mattermost user returned by the API."""
 
+    auth_data: str | None = None
+    auth_service: str | None = None
     create_at: float | None = OutputField(example_values=[1535004134292])
     delete_at: float | None = OutputField(example_values=[0])
     email: str | None = OutputField(
@@ -63,7 +65,9 @@ class ListUsersOutput(ActionOutput):
     locale: str | None = OutputField(example_values=["en"])
     mfa_active: bool | None = None
     nickname: str | None = OutputField(example_values=["test"])
+    notify_props: str | None = None
     position: str | None = None
+    props: str | None = None
     roles: str | None = OutputField(
         example_values=["system_user system_user_access_token system_post_all"],
     )
@@ -90,6 +94,13 @@ def list_users(
     if params.team:
         extra_params["in_team"] = _resolve_team_id(params.team, asset)
     users = _paginate_all(MATTERMOST_USERS_ENDPOINT, asset, extra_params)
-    output = [ListUsersOutput(**user) for user in users]
+    output = [
+        ListUsersOutput(
+            **_stringify_legacy_fields(
+                user, {"auth_data", "notify_props", "props"}
+            )
+        )
+        for user in users
+    ]
     soar.set_summary(ListUsersSummary(total_users=len(output)))
     return output

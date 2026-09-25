@@ -18,7 +18,11 @@ from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ._helpers import _list_all_channels, _resolve_team_id
+from ._helpers import (
+    _list_all_channels,
+    _resolve_team_id,
+    _stringify_legacy_fields,
+)
 
 
 class ListChannelsParams(Params):
@@ -50,6 +54,7 @@ class ListChannelsOutput(ActionOutput):
         cef_types=["mattermost channel"],
         example_values=["off-topic"],
     )
+    props: str | None = None
     purpose: str | None = None
     scheme_id: str | None = None
     team_id: str | None = OutputField(
@@ -63,6 +68,9 @@ class ListChannelsOutput(ActionOutput):
     team_name: str | None = OutputField(example_values=["test-005"])
     team_update_at: float | None = OutputField(example_values=[1637228653671])
     team_display_name: str | None = OutputField(example_values=["test-005"])
+    shared: str | None = None
+    policy_id: str | None = None
+    group_constrained: str | None = None
 
 
 class ListChannelsSummary(ActionOutput):
@@ -77,6 +85,13 @@ def list_channels(
     """List public and private channels for a Mattermost team."""
     team_id = _resolve_team_id(params.team, asset)
     channels = _list_all_channels(team_id, asset)
-    output = [ListChannelsOutput(**channel) for channel in channels]
+    output = [
+        ListChannelsOutput(
+            **_stringify_legacy_fields(
+                channel, {"props", "shared", "policy_id", "group_constrained"}
+            )
+        )
+        for channel in channels
+    ]
     soar.set_summary(ListChannelsSummary(total_channels=len(output)))
     return output

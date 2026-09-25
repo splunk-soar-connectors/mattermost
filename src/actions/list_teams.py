@@ -18,7 +18,7 @@ from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Params
 
 from ..asset import Asset
-from ._helpers import _list_all_teams
+from ._helpers import _list_all_teams, _stringify_legacy_fields
 
 
 class ListTeamsOutput(ActionOutput):
@@ -45,7 +45,7 @@ class ListTeamsOutput(ActionOutput):
     type: str | None = OutputField(example_values=["O"])
     update_at: float | None = OutputField(example_values=[1534918716675])
     policy_id: str | None = None
-    group_constrained: bool | None = None
+    group_constrained: str | None = None
 
 
 class ListTeamsSummary(ActionOutput):
@@ -57,6 +57,9 @@ class ListTeamsSummary(ActionOutput):
 def list_teams(params: Params, soar: SOARClient, asset: Asset) -> list[ListTeamsOutput]:
     """List all Mattermost teams visible to the current user."""
     teams = _list_all_teams(asset)
-    output = [ListTeamsOutput(**team) for team in teams]
+    output = [
+        ListTeamsOutput(**_stringify_legacy_fields(team, {"group_constrained"}))
+        for team in teams
+    ]
     soar.set_summary(ListTeamsSummary(total_teams=len(output)))
     return output

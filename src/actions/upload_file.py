@@ -26,7 +26,12 @@ from ..consts import (
     MATTERMOST_FILES_ENDPOINT,
     MATTERMOST_VAULT_ID_NOT_FOUND,
 )
-from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
+from ._helpers import (
+    _create_post,
+    _resolve_channel_id,
+    _resolve_team_id,
+    _stringify_legacy_fields,
+)
 
 
 class UploadFileParams(Params):
@@ -88,7 +93,7 @@ class UploadFileOutput(ActionOutput):
     create_at: float | None = None
     delete_at: float | None = None
     edit_at: float | None = None
-    file_ids: list[str] | None = None
+    file_ids: str | None = None
     hashtags: str | None = None
     id: str | None = None
     is_pinned: bool | None = None
@@ -103,6 +108,7 @@ class UploadFileOutput(ActionOutput):
     metadata: MetadataOutput | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
+    participants: str | None = None
 
 
 def upload_file(
@@ -144,4 +150,6 @@ def upload_file(
         },
         asset,
     )
-    return UploadFileOutput(**post)
+    return UploadFileOutput(
+        **_stringify_legacy_fields(post, {"file_ids", "participants"})
+    )

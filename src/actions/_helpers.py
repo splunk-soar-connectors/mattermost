@@ -58,6 +58,18 @@ def _item_key(item: Any) -> str:
     return json.dumps(item, sort_keys=True, default=str)
 
 
+def _stringify_legacy_fields(
+    payload: dict[str, Any], field_names: set[str]
+) -> dict[str, Any]:
+    """Preserve legacy string output fields for structured API values."""
+    output = dict(payload)
+    for field_name in field_names:
+        value = output.get(field_name)
+        if value is not None and not isinstance(value, str):
+            output[field_name] = json.dumps(value, sort_keys=True, default=str)
+    return output
+
+
 def _paginate_all(
     endpoint: str,
     asset: Asset,
@@ -242,5 +254,6 @@ __all__ = [
     "_process_posts",
     "_resolve_channel_id",
     "_resolve_team_id",
+    "_stringify_legacy_fields",
     "_validate_and_convert_time",
 ]
