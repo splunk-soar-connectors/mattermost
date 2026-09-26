@@ -27,13 +27,10 @@ from soar_sdk.auth import (
 )
 from soar_sdk.auth.client import ConfigurationChangedError, OAuthToken
 from soar_sdk.exceptions import ActionFailure
-from soar_sdk.logging import getLogger
-
 from .consts import (
     MATTERMOST_ACCESS_TOKEN_URL,
     MATTERMOST_API_BASE_URL,
     MATTERMOST_AUTHORIZE_URL,
-    MATTERMOST_CONFIG_PARAMS_REQUIRED_MSG,
     MATTERMOST_CURRENT_USER_ENDPOINT,
     MATTERMOST_TC_STATUS_SLEEP,
 )
@@ -43,7 +40,6 @@ if TYPE_CHECKING:
     from .asset import Asset
 
 
-logger = getLogger()
 OAUTH_POLL_TIMEOUT = 300
 
 
@@ -142,12 +138,3 @@ def complete_oauth_authorization(
         f"OAuth authorization failed: timed out after {poll_timeout}s "
         "waiting for user authorization."
     )
-
-
-def resolve_mattermost_auth(asset: Asset) -> httpx.Auth:
-    """Return the preferred configured Mattermost authentication method."""
-    if asset.personal_token:
-        return build_pat_auth(asset)
-    if asset.client_id and asset.client_secret:
-        return build_oauth_auth(asset)
-    raise ActionFailure(MATTERMOST_CONFIG_PARAMS_REQUIRED_MSG)

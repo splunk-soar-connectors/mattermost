@@ -14,12 +14,12 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import OutputField
 from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ..client import call_mattermost
+from ..client import call_mattermost, parse_json_response
 from ..consts import (
     MATTERMOST_FILE_UPLOAD_FAILED,
     MATTERMOST_FILE_UPLOAD_MSG,
@@ -27,8 +27,8 @@ from ..consts import (
     MATTERMOST_VAULT_ID_NOT_FOUND,
 )
 from ._helpers import (
+    LegacyCompatibleOutput,
     _create_post,
-    _check_response,
     _resolve_channel_id,
     _resolve_team_id,
     _stringify_legacy_fields,
@@ -60,7 +60,7 @@ class UploadFileParams(Params):
     )
 
 
-class FilesOutput(ActionOutput):
+class FilesOutput(LegacyCompatibleOutput):
     """File metadata returned by Mattermost."""
 
     id: str | None = None
@@ -81,13 +81,13 @@ class FilesOutput(ActionOutput):
     remote_id: str | None = None
 
 
-class MetadataOutput(ActionOutput):
+class MetadataOutput(LegacyCompatibleOutput):
     """File metadata embedded in the created post."""
 
     files: list[FilesOutput] | None = None
 
 
-class UploadFileOutput(ActionOutput):
+class UploadFileOutput(LegacyCompatibleOutput):
     """Mattermost post created after the file upload."""
 
     channel_id: str | None = OutputField(cef_types=["mattermost channel"])
@@ -138,7 +138,7 @@ def upload_file(
         data={"channel_id": channel_id},
         files={"files": (attachment.name, content)},
     )
-    upload_response = _check_response(response, dict)
+    upload_response = parse_json_response(response)
     file_infos = upload_response.get("file_infos", [])
     if not file_infos:
         raise ActionFailure(MATTERMOST_FILE_UPLOAD_FAILED)
@@ -152,5 +152,21 @@ def upload_file(
         asset,
     )
     return UploadFileOutput(
-        **_stringify_legacy_fields(post, {"file_ids", "participants"})
+        **_stringify_legacy_fields(
+            post,
+            {
+                "channel_id",
+                "file_ids",
+                "hashtags",
+                "id",
+                "message",
+                "original_id",
+                "parent_id",
+                "pending_post_id",
+                "root_id",
+                "type",
+                "user_id",
+                "participants",
+            },
+        )
     )

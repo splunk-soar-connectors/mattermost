@@ -33,10 +33,6 @@ MATTERMOST_CONFIG_PARAMS_REQUIRED_CONNECTIVITY = (
     "Either 'personal_token' or 'client_id' and 'client_secret' are required "
     "for test connectivity"
 )
-MATTERMOST_CONFIG_PARAMS_REQUIRED_MSG = (
-    "Please provide 'personal_token' or run test connectivity with "
-    "'client_id' and 'client_secret'"
-)
 MATTERMOST_TEAM_NOT_FOUND_MSG = "Team with given name or ID not found"
 MATTERMOST_CHANNEL_NOT_FOUND_MSG = "Channel with given name or ID not found"
 MATTERMOST_NO_POSTS_FOUND = "No posts found"

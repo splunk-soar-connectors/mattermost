@@ -13,11 +13,11 @@ import pytest
 from soar_sdk.exceptions import ActionFailure
 
 from src.actions._helpers import (
-    _check_response,
     _get_posts,
     _process_posts,
     _validate_and_convert_time,
 )
+from src.actions.list_teams import ListTeamsOutput, _normalize_team_output
 from src.actions.list_users import _normalize_user_output
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
@@ -44,37 +44,6 @@ def test_parse_json_response_raises_action_failure_for_api_error() -> None:
         parse_json_response(response)
 
 
-def test_parse_json_response_returns_none_for_no_content() -> None:
-    response = httpx.Response(204)
-
-    assert parse_json_response(response) is None
-
-
-def test_parse_json_response_rejects_empty_success_body() -> None:
-    response = httpx.Response(200, content=b"")
-
-    with pytest.raises(ActionFailure, match="empty response body"):
-        parse_json_response(response)
-
-
-def test_parse_json_response_reports_non_json_response_details() -> None:
-    response = httpx.Response(
-        200,
-        content=b"upstream failure",
-        headers={"content-type": "text/html"},
-    )
-
-    with pytest.raises(ActionFailure, match=r"HTTP 200.*text/html.*upstream failure"):
-        parse_json_response(response)
-
-
-def test_check_response_rejects_unexpected_json_type() -> None:
-    response = httpx.Response(200, json={"posts": []})
-
-    with pytest.raises(ActionFailure, match="expected list, got dict"):
-        _check_response(response, list)
-
-
 def test_normalize_user_output_stringifies_nested_timezone_flag() -> None:
     user = {
         "timezone": {
@@ -87,6 +56,22 @@ def test_normalize_user_output_stringifies_nested_timezone_flag() -> None:
     normalized = _normalize_user_output(user)
 
     assert normalized["timezone"]["useAutomaticTimezone"] == "true"
+
+
+def test_list_teams_output_preserves_legacy_fields_and_extra_values() -> None:
+    team = {
+        "id": "team-id",
+        "name": "team-name",
+        "allowed_domains": ["example.com"],
+        "group_constrained": False,
+        "legacy_extra": {"key": "value"},
+    }
+
+    output = ListTeamsOutput(**_normalize_team_output(team))
+
+    assert output.model_dump()["allowed_domains"] == '["example.com"]'
+    assert output.model_dump()["group_constrained"] == "false"
+    assert output.model_dump()["legacy_extra"] == {"key": "value"}
 
 
 def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:

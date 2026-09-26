@@ -13,15 +13,21 @@
 # limitations under the License.
 
 
+from typing import Any
+
 from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Params
 
 from ..asset import Asset
-from ._helpers import _list_all_teams, _stringify_legacy_fields
+from ._helpers import (
+    LegacyCompatibleOutput,
+    _list_all_teams,
+    _stringify_legacy_fields,
+)
 
 
-class ListTeamsOutput(ActionOutput):
+class ListTeamsOutput(LegacyCompatibleOutput):
     """A Mattermost team returned by the API."""
 
     allow_open_invite: bool | None = None
@@ -54,12 +60,30 @@ class ListTeamsSummary(ActionOutput):
     total_teams: int
 
 
+def _normalize_team_output(team: dict[str, Any]) -> dict[str, Any]:
+    """Normalize all legacy string fields without dropping API fields."""
+    return _stringify_legacy_fields(
+        team,
+        {
+            "allowed_domains",
+            "company_name",
+            "description",
+            "display_name",
+            "email",
+            "id",
+            "invite_id",
+            "name",
+            "scheme_id",
+            "type",
+            "policy_id",
+            "group_constrained",
+        },
+    )
+
+
 def list_teams(params: Params, soar: SOARClient, asset: Asset) -> list[ListTeamsOutput]:
     """List all Mattermost teams visible to the current user."""
     teams = _list_all_teams(asset)
-    output = [
-        ListTeamsOutput(**_stringify_legacy_fields(team, {"group_constrained"}))
-        for team in teams
-    ]
+    output = [ListTeamsOutput(**_normalize_team_output(team)) for team in teams]
     soar.set_summary(ListTeamsSummary(total_teams=len(output)))
     return output

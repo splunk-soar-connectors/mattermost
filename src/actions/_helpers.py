@@ -19,6 +19,8 @@ import re
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
+from pydantic import ConfigDict
+from soar_sdk.action_results import ActionOutput
 from soar_sdk.exceptions import ActionFailure
 
 from ..client import call_mattermost, parse_json_response
@@ -48,23 +50,15 @@ ISO8601_RE = re.compile(
 )
 
 
-def _check_response(
-    response, expected_type: type | tuple[type, ...] | None = None
-) -> Any:
-    """Decode a response and optionally validate its top-level JSON type."""
-    payload = parse_json_response(response)
-    if expected_type is not None and not isinstance(payload, expected_type):
-        expected_name = (
-            ", ".join(item.__name__ for item in expected_type)
-            if isinstance(expected_type, tuple)
-            else expected_type.__name__
-        )
-        actual_name = type(payload).__name__
-        raise ActionFailure(
-            f"Mattermost returned an unexpected response type: "
-            f"expected {expected_name}, got {actual_name}"
-        )
-    return payload
+class LegacyCompatibleOutput(ActionOutput):
+    """Preserve fields returned by the legacy connector but not yet modeled."""
+
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+
+def _check_response(response) -> Any:
+    """Return a decoded response or raise a user-facing action failure."""
+    return parse_json_response(response)
 
 
 def _item_key(item: Any) -> str:
@@ -96,9 +90,7 @@ def _paginate_all(
 
     while page < MATTERMOST_MAX_GENERIC_PAGES:
         query = {"page": page, **(extra_params or {})}
-        payload = _check_response(
-            call_mattermost("GET", endpoint, asset, params=query), list
-        )
+        payload = _check_response(call_mattermost("GET", endpoint, asset, params=query))
         if not payload:
             return results
         if not isinstance(payload, list):
@@ -134,7 +126,7 @@ def _list_all_teams(asset: Asset) -> list[dict[str, Any]]:
 def _resolve_channel_id(team_id: str, channel: str, asset: Asset) -> str:
     """Resolve a Mattermost channel name or ID to its ID."""
     endpoint = MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id)
-    channels = _check_response(call_mattermost("GET", endpoint, asset), list)
+    channels = _check_response(call_mattermost("GET", endpoint, asset))
     channel_value = channel.strip().lower()
     for each_channel in channels:
         if channel_value in (
@@ -148,7 +140,7 @@ def _resolve_channel_id(team_id: str, channel: str, asset: Asset) -> str:
 def _list_all_channels(team_id: str, asset: Asset) -> list[dict[str, Any]]:
     """Return public and private channels visible to the current user."""
     endpoint = MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id)
-    channels = _check_response(call_mattermost("GET", endpoint, asset), list)
+    channels = _check_response(call_mattermost("GET", endpoint, asset))
     return [
         channel
         for channel in channels
@@ -161,8 +153,7 @@ def _create_post(request_data: dict[str, Any], asset: Asset) -> dict[str, Any]:
     response = call_mattermost(
         "POST", MATTERMOST_SEND_MSG_ENDPOINT, asset, json=request_data
     )
-    payload = _check_response(response, dict)
-    return payload
+    return _check_response(response)
 
 
 def _validate_and_convert_time(time_stamp: str) -> int:
@@ -259,6 +250,7 @@ def _process_posts(
 
 
 __all__ = [
+    "LegacyCompatibleOutput",
     "_check_response",
     "_create_post",
     "_get_posts",

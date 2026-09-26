@@ -19,6 +19,7 @@ from soar_sdk.params import Param, Params
 
 from ..asset import Asset
 from ._helpers import (
+    LegacyCompatibleOutput,
     _list_all_channels,
     _resolve_team_id,
     _stringify_legacy_fields,
@@ -36,7 +37,7 @@ class ListChannelsParams(Params):
     )
 
 
-class ListChannelsOutput(ActionOutput):
+class ListChannelsOutput(LegacyCompatibleOutput):
     """A Mattermost public or private channel."""
 
     create_at: float | None = OutputField(example_values=[1535370158299])
@@ -88,7 +89,24 @@ def list_channels(
     output = [
         ListChannelsOutput(
             **_stringify_legacy_fields(
-                channel, {"props", "shared", "policy_id", "group_constrained"}
+                channel,
+                {
+                    "creator_id",
+                    "display_name",
+                    "header",
+                    "id",
+                    "name",
+                    "props",
+                    "purpose",
+                    "scheme_id",
+                    "team_id",
+                    "type",
+                    "team_name",
+                    "team_display_name",
+                    "shared",
+                    "policy_id",
+                    "group_constrained",
+                },
             )
         )
         for channel in channels

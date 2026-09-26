@@ -21,7 +21,12 @@ from soar_sdk.params import Param, Params
 
 from ..asset import Asset
 from ..consts import MATTERMOST_USERS_ENDPOINT
-from ._helpers import _paginate_all, _resolve_team_id, _stringify_legacy_fields
+from ._helpers import (
+    LegacyCompatibleOutput,
+    _paginate_all,
+    _resolve_team_id,
+    _stringify_legacy_fields,
+)
 
 
 def _normalize_user_output(user: dict[str, Any]) -> dict[str, Any]:
@@ -47,7 +52,7 @@ class ListUsersParams(Params):
     )
 
 
-class TimezoneOutput(ActionOutput):
+class TimezoneOutput(LegacyCompatibleOutput):
     """Mattermost user timezone settings."""
 
     automaticTimezone: str | None = None
@@ -55,7 +60,7 @@ class TimezoneOutput(ActionOutput):
     useAutomaticTimezone: str | None = OutputField(example_values=["true"])
 
 
-class ListUsersOutput(ActionOutput):
+class ListUsersOutput(LegacyCompatibleOutput):
     """A Mattermost user returned by the API."""
 
     auth_data: str | None = None
@@ -107,11 +112,6 @@ def list_users(
     if params.team:
         extra_params["in_team"] = _resolve_team_id(params.team, asset)
     users = _paginate_all(MATTERMOST_USERS_ENDPOINT, asset, extra_params)
-    output = [
-        ListUsersOutput(
-            **_normalize_user_output(user)
-        )
-        for user in users
-    ]
+    output = [ListUsersOutput(**_normalize_user_output(user)) for user in users]
     soar.set_summary(ListUsersSummary(total_users=len(output)))
     return output

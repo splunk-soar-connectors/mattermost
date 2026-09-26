@@ -14,11 +14,12 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import OutputField
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
 from ._helpers import (
+    LegacyCompatibleOutput,
     _create_post,
     _resolve_channel_id,
     _resolve_team_id,
@@ -44,7 +45,7 @@ class SendMessageParams(Params):
     message: str = Param(required=True, description="Message to send")
 
 
-class SendMessageOutput(ActionOutput):
+class SendMessageOutput(LegacyCompatibleOutput):
     """Mattermost post created by the send message action."""
 
     channel_id: str | None = OutputField(cef_types=["mattermost channel"])
@@ -76,6 +77,18 @@ def send_message(
     return SendMessageOutput(
         **_stringify_legacy_fields(
             _create_post({"channel_id": channel_id, "message": params.message}, asset),
-            {"participants"},
+            {
+                "channel_id",
+                "hashtags",
+                "id",
+                "message",
+                "original_id",
+                "parent_id",
+                "pending_post_id",
+                "root_id",
+                "type",
+                "user_id",
+                "participants",
+            },
         )
     )

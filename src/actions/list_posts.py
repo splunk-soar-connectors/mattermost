@@ -21,6 +21,7 @@ from soar_sdk.params import Param, Params
 from ..asset import Asset
 from ..consts import MATTERMOST_INVALID_TIME_RANGE, MATTERMOST_LIST_POSTS_ENDPOINT
 from ._helpers import (
+    LegacyCompatibleOutput,
     _process_posts,
     _resolve_channel_id,
     _resolve_team_id,
@@ -52,14 +53,14 @@ class ListPostsParams(Params):
     )
 
 
-class PropsOutput(ActionOutput):
+class PropsOutput(LegacyCompatibleOutput):
     """Post properties returned by Mattermost."""
 
     addedUsername: str | None = OutputField(cef_types=["user name"])
     username: str | None = OutputField(cef_types=["user name"])
 
 
-class FilesOutput(ActionOutput):
+class FilesOutput(LegacyCompatibleOutput):
     """File metadata embedded in a Mattermost post."""
 
     id: str | None = None
@@ -80,13 +81,13 @@ class FilesOutput(ActionOutput):
     remote_id: str | None = None
 
 
-class MetadataOutput(ActionOutput):
+class MetadataOutput(LegacyCompatibleOutput):
     """Metadata attached to a Mattermost post."""
 
     files: list[FilesOutput] | None = None
 
 
-class ListPostsOutput(ActionOutput):
+class ListPostsOutput(LegacyCompatibleOutput):
     """A Mattermost post."""
 
     channel_id: str | None = OutputField(cef_types=["mattermost channel"])
