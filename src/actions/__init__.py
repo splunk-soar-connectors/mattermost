@@ -11,7 +11,7 @@ from soar_sdk.app import App
 from ..views import display_view
 from .list_channels import ListChannelsSummary, list_channels
 from .list_posts import ListPostsSummary, list_posts
-from .list_teams import ListTeamsSummary, list_teams
+from .list_teams import ListTeamsOutput, ListTeamsSummary, list_teams
 from .list_users import ListUsersSummary, list_users
 from .send_message import send_message
 from .upload_file import upload_file
@@ -67,6 +67,7 @@ def register_actions(app: App) -> App:
         action_type="investigate",
         read_only=True,
         render_as="table",
+        output_class=ListTeamsOutput,
         summary_type=ListTeamsSummary,
     )
     return app

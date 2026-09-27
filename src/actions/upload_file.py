@@ -23,6 +23,7 @@ from ..client import call_mattermost, parse_json_response
 from ..consts import (
     MATTERMOST_FILE_UPLOAD_FAILED,
     MATTERMOST_FILE_UPLOAD_MSG,
+    MATTERMOST_FILE_UPLOAD_SUCCESS,
     MATTERMOST_FILES_ENDPOINT,
     MATTERMOST_VAULT_ID_NOT_FOUND,
 )
@@ -151,7 +152,7 @@ def upload_file(
         },
         asset,
     )
-    return UploadFileOutput(
+    output = UploadFileOutput(
         **_stringify_legacy_fields(
             post,
             {
@@ -170,3 +171,5 @@ def upload_file(
             },
         )
     )
+    soar.set_message(MATTERMOST_FILE_UPLOAD_SUCCESS)
+    return output

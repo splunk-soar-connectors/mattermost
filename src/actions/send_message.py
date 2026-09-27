@@ -18,6 +18,7 @@ from soar_sdk.action_results import OutputField
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
+from ..consts import MATTERMOST_SEND_MSG_SUCCESS
 from ._helpers import (
     LegacyCompatibleOutput,
     _create_post,
@@ -74,7 +75,7 @@ def send_message(
     """Send a message to a Mattermost channel."""
     team_id = _resolve_team_id(params.team, asset)
     channel_id = _resolve_channel_id(team_id, params.channel, asset)
-    return SendMessageOutput(
+    output = SendMessageOutput(
         **_stringify_legacy_fields(
             _create_post({"channel_id": channel_id, "message": params.message}, asset),
             {
@@ -92,3 +93,5 @@ def send_message(
             },
         )
     )
+    soar.set_message(MATTERMOST_SEND_MSG_SUCCESS)
+    return output
