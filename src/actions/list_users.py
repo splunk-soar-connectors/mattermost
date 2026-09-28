@@ -49,6 +49,7 @@ class ListUsersParams(Params):
         description="ID or name of the team",
         primary=True,
         cef_types=["mattermost team"],
+        column_name="Team",
     )
 
 
@@ -63,21 +64,36 @@ class TimezoneOutput(LegacyCompatibleOutput):
 class ListUsersOutput(LegacyCompatibleOutput):
     """A Mattermost user returned by the API."""
 
+    id: str | None = OutputField(
+        column_name="User ID",
+        example_values=["pyx8sqe7zfn1dpmtd1s3qzqhfr"],
+    )
+    username: str | None = OutputField(
+        column_name="User Name",
+        cef_types=["user name"],
+        example_values=["test.user"],
+    )
+    email: str | None = OutputField(
+        column_name="Email",
+        cef_types=["email"],
+        example_values=["test.user@mattermost.com"],
+    )
+    first_name: str | None = OutputField(
+        column_name="First Name", example_values=["test"]
+    )
+    last_name: str | None = OutputField(
+        column_name="Last Name", example_values=["user"]
+    )
+    roles: str | None = OutputField(
+        column_name="Roles",
+        example_values=["system_user system_user_access_token system_post_all"],
+    )
     auth_data: str | None = None
     auth_service: str | None = None
     create_at: float | None = OutputField(example_values=[1535004134292])
     delete_at: float | None = OutputField(example_values=[0])
-    email: str | None = OutputField(
-        cef_types=["email"],
-        example_values=["test.user@mattermost.com"],
-    )
     email_verified: bool | None = None
     failed_attempts: float | None = OutputField(example_values=[0])
-    first_name: str | None = OutputField(example_values=["test"])
-    id: str | None = OutputField(
-        example_values=["pyx8sqe7zfn1dpmtd1s3qzqhfr"],
-    )
-    last_name: str | None = OutputField(example_values=["user"])
     last_password_update: float | None = OutputField(example_values=[0])
     last_picture_update: float | None = OutputField(example_values=[0])
     locale: str | None = OutputField(example_values=["en"])
@@ -86,15 +102,8 @@ class ListUsersOutput(LegacyCompatibleOutput):
     notify_props: str | None = None
     position: str | None = None
     props: str | None = None
-    roles: str | None = OutputField(
-        example_values=["system_user system_user_access_token system_post_all"],
-    )
     timezone: TimezoneOutput | None = None
     update_at: float | None = OutputField(example_values=[1535105717458])
-    username: str | None = OutputField(
-        cef_types=["user name"],
-        example_values=["test.user"],
-    )
     disable_welcome_email: bool | None = OutputField(example_values=[False])
 
 

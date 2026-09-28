@@ -57,7 +57,9 @@ class PropsOutput(LegacyCompatibleOutput):
     """Post properties returned by Mattermost."""
 
     addedUsername: str | None = OutputField(cef_types=["user name"])
-    username: str | None = OutputField(cef_types=["user name"])
+    username: str | None = OutputField(
+        cef_types=["user name"], column_name="User Name"
+    )
 
 
 class FilesOutput(LegacyCompatibleOutput):
@@ -90,23 +92,25 @@ class MetadataOutput(LegacyCompatibleOutput):
 class ListPostsOutput(LegacyCompatibleOutput):
     """A Mattermost post."""
 
-    channel_id: str | None = OutputField(cef_types=["mattermost channel"])
-    create_at: float | None = None
+    id: str | None = OutputField(column_name="Post ID")
+    message: str | None = OutputField(column_name="Message")
+    type: str | None = OutputField(column_name="Type")
+    user_id: str | None = OutputField(column_name="User ID")
+    props: PropsOutput | None = None
+    channel_id: str | None = OutputField(
+        column_name="Channel ID", cef_types=["mattermost channel"]
+    )
+    file_ids: str | None = OutputField(column_name="File ID")
+    create_at: float | None = OutputField(column_name="Created At")
+    edit_at: float | None = OutputField(column_name="Edited At")
+    update_at: float | None = OutputField(column_name="Updated At")
     delete_at: float | None = None
-    edit_at: float | None = None
-    file_ids: str | None = None
     hashtags: str | None = None
-    id: str | None = None
     is_pinned: bool | None = None
-    message: str | None = None
     original_id: str | None = None
     parent_id: str | None = None
     pending_post_id: str | None = None
-    props: PropsOutput | None = None
     root_id: str | None = None
-    type: str | None = None
-    update_at: float | None = None
-    user_id: str | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
     metadata: MetadataOutput | None = None

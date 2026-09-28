@@ -30,25 +30,33 @@ from ._helpers import (
 class ListTeamsOutput(LegacyCompatibleOutput):
     """A Mattermost team returned by the API."""
 
-    allow_open_invite: bool | None = None
+    id: str | None = OutputField(
+        column_name="Team ID",
+        cef_types=["mattermost team"],
+        example_values=["396afxwqzbgruxdkft7d8wo5qw"],
+    )
+    name: str | None = OutputField(
+        column_name="Team Name",
+        cef_types=["mattermost team"],
+        example_values=["test2-sample"],
+    )
+    display_name: str | None = OutputField(
+        column_name="Display Name", example_values=["test2 sample"]
+    )
+    email: str | None = OutputField(
+        column_name="Email", example_values=["sampleteam@mattermost.com"]
+    )
+    type: str | None = OutputField(column_name="Type", example_values=["O"])
+    invite_id: str | None = OutputField(
+        column_name="Invite ID", example_values=["xo3gnntbfbg5bnirx7i1uqujc"]
+    )
+    allow_open_invite: bool | None = OutputField(column_name="Allow Open Invite")
     allowed_domains: str | None = OutputField(example_values=["example.com"])
     company_name: str | None = None
     create_at: float | None = OutputField(example_values=[1534856540543])
     delete_at: float | None = OutputField(example_values=[0])
     description: str | None = None
-    display_name: str | None = OutputField(example_values=["test2 sample"])
-    email: str | None = OutputField(example_values=["sampleteam@mattermost.com"])
-    id: str | None = OutputField(
-        cef_types=["mattermost team"],
-        example_values=["396afxwqzbgruxdkft7d8wo5qw"],
-    )
-    invite_id: str | None = OutputField(example_values=["xo3gnntbfbg5bnirx7i1uqujc"])
-    name: str | None = OutputField(
-        cef_types=["mattermost team"],
-        example_values=["test2-sample"],
-    )
     scheme_id: str | None = None
-    type: str | None = OutputField(example_values=["O"])
     update_at: float | None = OutputField(example_values=[1534918716675])
     policy_id: str | None = None
     group_constrained: str | None = None

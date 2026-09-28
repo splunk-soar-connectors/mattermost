@@ -49,21 +49,23 @@ class SendMessageParams(Params):
 class SendMessageOutput(LegacyCompatibleOutput):
     """Mattermost post created by the send message action."""
 
-    channel_id: str | None = OutputField(cef_types=["mattermost channel"])
-    create_at: float | None = None
+    id: str | None = OutputField(column_name="Message ID")
+    message: str | None = OutputField(column_name="Message")
+    user_id: str | None = OutputField(column_name="User ID")
+    channel_id: str | None = OutputField(
+        column_name="Channel ID", cef_types=["mattermost channel"]
+    )
+    create_at: float | None = OutputField(column_name="Created At")
+    update_at: float | None = OutputField(column_name="Updated At")
     delete_at: float | None = None
     edit_at: float | None = None
     hashtags: str | None = None
-    id: str | None = None
     is_pinned: bool | None = None
-    message: str | None = None
     original_id: str | None = None
     parent_id: str | None = None
     pending_post_id: str | None = None
     root_id: str | None = None
     type: str | None = None
-    update_at: float | None = None
-    user_id: str | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
     participants: str | None = None

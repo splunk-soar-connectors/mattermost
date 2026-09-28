@@ -34,27 +34,36 @@ class ListChannelsParams(Params):
         description="ID or name of the team",
         primary=True,
         cef_types=["mattermost team"],
+        column_name="Team",
     )
 
 
 class ListChannelsOutput(LegacyCompatibleOutput):
     """A Mattermost public or private channel."""
 
-    create_at: float | None = OutputField(example_values=[1535370158299])
-    creator_id: str | None = None
-    delete_at: float | None = OutputField(example_values=[0])
-    display_name: str | None = OutputField(example_values=["Off-Topic"])
-    extra_update_at: float | None = OutputField(example_values=[0])
-    header: str | None = None
     id: str | None = OutputField(
+        column_name="Channel ID",
         cef_types=["mattermost channel"],
         example_values=["bm5dwbhditgxxxd5z4qkawgxha"],
     )
-    last_post_at: float | None = OutputField(example_values=[1535370232524])
     name: str | None = OutputField(
+        column_name="Channel Name",
         cef_types=["mattermost channel"],
         example_values=["off-topic"],
     )
+    display_name: str | None = OutputField(
+        column_name="Display Name", example_values=["Off-Topic"]
+    )
+    type: str | None = OutputField(column_name="Type", example_values=["O"])
+    total_msg_count: float | None = OutputField(
+        column_name="Total Message Count", example_values=[0]
+    )
+    create_at: float | None = OutputField(example_values=[1535370158299])
+    creator_id: str | None = None
+    delete_at: float | None = OutputField(example_values=[0])
+    extra_update_at: float | None = OutputField(example_values=[0])
+    header: str | None = None
+    last_post_at: float | None = OutputField(example_values=[1535370232524])
     props: str | None = None
     purpose: str | None = None
     scheme_id: str | None = None
@@ -62,8 +71,6 @@ class ListChannelsOutput(LegacyCompatibleOutput):
         cef_types=["mattermost team"],
         example_values=["suico8q897yyiraqdekxspfjma"],
     )
-    total_msg_count: float | None = OutputField(example_values=[0])
-    type: str | None = OutputField(example_values=["O"])
     update_at: float | None = OutputField(example_values=[1535370158299])
     total_msg_count_root: float | None = OutputField(example_values=[0])
     team_name: str | None = OutputField(example_values=["test-005"])

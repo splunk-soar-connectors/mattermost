@@ -8,10 +8,9 @@
 
 from soar_sdk.app import App
 
-from ..views import display_view
 from .list_channels import ListChannelsSummary, list_channels
 from .list_posts import ListPostsSummary, list_posts
-from .list_teams import ListTeamsOutput, ListTeamsSummary, list_teams
+from .list_teams import ListTeamsSummary, list_teams
 from .list_users import ListUsersSummary, list_users
 from .send_message import send_message
 from .upload_file import upload_file
@@ -25,7 +24,7 @@ def register_actions(app: App) -> App:
         verbose="Lists all users, optionally limited to a Mattermost team.",
         action_type="investigate",
         read_only=True,
-        view_handler=display_view,
+        render_as="table",
         summary_type=ListUsersSummary,
     )
     app.register_action(
@@ -33,14 +32,14 @@ def register_actions(app: App) -> App:
         description="Upload a vault file to a Mattermost channel.",
         verbose="Uploads a SOAR vault file and creates a Mattermost post containing it.",
         read_only=False,
-        view_handler=display_view,
+        render_as="table",
     )
     app.register_action(
         send_message,
         description="Send a message to a Mattermost channel.",
         verbose="Creates a new post in a Mattermost channel.",
         read_only=False,
-        view_handler=display_view,
+        render_as="table",
     )
     app.register_action(
         list_posts,
@@ -48,7 +47,7 @@ def register_actions(app: App) -> App:
         verbose="Lists channel posts, optionally constrained by a timestamp range.",
         action_type="investigate",
         read_only=True,
-        view_handler=display_view,
+        render_as="table",
         summary_type=ListPostsSummary,
     )
     app.register_action(
@@ -57,7 +56,7 @@ def register_actions(app: App) -> App:
         verbose="Lists channels visible to the configured Mattermost user.",
         action_type="investigate",
         read_only=True,
-        view_handler=display_view,
+        render_as="table",
         summary_type=ListChannelsSummary,
     )
     app.register_action(
@@ -67,7 +66,6 @@ def register_actions(app: App) -> App:
         action_type="investigate",
         read_only=True,
         render_as="table",
-        output_class=ListTeamsOutput,
         summary_type=ListTeamsSummary,
     )
     return app
