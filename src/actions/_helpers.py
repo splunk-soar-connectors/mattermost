@@ -218,7 +218,16 @@ def _get_posts(
             return results
         page += 1
 
-    raise ActionFailure("Mattermost post pagination exceeded the safety limit")
+    if len(results) >= MATTERMOST_MAX_POSTS:
+        raise ActionFailure(
+            "Mattermost post pagination exceeded the maximum post limit "
+            f"({MATTERMOST_MAX_POSTS}); collected {len(results)} posts"
+        )
+
+    raise ActionFailure(
+        "Mattermost post pagination exceeded the maximum page limit "
+        f"({MATTERMOST_MAX_POST_PAGES}); fetched {page} pages"
+    )
 
 
 def _process_posts(

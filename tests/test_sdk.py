@@ -122,6 +122,34 @@ def test_get_posts_rejects_a_repeated_page() -> None:
         _get_posts("/channels/channel-id/posts", _asset())
 
 
+def test_get_posts_reports_the_post_limit() -> None:
+    response = httpx.Response(
+        200,
+        json={"order": ["post-1"], "posts": {"post-1": {"id": "post-1"}}},
+    )
+
+    with (
+        patch("src.actions._helpers.call_mattermost", return_value=response),
+        patch("src.actions._helpers.MATTERMOST_MAX_POSTS", 1),
+        pytest.raises(ActionFailure, match=r"maximum post limit \(1\)"),
+    ):
+        _get_posts("/channels/channel-id/posts", _asset())
+
+
+def test_get_posts_reports_the_page_limit() -> None:
+    response = httpx.Response(
+        200,
+        json={"order": ["post-1"], "posts": {"post-1": {"id": "post-1"}}},
+    )
+
+    with (
+        patch("src.actions._helpers.call_mattermost", return_value=response),
+        patch("src.actions._helpers.MATTERMOST_MAX_POST_PAGES", 1),
+        pytest.raises(ActionFailure, match=r"maximum page limit \(1\)"),
+    ):
+        _get_posts("/channels/channel-id/posts", _asset())
+
+
 def test_process_posts_stops_at_end_time() -> None:
     posts = [
         {"id": "new", "create_at": 300},
