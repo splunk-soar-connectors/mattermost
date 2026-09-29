@@ -519,7 +519,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.27.0,<0.29" },
     { name = "pytest-cov", marker = "extra == 'soarapps-test'", specifier = ">=4.0.0,<7" },
     { name = "pytest-xdist", marker = "extra == 'soarapps-test'", specifier = ">=3.0.0,<4" },
-    { name = "splunk-soar-sdk", specifier = "==3.26.2" },
+    { name = "splunk-soar-sdk", specifier = ">=3.26.2" },
 ]
 provides-extras = ["soarapps-test"]
 
