@@ -97,7 +97,7 @@ class UploadFileOutput(LegacyCompatibleOutput):
     channel_id: str | None = OutputField(
         column_name="Channel ID", cef_types=["mattermost channel"]
     )
-    file_ids: str | None = OutputField(column_name="File ID")
+    file_ids: list[str] | None = OutputField(column_name="File ID")
     create_at: float | None = OutputField(column_name="Created At")
     update_at: float | None = OutputField(column_name="Updated At")
     delete_at: float | None = None
@@ -112,7 +112,7 @@ class UploadFileOutput(LegacyCompatibleOutput):
     metadata: MetadataOutput | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
-    participants: str | None = None
+    participants: list[str] | None = None
 
 
 def upload_file(

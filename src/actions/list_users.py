@@ -30,7 +30,7 @@ from ._helpers import (
 
 
 def _normalize_user_output(user: dict[str, Any]) -> dict[str, Any]:
-    """Normalize legacy string fields, including nested timezone values."""
+    """Copy user output without changing the API response value types."""
     output = _stringify_legacy_fields(user, {"auth_data", "notify_props", "props"})
     timezone = output.get("timezone")
     if isinstance(timezone, dict):
@@ -58,7 +58,7 @@ class TimezoneOutput(LegacyCompatibleOutput):
 
     automaticTimezone: str | None = None
     manualTimezone: str | None = None
-    useAutomaticTimezone: str | None = OutputField(example_values=["true"])
+    useAutomaticTimezone: bool | None = OutputField(example_values=[True, False])
 
 
 class ListUsersOutput(LegacyCompatibleOutput):
@@ -99,9 +99,9 @@ class ListUsersOutput(LegacyCompatibleOutput):
     locale: str | None = OutputField(example_values=["en"])
     mfa_active: bool | None = None
     nickname: str | None = OutputField(example_values=["test"])
-    notify_props: str | None = None
+    notify_props: LegacyCompatibleOutput | None = None
     position: str | None = None
-    props: str | None = None
+    props: LegacyCompatibleOutput | None = None
     timezone: TimezoneOutput | None = None
     update_at: float | None = OutputField(example_values=[1535105717458])
     disable_welcome_email: bool | None = OutputField(example_values=[False])

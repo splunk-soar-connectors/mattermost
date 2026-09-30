@@ -67,15 +67,10 @@ def _item_key(item: Any) -> str:
 
 
 def _stringify_legacy_fields(
-    payload: dict[str, Any], field_names: set[str]
+    payload: dict[str, Any], _field_names: set[str]
 ) -> dict[str, Any]:
-    """Preserve legacy string output fields for structured API values."""
-    output = dict(payload)
-    for field_name in field_names:
-        value = output.get(field_name)
-        if value is not None and not isinstance(value, str):
-            output[field_name] = json.dumps(value, sort_keys=True, default=str)
-    return output
+    """Return API fields without changing their original response types."""
+    return dict(payload)
 
 
 def _paginate_all(
@@ -244,9 +239,8 @@ def _process_posts(
 
     if not start_time:
         posts = _get_posts(endpoint, asset, {"since": end_time})
-        if not posts:
-            return []
-        return _get_posts(endpoint, asset, {"before": posts[-1]["id"]})
+        params = {"before": posts[-1]["id"]} if posts else {}
+        return _get_posts(endpoint, asset, params)
 
     posts = _get_posts(endpoint, asset, {"since": start_time})
     result = []

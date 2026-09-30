@@ -68,7 +68,7 @@ class SendMessageOutput(LegacyCompatibleOutput):
     type: str | None = None
     reply_count: float | None = None
     last_reply_at: float | None = None
-    participants: str | None = None
+    participants: list[str] | None = None
 
 
 def send_message(

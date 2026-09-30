@@ -64,7 +64,7 @@ class ListChannelsOutput(LegacyCompatibleOutput):
     extra_update_at: float | None = OutputField(example_values=[0])
     header: str | None = None
     last_post_at: float | None = OutputField(example_values=[1535370232524])
-    props: str | None = None
+    props: LegacyCompatibleOutput | None = None
     purpose: str | None = None
     scheme_id: str | None = None
     team_id: str | None = OutputField(
@@ -76,9 +76,9 @@ class ListChannelsOutput(LegacyCompatibleOutput):
     team_name: str | None = OutputField(example_values=["test-005"])
     team_update_at: float | None = OutputField(example_values=[1637228653671])
     team_display_name: str | None = OutputField(example_values=["test-005"])
-    shared: str | None = None
+    shared: bool | None = None
     policy_id: str | None = None
-    group_constrained: str | None = None
+    group_constrained: bool | None = None
 
 
 class ListChannelsSummary(ActionOutput):

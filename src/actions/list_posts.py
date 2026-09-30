@@ -19,7 +19,11 @@ from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ..consts import MATTERMOST_INVALID_TIME_RANGE, MATTERMOST_LIST_POSTS_ENDPOINT
+from ..consts import (
+    MATTERMOST_INVALID_TIME_RANGE,
+    MATTERMOST_LIST_POSTS_ENDPOINT,
+    MATTERMOST_NO_POSTS_FOUND,
+)
 from ._helpers import (
     LegacyCompatibleOutput,
     _process_posts,
@@ -100,7 +104,7 @@ class ListPostsOutput(LegacyCompatibleOutput):
     channel_id: str | None = OutputField(
         column_name="Channel ID", cef_types=["mattermost channel"]
     )
-    file_ids: str | None = OutputField(column_name="File ID")
+    file_ids: list[str] | None = OutputField(column_name="File ID")
     create_at: float | None = OutputField(column_name="Created At")
     edit_at: float | None = OutputField(column_name="Edited At")
     update_at: float | None = OutputField(column_name="Updated At")
@@ -114,7 +118,7 @@ class ListPostsOutput(LegacyCompatibleOutput):
     reply_count: float | None = None
     last_reply_at: float | None = None
     metadata: MetadataOutput | None = None
-    participants: str | None = None
+    participants: list[str] | None = None
 
 
 class ListPostsSummary(ActionOutput):
@@ -144,5 +148,7 @@ def list_posts(
         )
         for post in posts
     ]
+    if not output:
+        soar.set_message(MATTERMOST_NO_POSTS_FOUND)
     soar.set_summary(ListPostsSummary(total_posts=len(output)))
     return output

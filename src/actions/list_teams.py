@@ -44,14 +44,18 @@ class ListTeamsOutput(LegacyCompatibleOutput):
         column_name="Display Name", example_values=["test2 sample"]
     )
     email: str | None = OutputField(
-        column_name="Email", example_values=["sampleteam@mattermost.com"]
+        column_name="Email",
+        cef_types=["email"],
+        example_values=["sampleteam@mattermost.com"],
     )
     type: str | None = OutputField(column_name="Type", example_values=["O"])
     invite_id: str | None = OutputField(
         column_name="Invite ID", example_values=["xo3gnntbfbg5bnirx7i1uqujc"]
     )
     allow_open_invite: bool | None = OutputField(column_name="Allow Open Invite")
-    allowed_domains: str | None = OutputField(example_values=["example.com"])
+    allowed_domains: str | None = OutputField(
+        cef_types=["domain"], example_values=["example.com"]
+    )
     company_name: str | None = None
     create_at: float | None = OutputField(example_values=[1534856540543])
     delete_at: float | None = OutputField(example_values=[0])
@@ -59,7 +63,7 @@ class ListTeamsOutput(LegacyCompatibleOutput):
     scheme_id: str | None = None
     update_at: float | None = OutputField(example_values=[1534918716675])
     policy_id: str | None = None
-    group_constrained: str | None = None
+    group_constrained: bool | None = None
 
 
 class ListTeamsSummary(ActionOutput):

@@ -17,8 +17,10 @@ from src.actions._helpers import (
     _process_posts,
     _validate_and_convert_time,
 )
+from src.actions.list_posts import ListPostsOutput, ListPostsParams
 from src.actions.list_teams import ListTeamsOutput, _normalize_team_output
 from src.actions.list_users import _normalize_user_output
+from src.app import app
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
 
@@ -44,7 +46,7 @@ def test_parse_json_response_raises_action_failure_for_api_error() -> None:
         parse_json_response(response)
 
 
-def test_normalize_user_output_stringifies_nested_timezone_flag() -> None:
+def test_normalize_user_output_preserves_nested_timezone_flag() -> None:
     user = {
         "timezone": {
             "automaticTimezone": "UTC",
@@ -55,23 +57,30 @@ def test_normalize_user_output_stringifies_nested_timezone_flag() -> None:
 
     normalized = _normalize_user_output(user)
 
-    assert normalized["timezone"]["useAutomaticTimezone"] == "true"
+    assert normalized["timezone"]["useAutomaticTimezone"] is True
 
 
 def test_list_teams_output_preserves_legacy_fields_and_extra_values() -> None:
     team = {
         "id": "team-id",
         "name": "team-name",
-        "allowed_domains": ["example.com"],
+        "allowed_domains": "example.com",
         "group_constrained": False,
         "legacy_extra": {"key": "value"},
     }
 
     output = ListTeamsOutput(**_normalize_team_output(team))
 
-    assert output.model_dump()["allowed_domains"] == '["example.com"]'
-    assert output.model_dump()["group_constrained"] == "false"
+    assert output.model_dump()["allowed_domains"] == "example.com"
+    assert output.model_dump()["group_constrained"] is False
     assert output.model_dump()["legacy_extra"] == {"key": "value"}
+
+
+def test_output_model_preserves_structured_post_values() -> None:
+    output = ListPostsOutput(file_ids=["file-id"], participants=["user-id"])
+
+    assert output.model_dump()["file_ids"] == ["file-id"]
+    assert output.model_dump()["participants"] == ["user-id"]
 
 
 def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:
@@ -160,3 +169,36 @@ def test_process_posts_stops_at_end_time() -> None:
         result = _process_posts("/posts", _asset(), 50, 200)
 
     assert result == [{"id": "old", "create_at": 100}]
+
+
+def test_process_posts_preserves_legacy_end_time_fallback() -> None:
+    older_posts = [{"id": "old", "create_at": 100}]
+
+    with patch(
+        "src.actions._helpers._get_posts", side_effect=[[], older_posts]
+    ) as get_posts:
+        result = _process_posts("/posts", _asset(), None, 200)
+
+    assert result == older_posts
+    assert get_posts.call_args_list[0].args[2] == {"since": 200}
+    assert get_posts.call_args_list[1].args[2] == {}
+
+
+def test_registered_list_posts_action_preserves_empty_result_message() -> None:
+    soar = Mock()
+    action = app.get_actions()["list_posts"]
+
+    with (
+        patch("src.actions.list_posts._resolve_team_id", return_value="team-id"),
+        patch("src.actions.list_posts._resolve_channel_id", return_value="channel-id"),
+        patch("src.actions.list_posts._process_posts", return_value=[]),
+    ):
+        result = action(
+            ListPostsParams(team="team", channel="channel"),
+            soar=soar,
+            asset=_asset(),
+        )
+
+    assert action.meta.render_as == "table"
+    assert result is True
+    soar.set_message.assert_called_once_with("No posts found")
