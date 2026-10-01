@@ -1,5 +1,3 @@
-# File: __init__.py
-#
 # Copyright (c) 2018-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
