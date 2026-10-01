@@ -52,7 +52,10 @@ class UploadFileParams(Params):
         cef_types=["mattermost channel"],
     )
     vault_id: str = Param(
-        required=True, description="Vault ID", cef_types=["vault id", "sha1"]
+        required=True,
+        description="Vault ID",
+        primary=True,
+        cef_types=["vault id", "sha1"],
     )
     message: str | None = Param(
         required=False,
