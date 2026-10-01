@@ -88,7 +88,7 @@ def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:
         server_url="https://mattermost.example.com",
         personal_token="expired-token",
         client_id="client-id",
-        client_secret="client-secret",
+        client_secret="client-secret",  # pragma: allowlist secret
     )
     pat_response = httpx.Response(401)
     oauth_response = httpx.Response(200, json={"id": "user-id"})
