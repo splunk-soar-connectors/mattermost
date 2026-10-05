@@ -37,16 +37,17 @@ def _request_with_auth(
     *,
     auth: httpx.Auth,
     params: dict[str, Any] | None,
-    json: dict[str, Any] | None,
+    json: Any | None,
     data: dict[str, Any] | None,
     files: dict[str, Any] | None,
     headers: dict[str, str],
     timeout: float,
+    verify_ssl: bool,
 ) -> httpx.Response:
     try:
         with httpx.Client(
             timeout=timeout,
-            verify=asset.verify_server_cert,
+            verify=verify_ssl,
         ) as client:
             return client.request(
                 method=method,
@@ -68,15 +69,23 @@ def call_mattermost(
     asset: Asset,
     *,
     params: dict[str, Any] | None = None,
-    json: dict[str, Any] | None = None,
+    json: Any | None = None,
     data: dict[str, Any] | None = None,
     files: dict[str, Any] | None = None,
     timeout: float = 30.0,
+    headers: dict[str, str] | None = None,
+    query_string: str | None = None,
+    verify_ssl: bool | None = None,
 ) -> httpx.Response:
     """Send one authenticated request, preserving legacy auth fallback."""
     base_url = MATTERMOST_API_BASE_URL.format(server_url=asset.server_url.rstrip("/"))
     url = f"{base_url}{endpoint}"
-    headers = DEFAULT_HEADERS
+    if query_string:
+        separator = "&" if "?" in url else "?"
+        url = f"{url}{separator}{query_string.lstrip('?')}"
+    request_headers = {**DEFAULT_HEADERS, **(headers or {})}
+    request_verify_ssl = asset.verify_server_cert if verify_ssl is None else verify_ssl
+    request_timeout = timeout or 30.0
 
     auth_candidates: list[httpx.Auth] = []
     if asset.personal_token:
@@ -98,8 +107,9 @@ def call_mattermost(
         json=json,
         data=data,
         files=files,
-        headers=headers,
-        timeout=timeout,
+        headers=request_headers,
+        timeout=request_timeout,
+        verify_ssl=request_verify_ssl,
     )
     if response.status_code != 401 or len(auth_candidates) == 1:
         return response
@@ -113,8 +123,9 @@ def call_mattermost(
         json=json,
         data=data,
         files=files,
-        headers=headers,
-        timeout=timeout,
+        headers=request_headers,
+        timeout=request_timeout,
+        verify_ssl=request_verify_ssl,
     )
 
 

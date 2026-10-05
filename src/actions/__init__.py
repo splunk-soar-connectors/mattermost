@@ -12,6 +12,7 @@ from .list_channels import ListChannelsSummary, list_channels
 from .list_posts import ListPostsSummary, list_posts
 from .list_teams import ListTeamsSummary, list_teams
 from .list_users import ListUsersSummary, list_users
+from .make_request import make_request
 from .send_message import send_message
 from .upload_file import upload_file
 
@@ -68,6 +69,7 @@ def register_actions(app: App) -> App:
         render_as="table",
         summary_type=ListTeamsSummary,
     )
+    app.make_request()(make_request)
     return app
 
 

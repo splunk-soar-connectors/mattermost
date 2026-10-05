@@ -15,11 +15,13 @@ from soar_sdk.exceptions import ActionFailure
 from src.actions._helpers import (
     _get_posts,
     _process_posts,
+    _resolve_team_id,
     _validate_and_convert_time,
 )
 from src.actions.list_posts import ListPostsOutput, ListPostsParams
 from src.actions.list_teams import ListTeamsOutput, _normalize_team_output
 from src.actions.list_users import _normalize_user_output
+from src.actions.make_request import MattermostMakeRequestParams, make_request
 from src.app import app
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
@@ -108,6 +110,32 @@ def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:
     )
 
 
+def test_make_request_is_registered_and_passes_request_parameters() -> None:
+    response = httpx.Response(200, text='{"id":"user-id"}')
+    with patch(
+        "src.actions.make_request.call_mattermost", return_value=response
+    ) as call:
+        output = make_request(
+            MattermostMakeRequestParams(
+                http_method="GET",
+                endpoint="users/me",
+                headers='{"X-Test":"value"}',
+                query_parameters="?per_page=1",
+                timeout=10,
+                verify_ssl=True,
+            ),
+            _asset(),
+        )
+
+    assert "make_request" in app.get_actions()
+    assert output.status_code == 200
+    assert output.response_body == '{"id":"user-id"}'
+    assert call.call_args.args[:2] == ("GET", "/users/me")
+    assert call.call_args.kwargs["headers"] == {"X-Test": "value"}
+    assert call.call_args.kwargs["query_string"] == "per_page=1"
+    assert call.call_args.kwargs["verify_ssl"] is True
+
+
 def test_validate_and_convert_time_accepts_date_and_iso_timestamp() -> None:
     assert _validate_and_convert_time("1970-01-01") == 0
     assert _validate_and_convert_time("1970-01-01T00:00:01Z") == 1000
@@ -157,6 +185,18 @@ def test_get_posts_reports_the_page_limit() -> None:
         pytest.raises(ActionFailure, match="safe page limit"),
     ):
         _get_posts("/channels/channel-id/posts", _asset())
+
+
+def test_resolve_team_id_stops_after_matching_page() -> None:
+    response = httpx.Response(
+        200,
+        json=[{"id": "team-id", "name": "target-team"}],
+    )
+
+    with patch("src.actions._helpers.call_mattermost", return_value=response) as call:
+        assert _resolve_team_id("target-team", _asset()) == "team-id"
+
+    call.assert_called_once_with("GET", "/teams", _asset(), params={"page": 0})
 
 
 def test_process_posts_stops_at_end_time() -> None:

@@ -104,12 +104,35 @@ def _paginate_all(
 def _resolve_team_id(team: str, asset: Asset) -> str:
     """Resolve a Mattermost team name or ID to its ID."""
     team_value = team.strip().lower()
-    for each_team in _paginate_all(MATTERMOST_TEAMS_ENDPOINT, asset):
-        if team_value in (
-            str(each_team.get("id", "")).lower(),
-            str(each_team.get("name", "")).lower(),
-        ):
-            return each_team["id"]
+    page = 0
+    seen_items: set[str] = set()
+
+    while page < MATTERMOST_MAX_GENERIC_PAGES:
+        payload = _check_response(
+            call_mattermost(
+                "GET", MATTERMOST_TEAMS_ENDPOINT, asset, params={"page": page}
+            )
+        )
+        if not payload:
+            break
+        if not isinstance(payload, list):
+            raise ActionFailure("Mattermost returned an unexpected paginated response")
+
+        for each_team in payload:
+            if team_value in (
+                str(each_team.get("id", "")).lower(),
+                str(each_team.get("name", "")).lower(),
+            ):
+                return each_team["id"]
+
+        new_items = [item for item in payload if _item_key(item) not in seen_items]
+        if not new_items:
+            raise ActionFailure("Mattermost pagination stopped making progress")
+        seen_items.update(_item_key(item) for item in new_items)
+        page += 1
+
+    if page >= MATTERMOST_MAX_GENERIC_PAGES:
+        raise ActionFailure("Mattermost pagination exceeded the safety limit")
     raise ActionFailure(MATTERMOST_TEAM_NOT_FOUND_MSG)
 
 

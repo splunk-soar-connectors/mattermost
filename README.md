@@ -28,7 +28,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [send message](#action-send-message) - Send a message to a Mattermost channel. <br>
 [list posts](#action-list-posts) - List posts from a Mattermost channel. <br>
 [list channels](#action-list-channels) - List public and private Mattermost channels for a team. <br>
-[list teams](#action-list-teams) - List Mattermost teams.
+[list teams](#action-list-teams) - List Mattermost teams. <br>
+[make request](#action-make-request) - Send an arbitrary authenticated request to a Mattermost API endpoint.
 
 ## action: 'test connectivity'
 
@@ -367,6 +368,45 @@ action_result.data.\*.update_at | numeric | | 1534918716675 |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | boolean | | True False |
 action_result.summary.total_teams | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'make request'
+
+Send an arbitrary authenticated request to a Mattermost API endpoint.
+
+Type: **generic** <br>
+Read only: **False**
+
+'make request' action for the app. Used to handle arbitrary HTTP requests with the app's asset
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**http_method** | required | The HTTP method to use for the request. | string | |
+**endpoint** | required | Mattermost API endpoint relative to /api/v4. For example, 'users/me' or 'teams'. Do not include the server URL. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
+**timeout** | optional | The timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default true. | boolean | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.http_method | string | | |
+action_result.parameter.endpoint | string | | |
+action_result.parameter.headers | string | | |
+action_result.parameter.query_parameters | string | | |
+action_result.parameter.body | string | | |
+action_result.parameter.timeout | numeric | | |
+action_result.parameter.verify_ssl | boolean | | |
+action_result.data.\*.status_code | numeric | | 200 404 500 |
+action_result.data.\*.response_body | string | | {"key": "value"} |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
