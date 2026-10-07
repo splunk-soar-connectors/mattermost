@@ -118,5 +118,6 @@ def list_channels(
         )
         for channel in channels
     ]
+    soar.set_message(f"Total channels: {len(output)}")
     soar.set_summary(ListChannelsSummary(total_channels=len(output)))
     return output

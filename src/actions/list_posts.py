@@ -146,5 +146,7 @@ def list_posts(
     ]
     if not output:
         soar.set_message(MATTERMOST_NO_POSTS_FOUND)
+    else:
+        soar.set_message(f"Total posts: {len(output)}")
     soar.set_summary(ListPostsSummary(total_posts=len(output)))
     return output

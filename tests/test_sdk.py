@@ -18,9 +18,10 @@ from src.actions._helpers import (
     _resolve_team_id,
     _validate_and_convert_time,
 )
-from src.actions.list_posts import ListPostsOutput, ListPostsParams
-from src.actions.list_teams import ListTeamsOutput, _normalize_team_output
-from src.actions.list_users import _normalize_user_output
+from src.actions.list_channels import ListChannelsParams, list_channels
+from src.actions.list_posts import ListPostsOutput, ListPostsParams, list_posts
+from src.actions.list_teams import ListTeamsOutput, _normalize_team_output, list_teams
+from src.actions.list_users import ListUsersParams, _normalize_user_output, list_users
 from src.actions.make_request import MattermostMakeRequestParams, make_request
 from src.app import app
 from src.asset import Asset
@@ -242,3 +243,43 @@ def test_registered_list_posts_action_preserves_empty_result_message() -> None:
     assert action.meta.render_as == "table"
     assert result is True
     soar.set_message.assert_called_once_with("No posts found")
+
+
+def test_list_actions_preserve_legacy_count_messages() -> None:
+    soar = Mock()
+    asset = _asset()
+
+    with patch(
+        "src.actions.list_users._paginate_all",
+        return_value=[{"id": "user-id"}],
+    ):
+        list_users(ListUsersParams(), soar, asset)
+    soar.set_message.assert_called_with("Total users: 1")
+
+    with (
+        patch("src.actions.list_channels._resolve_team_id", return_value="team-id"),
+        patch(
+            "src.actions.list_channels._list_all_channels",
+            return_value=[{"id": "channel-id"}],
+        ),
+    ):
+        list_channels(ListChannelsParams(team="team"), soar, asset)
+    soar.set_message.assert_called_with("Total channels: 1")
+
+    with patch(
+        "src.actions.list_teams._list_all_teams",
+        return_value=[{"id": "team-id"}],
+    ):
+        list_teams(None, soar, asset)
+    soar.set_message.assert_called_with("Total teams: 1")
+
+    with (
+        patch("src.actions.list_posts._resolve_team_id", return_value="team-id"),
+        patch("src.actions.list_posts._resolve_channel_id", return_value="channel-id"),
+        patch(
+            "src.actions.list_posts._process_posts",
+            return_value=[{"id": "post-id"}],
+        ),
+    ):
+        list_posts(ListPostsParams(team="team", channel="channel"), soar, asset)
+    soar.set_message.assert_called_with("Total posts: 1")

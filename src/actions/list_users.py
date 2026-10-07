@@ -122,5 +122,6 @@ def list_users(
         extra_params["in_team"] = _resolve_team_id(params.team, asset)
     users = _paginate_all(MATTERMOST_USERS_ENDPOINT, asset, extra_params)
     output = [ListUsersOutput(**_normalize_user_output(user)) for user in users]
+    soar.set_message(f"Total users: {len(output)}")
     soar.set_summary(ListUsersSummary(total_users=len(output)))
     return output

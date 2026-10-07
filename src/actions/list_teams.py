@@ -97,5 +97,6 @@ def list_teams(params: Params, soar: SOARClient, asset: Asset) -> list[ListTeams
     """List all Mattermost teams visible to the current user."""
     teams = _list_all_teams(asset)
     output = [ListTeamsOutput(**_normalize_team_output(team)) for team in teams]
+    soar.set_message(f"Total teams: {len(output)}")
     soar.set_summary(ListTeamsSummary(total_teams=len(output)))
     return output
