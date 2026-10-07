@@ -66,8 +66,8 @@ class SendMessageOutput(LegacyCompatibleOutput):
     pending_post_id: str | None = None
     root_id: str | None = None
     type: str | None = None
-    reply_count: float | None = None
-    last_reply_at: float | None = None
+    reply_count: float | None = OutputField(example_values=[0])
+    last_reply_at: float | None = OutputField(example_values=[0])
     participants: list[str] | None = None
 
 

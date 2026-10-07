@@ -16,11 +16,12 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterator
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 from pydantic import ConfigDict
-from soar_sdk.action_results import ActionOutput
+from soar_sdk.action_results import ActionOutput, OutputFieldSpecification
 from soar_sdk.exceptions import ActionFailure
 
 from ..client import call_mattermost, parse_json_response
@@ -54,6 +55,36 @@ class LegacyCompatibleOutput(ActionOutput):
     """Preserve fields returned by the legacy connector but not yet modeled."""
 
     model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+
+class LegacyStringSummary(ActionOutput):
+    """Represent the legacy scalar ``action_result.summary`` datapath."""
+
+    value: str = ""
+
+    def model_dump(self, *args: Any, **kwargs: Any) -> str:
+        """Serialize the compatibility summary as the legacy string value."""
+        return self.value
+
+    @classmethod
+    def _to_json_schema(
+        cls,
+        parent_datapath: str = "action_result.summary",
+        column_order_counter: Any | None = None,
+    ) -> Iterator[OutputFieldSpecification]:
+        """Declare the legacy scalar summary datapath in the app manifest."""
+        yield {"data_path": parent_datapath, "data_type": "string"}
+
+
+def _legacy_string_fields(
+    parent_datapath: str, field_names: tuple[str, ...]
+) -> Iterator[OutputFieldSpecification]:
+    """Declare legacy string datapaths while preserving raw runtime values."""
+    for field_name in field_names:
+        yield {
+            "data_path": f"{parent_datapath}.{field_name}",
+            "data_type": "string",
+        }
 
 
 def _check_response(response) -> Any:

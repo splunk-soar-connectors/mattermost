@@ -23,6 +23,7 @@ from ..asset import Asset
 from ..consts import MATTERMOST_USERS_ENDPOINT
 from ._helpers import (
     LegacyCompatibleOutput,
+    _legacy_string_fields,
     _paginate_all,
     _resolve_team_id,
     _stringify_legacy_fields,
@@ -63,6 +64,14 @@ class TimezoneOutput(LegacyCompatibleOutput):
 
 class ListUsersOutput(LegacyCompatibleOutput):
     """A Mattermost user returned by the API."""
+
+    @classmethod
+    def _to_json_schema(
+        cls, parent_datapath="action_result.data.*", column_order_counter=None
+    ):
+        """Keep legacy string datapaths for raw Mattermost property objects."""
+        yield from super()._to_json_schema(parent_datapath, column_order_counter)
+        yield from _legacy_string_fields(parent_datapath, ("notify_props", "props"))
 
     id: str | None = OutputField(
         column_name="User ID",

@@ -41,6 +41,17 @@ class ListChannelsParams(Params):
 class ListChannelsOutput(LegacyCompatibleOutput):
     """A Mattermost public or private channel."""
 
+    @classmethod
+    def _to_json_schema(
+        cls, parent_datapath="action_result.data.*", column_order_counter=None
+    ):
+        """Keep the legacy string contract for the unstructured props field."""
+        yield from super()._to_json_schema(parent_datapath, column_order_counter)
+        yield {
+            "data_path": f"{parent_datapath}.props",
+            "data_type": "string",
+        }
+
     id: str | None = OutputField(
         column_name="Channel ID",
         cef_types=["mattermost channel"],

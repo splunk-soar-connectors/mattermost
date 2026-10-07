@@ -98,6 +98,8 @@ action_result.data.\*.timezone.manualTimezone | string | | |
 action_result.data.\*.timezone.useAutomaticTimezone | boolean | | True False |
 action_result.data.\*.update_at | numeric | | 1535105717458 |
 action_result.data.\*.disable_welcome_email | boolean | | True False |
+action_result.data.\*.notify_props | string | | |
+action_result.data.\*.props | string | | |
 action_result.summary.total_users | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
@@ -146,25 +148,26 @@ action_result.data.\*.parent_id | string | | |
 action_result.data.\*.pending_post_id | string | | |
 action_result.data.\*.root_id | string | | |
 action_result.data.\*.type | string | | |
-action_result.data.\*.metadata.files.\*.id | string | | |
-action_result.data.\*.metadata.files.\*.name | string | | |
-action_result.data.\*.metadata.files.\*.size | numeric | | |
-action_result.data.\*.metadata.files.\*.width | numeric | | |
-action_result.data.\*.metadata.files.\*.height | numeric | | |
-action_result.data.\*.metadata.files.\*.post_id | string | | |
-action_result.data.\*.metadata.files.\*.user_id | string | | |
-action_result.data.\*.metadata.files.\*.create_at | numeric | | |
-action_result.data.\*.metadata.files.\*.delete_at | numeric | | |
-action_result.data.\*.metadata.files.\*.extension | string | | |
-action_result.data.\*.metadata.files.\*.mime_type | string | | |
-action_result.data.\*.metadata.files.\*.update_at | numeric | | |
-action_result.data.\*.metadata.files.\*.channel_id | string | | |
+action_result.data.\*.metadata.files.\*.id | string | | 8fgytaxpojn15dchqonjb15enw |
+action_result.data.\*.metadata.files.\*.name | string | | test.png |
+action_result.data.\*.metadata.files.\*.size | numeric | | 211962 |
+action_result.data.\*.metadata.files.\*.width | numeric | | 2230 |
+action_result.data.\*.metadata.files.\*.height | numeric | | 1220 |
+action_result.data.\*.metadata.files.\*.post_id | string | | k44mtz9ippru7eipruqnthsc9o |
+action_result.data.\*.metadata.files.\*.user_id | string | | 8bfk4fj8gpyofq7qx85tsz97rh |
+action_result.data.\*.metadata.files.\*.create_at | numeric | | 1636961337700 |
+action_result.data.\*.metadata.files.\*.delete_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.extension | string | | png |
+action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
+action_result.data.\*.metadata.files.\*.update_at | numeric | | 1636961337700 |
+action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3qw |
 action_result.data.\*.metadata.files.\*.mini_preview | string | | |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants.\* | string | | |
+action_result.summary | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -209,9 +212,10 @@ action_result.data.\*.parent_id | string | | |
 action_result.data.\*.pending_post_id | string | | |
 action_result.data.\*.root_id | string | | |
 action_result.data.\*.type | string | | |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants.\* | string | | |
+action_result.summary | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -261,21 +265,21 @@ action_result.data.\*.original_id | string | | |
 action_result.data.\*.parent_id | string | | |
 action_result.data.\*.pending_post_id | string | | |
 action_result.data.\*.root_id | string | | |
-action_result.data.\*.reply_count | numeric | | |
-action_result.data.\*.last_reply_at | numeric | | |
-action_result.data.\*.metadata.files.\*.id | string | | |
-action_result.data.\*.metadata.files.\*.name | string | | |
-action_result.data.\*.metadata.files.\*.size | numeric | | |
-action_result.data.\*.metadata.files.\*.width | numeric | | |
-action_result.data.\*.metadata.files.\*.height | numeric | | |
-action_result.data.\*.metadata.files.\*.post_id | string | | |
-action_result.data.\*.metadata.files.\*.user_id | string | | |
-action_result.data.\*.metadata.files.\*.create_at | numeric | | |
-action_result.data.\*.metadata.files.\*.delete_at | numeric | | |
-action_result.data.\*.metadata.files.\*.extension | string | | |
-action_result.data.\*.metadata.files.\*.mime_type | string | | |
-action_result.data.\*.metadata.files.\*.update_at | numeric | | |
-action_result.data.\*.metadata.files.\*.channel_id | string | | |
+action_result.data.\*.reply_count | numeric | | 0 |
+action_result.data.\*.last_reply_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.id | string | | 1nrp7izie7gdz81mwb99azed4w |
+action_result.data.\*.metadata.files.\*.name | string | | test.png |
+action_result.data.\*.metadata.files.\*.size | numeric | | 211962 |
+action_result.data.\*.metadata.files.\*.width | numeric | | 2230 |
+action_result.data.\*.metadata.files.\*.height | numeric | | 1220 |
+action_result.data.\*.metadata.files.\*.post_id | string | | zn6cs7a4b7y6bmxy4yk4j1dz3y |
+action_result.data.\*.metadata.files.\*.user_id | string | | 8bfk4fj8gpyofq7qx85tsz97rh |
+action_result.data.\*.metadata.files.\*.create_at | numeric | | 1637228792269 |
+action_result.data.\*.metadata.files.\*.delete_at | numeric | | 0 |
+action_result.data.\*.metadata.files.\*.extension | string | | png |
+action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
+action_result.data.\*.metadata.files.\*.update_at | numeric | | 1637228792269 |
+action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3wy |
 action_result.data.\*.metadata.files.\*.mini_preview | string | | |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
@@ -328,6 +332,7 @@ action_result.data.\*.team_display_name | string | | test-005 |
 action_result.data.\*.shared | boolean | | True False |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | boolean | | True False |
+action_result.data.\*.props | string | | |
 action_result.summary.total_channels | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |

@@ -67,19 +67,19 @@ class PropsOutput(LegacyCompatibleOutput):
 class FilesOutput(LegacyCompatibleOutput):
     """File metadata embedded in a Mattermost post."""
 
-    id: str | None = None
-    name: str | None = None
-    size: float | None = None
-    width: float | None = None
-    height: float | None = None
-    post_id: str | None = None
-    user_id: str | None = None
-    create_at: float | None = None
-    delete_at: float | None = None
-    extension: str | None = None
-    mime_type: str | None = None
-    update_at: float | None = None
-    channel_id: str | None = None
+    id: str | None = OutputField(example_values=["1nrp7izie7gdz81mwb99azed4w"])
+    name: str | None = OutputField(example_values=["test.png"])
+    size: float | None = OutputField(example_values=[211962])
+    width: float | None = OutputField(example_values=[2230])
+    height: float | None = OutputField(example_values=[1220])
+    post_id: str | None = OutputField(example_values=["zn6cs7a4b7y6bmxy4yk4j1dz3y"])
+    user_id: str | None = OutputField(example_values=["8bfk4fj8gpyofq7qx85tsz97rh"])
+    create_at: float | None = OutputField(example_values=[1637228792269])
+    delete_at: float | None = OutputField(example_values=[0])
+    extension: str | None = OutputField(example_values=["png"])
+    mime_type: str | None = OutputField(example_values=["image/png"])
+    update_at: float | None = OutputField(example_values=[1637228792269])
+    channel_id: str | None = OutputField(example_values=["aopx3i38utrfxqyg86tq9xx3wy"])
     mini_preview: str | None = None
     has_preview_image: bool | None = None
     remote_id: str | None = None
@@ -113,8 +113,8 @@ class ListPostsOutput(LegacyCompatibleOutput):
     parent_id: str | None = None
     pending_post_id: str | None = None
     root_id: str | None = None
-    reply_count: float | None = None
-    last_reply_at: float | None = None
+    reply_count: float | None = OutputField(example_values=[0])
+    last_reply_at: float | None = OutputField(example_values=[0])
     metadata: MetadataOutput | None = None
     participants: list[str] | None = None
 

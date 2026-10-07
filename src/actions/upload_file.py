@@ -67,19 +67,19 @@ class UploadFileParams(Params):
 class FilesOutput(LegacyCompatibleOutput):
     """File metadata returned by Mattermost."""
 
-    id: str | None = None
-    name: str | None = None
-    size: float | None = None
-    width: float | None = None
-    height: float | None = None
-    post_id: str | None = None
-    user_id: str | None = None
-    create_at: float | None = None
-    delete_at: float | None = None
-    extension: str | None = None
-    mime_type: str | None = None
-    update_at: float | None = None
-    channel_id: str | None = None
+    id: str | None = OutputField(example_values=["8fgytaxpojn15dchqonjb15enw"])
+    name: str | None = OutputField(example_values=["test.png"])
+    size: float | None = OutputField(example_values=[211962])
+    width: float | None = OutputField(example_values=[2230])
+    height: float | None = OutputField(example_values=[1220])
+    post_id: str | None = OutputField(example_values=["k44mtz9ippru7eipruqnthsc9o"])
+    user_id: str | None = OutputField(example_values=["8bfk4fj8gpyofq7qx85tsz97rh"])
+    create_at: float | None = OutputField(example_values=[1636961337700])
+    delete_at: float | None = OutputField(example_values=[0])
+    extension: str | None = OutputField(example_values=["png"])
+    mime_type: str | None = OutputField(example_values=["image/png"])
+    update_at: float | None = OutputField(example_values=[1636961337700])
+    channel_id: str | None = OutputField(example_values=["aopx3i38utrfxqyg86tq9xx3qw"])
     mini_preview: str | None = None
     has_preview_image: bool | None = None
     remote_id: str | None = None
@@ -113,8 +113,8 @@ class UploadFileOutput(LegacyCompatibleOutput):
     root_id: str | None = None
     type: str | None = None
     metadata: MetadataOutput | None = None
-    reply_count: float | None = None
-    last_reply_at: float | None = None
+    reply_count: float | None = OutputField(example_values=[0])
+    last_reply_at: float | None = OutputField(example_values=[0])
     participants: list[str] | None = None
 
 
