@@ -24,7 +24,6 @@ from ._helpers import (
     _create_post,
     _resolve_channel_id,
     _resolve_team_id,
-    _stringify_legacy_fields,
 )
 
 
@@ -78,22 +77,7 @@ def send_message(
     team_id = _resolve_team_id(params.team, asset)
     channel_id = _resolve_channel_id(team_id, params.channel, asset)
     output = SendMessageOutput(
-        **_stringify_legacy_fields(
-            _create_post({"channel_id": channel_id, "message": params.message}, asset),
-            {
-                "channel_id",
-                "hashtags",
-                "id",
-                "message",
-                "original_id",
-                "parent_id",
-                "pending_post_id",
-                "root_id",
-                "type",
-                "user_id",
-                "participants",
-            },
-        )
+        **_create_post({"channel_id": channel_id, "message": params.message}, asset)
     )
     soar.set_message(MATTERMOST_SEND_MSG_SUCCESS)
     return output

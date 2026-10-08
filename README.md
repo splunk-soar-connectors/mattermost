@@ -20,6 +20,10 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **client_id** | optional | string | Client ID |
 **client_secret** | optional | password | Client secret |
 
+### OAuth configuration
+
+When using OAuth authentication, configure the Mattermost OAuth application with the client ID and client secret. Copy the callback URL shown under the Mattermost asset's Webhook Settings into the OAuth application's Callback URLs, then enable webhooks for the asset in SOAR. Leave **Webhooks require SOAR authentication** disabled for the OAuth callback. A personal-token configuration does not require webhook setup.
+
 ### Supported Actions
 
 [test connectivity](#action-test-connectivity) - Validate Mattermost credentials with the current-user endpoint. <br>

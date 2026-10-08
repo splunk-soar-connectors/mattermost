@@ -29,7 +29,6 @@ from ._helpers import (
     _process_posts,
     _resolve_channel_id,
     _resolve_team_id,
-    _stringify_legacy_fields,
     _validate_and_convert_time,
 )
 
@@ -140,10 +139,7 @@ def list_posts(
     channel_id = _resolve_channel_id(team_id, params.channel, asset)
     endpoint = MATTERMOST_LIST_POSTS_ENDPOINT.format(channel=channel_id)
     posts = _process_posts(endpoint, asset, start_time, end_time)
-    output = [
-        ListPostsOutput(**_stringify_legacy_fields(post, {"file_ids", "participants"}))
-        for post in posts
-    ]
+    output = [ListPostsOutput(**post) for post in posts]
     if not output:
         soar.set_message(MATTERMOST_NO_POSTS_FOUND)
     else:

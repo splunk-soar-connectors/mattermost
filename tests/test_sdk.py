@@ -20,7 +20,7 @@ from src.actions._helpers import (
 )
 from src.actions.list_channels import ListChannelsParams, list_channels
 from src.actions.list_posts import ListPostsOutput, ListPostsParams, list_posts
-from src.actions.list_teams import ListTeamsOutput, _normalize_team_output, list_teams
+from src.actions.list_teams import ListTeamsOutput, list_teams
 from src.actions.list_users import ListUsersParams, _normalize_user_output, list_users
 from src.actions.make_request import MattermostMakeRequestParams, make_request
 from src.app import app
@@ -72,7 +72,7 @@ def test_list_teams_output_preserves_legacy_fields_and_extra_values() -> None:
         "legacy_extra": {"key": "value"},
     }
 
-    output = ListTeamsOutput(**_normalize_team_output(team))
+    output = ListTeamsOutput(**team)
 
     assert output.model_dump()["allowed_domains"] == "example.com"
     assert output.model_dump()["group_constrained"] is False

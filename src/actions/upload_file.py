@@ -32,7 +32,6 @@ from ._helpers import (
     _create_post,
     _resolve_channel_id,
     _resolve_team_id,
-    _stringify_legacy_fields,
 )
 
 
@@ -157,24 +156,6 @@ def upload_file(
         },
         asset,
     )
-    output = UploadFileOutput(
-        **_stringify_legacy_fields(
-            post,
-            {
-                "channel_id",
-                "file_ids",
-                "hashtags",
-                "id",
-                "message",
-                "original_id",
-                "parent_id",
-                "pending_post_id",
-                "root_id",
-                "type",
-                "user_id",
-                "participants",
-            },
-        )
-    )
+    output = UploadFileOutput(**post)
     soar.set_message(MATTERMOST_FILE_UPLOAD_SUCCESS)
     return output

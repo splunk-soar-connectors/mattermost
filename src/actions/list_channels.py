@@ -22,7 +22,6 @@ from ._helpers import (
     LegacyCompatibleOutput,
     _list_all_channels,
     _resolve_team_id,
-    _stringify_legacy_fields,
 )
 
 
@@ -104,31 +103,7 @@ def list_channels(
     """List public and private channels for a Mattermost team."""
     team_id = _resolve_team_id(params.team, asset)
     channels = _list_all_channels(team_id, asset)
-    output = [
-        ListChannelsOutput(
-            **_stringify_legacy_fields(
-                channel,
-                {
-                    "creator_id",
-                    "display_name",
-                    "header",
-                    "id",
-                    "name",
-                    "props",
-                    "purpose",
-                    "scheme_id",
-                    "team_id",
-                    "type",
-                    "team_name",
-                    "team_display_name",
-                    "shared",
-                    "policy_id",
-                    "group_constrained",
-                },
-            )
-        )
-        for channel in channels
-    ]
+    output = [ListChannelsOutput(**channel) for channel in channels]
     soar.set_message(f"Total channels: {len(output)}")
     soar.set_summary(ListChannelsSummary(total_channels=len(output)))
     return output

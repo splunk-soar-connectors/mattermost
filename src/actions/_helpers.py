@@ -97,13 +97,6 @@ def _item_key(item: Any) -> str:
     return json.dumps(item, sort_keys=True, default=str)
 
 
-def _stringify_legacy_fields(
-    payload: dict[str, Any], _field_names: set[str]
-) -> dict[str, Any]:
-    """Return API fields without changing their original response types."""
-    return dict(payload)
-
-
 def _paginate_all(
     endpoint: str,
     asset: Asset,
@@ -316,6 +309,5 @@ __all__ = [
     "_process_posts",
     "_resolve_channel_id",
     "_resolve_team_id",
-    "_stringify_legacy_fields",
     "_validate_and_convert_time",
 ]

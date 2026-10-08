@@ -26,18 +26,15 @@ from ._helpers import (
     _legacy_string_fields,
     _paginate_all,
     _resolve_team_id,
-    _stringify_legacy_fields,
 )
 
 
 def _normalize_user_output(user: dict[str, Any]) -> dict[str, Any]:
     """Copy user output without changing the API response value types."""
-    output = _stringify_legacy_fields(user, {"auth_data", "notify_props", "props"})
+    output = dict(user)
     timezone = output.get("timezone")
     if isinstance(timezone, dict):
-        output["timezone"] = _stringify_legacy_fields(
-            timezone, {"useAutomaticTimezone"}
-        )
+        output["timezone"] = dict(timezone)
     return output
 
 
