@@ -151,7 +151,9 @@ def upload_file(
     post = _create_post(
         {
             "channel_id": channel_id,
-            "message": params.message or MATTERMOST_FILE_UPLOAD_MSG,
+            "message": (
+                MATTERMOST_FILE_UPLOAD_MSG if params.message is None else params.message
+            ),
             "file_ids": [file_info["id"] for file_info in file_infos],
         },
         asset,

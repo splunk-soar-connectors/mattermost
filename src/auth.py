@@ -68,9 +68,7 @@ def _build_oauth_config(
 
 def _oauth_http_client(verify: bool) -> httpx.Client:
     """Create the HTTP client used by the SDK OAuth token exchange."""
-    return httpx.Client(
-        headers={"Accept": "application/json"}, timeout=30.0, verify=verify
-    )
+    return httpx.Client(timeout=httpx.Timeout(None), verify=verify)
 
 
 def build_oauth_client(
@@ -96,8 +94,10 @@ def probe_current_user(asset: Asset, auth: httpx.Auth) -> httpx.Response:
         + MATTERMOST_CURRENT_USER_ENDPOINT
     )
     try:
-        with httpx.Client(timeout=30.0, verify=asset.verify_server_cert) as client:
-            return client.get(url, auth=auth, headers={"Accept": "application/json"})
+        with httpx.Client(
+            timeout=httpx.Timeout(None), verify=asset.verify_server_cert
+        ) as client:
+            return client.get(url, auth=auth)
     except httpx.RequestError as exc:
         raise ActionFailure(f"Error connecting to Mattermost API: {exc}") from exc
 

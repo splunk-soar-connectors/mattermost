@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from bs4 import BeautifulSoup
 import httpx
 from soar_sdk.exceptions import ActionFailure
 
@@ -27,9 +28,6 @@ if TYPE_CHECKING:
     from .asset import Asset
 
 
-DEFAULT_HEADERS = {"Accept": "application/json"}
-
-
 def _request_with_auth(
     method: str,
     url: str,
@@ -38,13 +36,15 @@ def _request_with_auth(
     auth: httpx.Auth,
     params: dict[str, Any] | None,
     json: Any | None,
-    data: dict[str, Any] | None,
+    data: Any | None,
     files: dict[str, Any] | None,
     headers: dict[str, str],
-    timeout: float,
+    timeout: float | None,
     verify_ssl: bool,
 ) -> httpx.Response:
     try:
+        raw_content = data if isinstance(data, str | bytes | bytearray) else None
+        form_data = None if raw_content is not None else data
         with httpx.Client(
             timeout=timeout,
             verify=verify_ssl,
@@ -56,7 +56,8 @@ def _request_with_auth(
                 headers=headers,
                 params=params,
                 json=json,
-                data=data,
+                data=form_data,
+                content=raw_content,
                 files=files,
             )
     except httpx.RequestError as exc:
@@ -70,9 +71,9 @@ def call_mattermost(
     *,
     params: dict[str, Any] | None = None,
     json: Any | None = None,
-    data: dict[str, Any] | None = None,
+    data: Any | None = None,
     files: dict[str, Any] | None = None,
-    timeout: float = 30.0,
+    timeout: float | None = None,
     headers: dict[str, str] | None = None,
     query_string: str | None = None,
     verify_ssl: bool | None = None,
@@ -83,9 +84,9 @@ def call_mattermost(
     if query_string:
         separator = "&" if "?" in url else "?"
         url = f"{url}{separator}{query_string.lstrip('?')}"
-    request_headers = {**DEFAULT_HEADERS, **(headers or {})}
+    request_headers = headers or {}
     request_verify_ssl = asset.verify_server_cert if verify_ssl is None else verify_ssl
-    request_timeout = timeout or 30.0
+    request_timeout = timeout
 
     auth_candidates: list[httpx.Auth] = []
     if asset.personal_token:
@@ -130,22 +131,56 @@ def call_mattermost(
 
 
 def parse_json_response(response: httpx.Response) -> Any:
-    """Validate an HTTP response and return its JSON body."""
-    if not 200 <= response.status_code < 300:
+    """Process a response using the legacy connector's response semantics."""
+    content_type = response.headers.get("Content-Type", "")
+    if any(
+        content_type_part in content_type
+        for content_type_part in ("json", "text/javascript", "text/plain")
+    ):
         try:
             payload = response.json()
-        except ValueError:
-            payload = None
-        if isinstance(payload, dict):
-            message = payload.get("detailed_error") or payload.get("message")
-        else:
-            message = None
-        message = message or response.text or "No response body"
-        raise ActionFailure(f"Mattermost API error {response.status_code}: {message}")
+        except ValueError as exc:
+            raise ActionFailure(f"Unable to parse JSON response. Error: {exc}") from exc
 
-    try:
-        return response.json()
-    except ValueError as exc:
-        raise ActionFailure(
-            f"Unable to parse Mattermost API JSON response: {exc}"
-        ) from exc
+        if 200 <= response.status_code < 399:
+            return payload
+
+        message = None
+        if isinstance(payload, dict) and payload.get("detailed_error"):
+            message = f"Error from server. Status Code: {response.status_code} Data from server: {payload['detailed_error']}"
+        elif isinstance(payload, dict) and payload.get("message"):
+            message = f"Error from server. Status Code: {response.status_code} Data from server: {payload['message']}"
+        if not message:
+            response_text = response.text.replace("{", "{{").replace("}", "}}")
+            message = f"Error from server. Status Code: {response.status_code} Data from server: {response_text}"
+        raise ActionFailure(message)
+
+    if "html" in content_type:
+        try:
+            soup = BeautifulSoup(response.text, "html.parser")
+            for element in soup(["script", "style", "footer", "nav"]):
+                element.extract()
+            error_text = "\n".join(
+                line.strip() for line in soup.text.split("\n") if line.strip()
+            )
+        except Exception:
+            error_text = "Cannot parse error details"
+
+        message = (
+            f"Status Code: {response.status_code}. Data from server:\n{error_text}\n"
+        )
+        if response.status_code in [200, 201, 204]:
+            message = f"Status Code: {response.status_code}. Data from server:\nInvalid URL. Cannot parse response.\n"
+        elif response.status_code == 403:
+            message = f"Status Code: {response.status_code}. Data from server:\nForbidden. Please verify credentials.\n"
+        raise ActionFailure(message.replace("{", "{{").replace("}", "}}"))
+
+    if not response.text:
+        if response.status_code in [200, 204]:
+            return {}
+        raise ActionFailure("Empty response and no information in the header")
+
+    response_text = response.text.replace("{", "{{").replace("}", "}}")
+    raise ActionFailure(
+        f"Can't process response from server. Status Code: {response.status_code} Data from server: {response_text}"
+    )

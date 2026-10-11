@@ -29,6 +29,7 @@ from .client import parse_json_response
 from .consts import (
     MATTERMOST_MAKING_CONNECTION_MSG,
     MATTERMOST_OAUTH_CALLBACK_ROUTE,
+    MATTERMOST_OAUTH_URL_MSG,
     MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG,
     MATTERMOST_TEST_CONNECTIVITY_PASSED_MSG,
 )
@@ -36,6 +37,11 @@ from .webhooks import register_oauth_webhook
 
 
 logger = getLogger()
+
+
+def _announce_oauth_url(url: str) -> None:
+    """Write a stable label before the OAuth URL for SOAR UI consumers."""
+    logger.progress(f"{MATTERMOST_OAUTH_URL_MSG} {url}")
 
 
 def create_mattermost_app() -> App:
@@ -80,7 +86,7 @@ def create_mattermost_app() -> App:
             asset,
             asset_id=str(soar.get_asset_id()),
             redirect_uri=redirect_uri,
-            announce_url=logger.progress,
+            announce_url=_announce_oauth_url,
         )
         response = probe_current_user(asset, build_oauth_auth(asset))
         try:

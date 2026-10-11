@@ -6,13 +6,14 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import httpx
 import pytest
 from soar_sdk.exceptions import ActionFailure
 
 from src.actions._helpers import (
+    _create_post,
     _get_posts,
     _process_posts,
     _resolve_team_id,
@@ -23,6 +24,7 @@ from src.actions.list_posts import ListPostsOutput, ListPostsParams, list_posts
 from src.actions.list_teams import ListTeamsOutput, list_teams
 from src.actions.list_users import ListUsersParams, _normalize_user_output, list_users
 from src.actions.make_request import MattermostMakeRequestParams, make_request
+from src.actions.upload_file import UploadFileParams, upload_file
 from src.app import app
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
@@ -46,6 +48,27 @@ def test_parse_json_response_raises_action_failure_for_api_error() -> None:
     response = httpx.Response(401, json={"message": "Not authorized"})
 
     with pytest.raises(ActionFailure, match="Not authorized"):
+        parse_json_response(response)
+
+
+def test_parse_json_response_accepts_legacy_success_status_range() -> None:
+    response = httpx.Response(398, json={"id": "post-id"})
+
+    assert parse_json_response(response) == {"id": "post-id"}
+
+
+def test_parse_json_response_preserves_legacy_empty_success_behavior() -> None:
+    assert parse_json_response(httpx.Response(204)) == {}
+
+
+def test_parse_json_response_processes_legacy_html_errors() -> None:
+    response = httpx.Response(
+        403,
+        text="<html><script>ignored</script><h1>Forbidden</h1></html>",
+        headers={"Content-Type": "text/html"},
+    )
+
+    with pytest.raises(ActionFailure, match=r"Forbidden\. Please verify credentials"):
         parse_json_response(response)
 
 
@@ -111,6 +134,66 @@ def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:
     )
 
 
+def test_call_mattermost_preserves_legacy_request_defaults() -> None:
+    response = httpx.Response(200, json={"id": "user-id"})
+
+    with patch("src.client._request_with_auth", return_value=response) as request:
+        call_mattermost("GET", "/users/me", _asset())
+
+    assert request.call_args.kwargs["headers"] == {}
+    assert request.call_args.kwargs["timeout"] is None
+
+
+def test_create_post_sends_legacy_serialized_body() -> None:
+    response = httpx.Response(200, json={"id": "post-id"})
+
+    with patch("src.actions._helpers.call_mattermost", return_value=response) as call:
+        _create_post({"channel_id": "channel-id", "message": "hello"}, _asset())
+
+    assert call.call_args.kwargs["data"] == (
+        '{"channel_id": "channel-id", "message": "hello"}'
+    )
+
+
+@pytest.mark.parametrize(
+    ("message", "expected_message"),
+    [(None, "Phantom file upload"), ("", "")],
+)
+def test_upload_file_preserves_legacy_empty_message_behavior(
+    message: str | None, expected_message: str
+) -> None:
+    soar = Mock()
+    attachment = MagicMock(container_id="container-id", name="test.txt")
+    attachment.open.return_value.__enter__.return_value.read.return_value = b"content"
+    soar.vault.get_attachment.return_value = [attachment]
+    soar.get_executing_container_id.return_value = "container-id"
+
+    with (
+        patch("src.actions.upload_file._resolve_team_id", return_value="team-id"),
+        patch("src.actions.upload_file._resolve_channel_id", return_value="channel-id"),
+        patch(
+            "src.actions.upload_file.call_mattermost",
+            return_value=httpx.Response(200, json={"file_infos": [{"id": "file-id"}]}),
+        ),
+        patch(
+            "src.actions.upload_file._create_post",
+            return_value={"id": "post-id"},
+        ) as create_post,
+    ):
+        upload_file(
+            UploadFileParams(
+                team="team",
+                channel="channel",
+                vault_id="vault-id",
+                message=message,
+            ),
+            soar,
+            _asset(),
+        )
+
+    assert create_post.call_args.args[0]["message"] == expected_message
+
+
 def test_make_request_is_registered_and_passes_request_parameters() -> None:
     response = httpx.Response(200, text='{"id":"user-id"}')
     with patch(
@@ -169,7 +252,7 @@ def test_get_posts_reports_the_post_length_limit() -> None:
     with (
         patch("src.actions._helpers.call_mattermost", return_value=response),
         patch("src.actions._helpers.MATTERMOST_MAX_POSTS", 1),
-        pytest.raises(ActionFailure, match="safe post length limit"),
+        pytest.raises(ActionFailure, match="exceeded the safety limit"),
     ):
         _get_posts("/channels/channel-id/posts", _asset())
 
@@ -183,7 +266,7 @@ def test_get_posts_reports_the_page_limit() -> None:
     with (
         patch("src.actions._helpers.call_mattermost", return_value=response),
         patch("src.actions._helpers.MATTERMOST_MAX_POST_PAGES", 1),
-        pytest.raises(ActionFailure, match="safe page limit"),
+        pytest.raises(ActionFailure, match="exceeded the safety limit"),
     ):
         _get_posts("/channels/channel-id/posts", _asset())
 

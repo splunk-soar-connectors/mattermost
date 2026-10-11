@@ -28,7 +28,6 @@ from ..client import call_mattermost, parse_json_response
 from ..consts import (
     MATTERMOST_CHANNEL_NOT_FOUND_MSG,
     MATTERMOST_LIST_CHANNELS_ENDPOINT,
-    MATTERMOST_MAX_GENERIC_PAGES,
     MATTERMOST_MAX_POST_PAGES,
     MATTERMOST_MAX_POSTS,
     MATTERMOST_NEGATIVE_TIME,
@@ -92,46 +91,30 @@ def _check_response(response) -> Any:
     return parse_json_response(response)
 
 
-def _item_key(item: Any) -> str:
-    """Create a stable key for pagination progress detection."""
-    return json.dumps(item, sort_keys=True, default=str)
-
-
 def _paginate_all(
     endpoint: str,
     asset: Asset,
     extra_params: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """Fetch all pages while preventing unbounded or non-progressing loops."""
+    """Fetch all pages using the legacy pagination behavior."""
     page = 0
     results: list[dict[str, Any]] = []
-    seen_items: set[str] = set()
 
-    while page < MATTERMOST_MAX_GENERIC_PAGES:
+    while True:
         query = {"page": page, **(extra_params or {})}
         payload = _check_response(call_mattermost("GET", endpoint, asset, params=query))
         if not payload:
             return results
-        if not isinstance(payload, list):
-            raise ActionFailure("Mattermost returned an unexpected paginated response")
-
-        new_items = [item for item in payload if _item_key(item) not in seen_items]
-        if not new_items:
-            raise ActionFailure("Mattermost pagination stopped making progress")
-        results.extend(new_items)
-        seen_items.update(_item_key(item) for item in new_items)
+        results.extend(payload)
         page += 1
-
-    raise ActionFailure("Mattermost pagination exceeded the safety limit")
 
 
 def _resolve_team_id(team: str, asset: Asset) -> str:
     """Resolve a Mattermost team name or ID to its ID."""
-    team_value = team.strip().lower()
+    team_value = team.lower()
     page = 0
-    seen_items: set[str] = set()
 
-    while page < MATTERMOST_MAX_GENERIC_PAGES:
+    while True:
         payload = _check_response(
             call_mattermost(
                 "GET", MATTERMOST_TEAMS_ENDPOINT, asset, params={"page": page}
@@ -139,30 +122,47 @@ def _resolve_team_id(team: str, asset: Asset) -> str:
         )
         if not payload:
             break
-        if not isinstance(payload, list):
-            raise ActionFailure("Mattermost returned an unexpected paginated response")
 
         for each_team in payload:
             if team_value in (
-                str(each_team.get("id", "")).lower(),
-                str(each_team.get("name", "")).lower(),
+                each_team.get("id", "").lower(),
+                each_team.get("name", "").lower(),
             ):
                 return each_team["id"]
 
-        new_items = [item for item in payload if _item_key(item) not in seen_items]
-        if not new_items:
-            raise ActionFailure("Mattermost pagination stopped making progress")
-        seen_items.update(_item_key(item) for item in new_items)
         page += 1
 
-    if page >= MATTERMOST_MAX_GENERIC_PAGES:
-        raise ActionFailure("Mattermost pagination exceeded the safety limit")
     raise ActionFailure(MATTERMOST_TEAM_NOT_FOUND_MSG)
 
 
 def _list_all_teams(asset: Asset) -> list[dict[str, Any]]:
-    """Return all Mattermost teams with duplicate-page protection."""
-    return _paginate_all(MATTERMOST_TEAMS_ENDPOINT, asset)
+    """Return all Mattermost teams using legacy duplicate-page handling."""
+    page = 0
+    results: list[dict[str, Any]] = []
+    duplicate_entry = 0
+    previous_teams: list[dict[str, Any]] = []
+
+    while True:
+        payload = _check_response(
+            call_mattermost(
+                "GET", MATTERMOST_TEAMS_ENDPOINT, asset, params={"page": page}
+            )
+        )
+        if not payload:
+            return results
+
+        new_teams: list[dict[str, Any]] = []
+        if previous_teams:
+            duplicate_entry = len([team for team in payload if team in previous_teams])
+            new_teams = [team for team in payload if team not in previous_teams]
+
+        previous_teams = payload
+        if not new_teams and page == 0:
+            results.extend(payload)
+        else:
+            results.extend(new_teams)
+
+        page += 1 + duplicate_entry
 
 
 def _resolve_channel_id(team_id: str, channel: str, asset: Asset) -> str:
@@ -193,7 +193,7 @@ def _list_all_channels(team_id: str, asset: Asset) -> list[dict[str, Any]]:
 def _create_post(request_data: dict[str, Any], asset: Asset) -> dict[str, Any]:
     """Create a Mattermost post."""
     response = call_mattermost(
-        "POST", MATTERMOST_SEND_MSG_ENDPOINT, asset, json=request_data
+        "POST", MATTERMOST_SEND_MSG_ENDPOINT, asset, data=json.dumps(request_data)
     )
     return _check_response(response)
 
@@ -237,22 +237,17 @@ def _get_posts(
         payload = _check_response(
             call_mattermost("GET", endpoint, asset, params=params)
         )
-        if not isinstance(payload, dict) or not payload.get("posts"):
-            return results
+        if not payload["posts"]:
+            break
 
         order = payload.get("order", [])
         page_post_ids = [post_id for post_id in order if post_id not in seen_post_ids]
         if not page_post_ids:
             raise ActionFailure("Mattermost post pagination stopped making progress")
 
-        posts = payload["posts"]
         for post_id in page_post_ids:
-            if post_id not in posts:
-                raise ActionFailure(
-                    f"Mattermost response did not contain post {post_id}"
-                )
             seen_post_ids.add(post_id)
-            results.append(posts[post_id])
+            results.append(payload.get("posts", "")[post_id])
             if len(results) >= MATTERMOST_MAX_POSTS:
                 break
 
@@ -260,13 +255,8 @@ def _get_posts(
             break
         page += 1
 
-    if len(results) >= MATTERMOST_MAX_POSTS:
-        raise ActionFailure(
-            "Mattermost post pagination exceeded the safe post length limit"
-        )
-
-    if page >= MATTERMOST_MAX_POST_PAGES:
-        raise ActionFailure("Mattermost post pagination exceeded the safe page limit")
+    if page >= MATTERMOST_MAX_POST_PAGES or len(results) >= MATTERMOST_MAX_POSTS:
+        raise ActionFailure("Mattermost post pagination exceeded the safety limit")
 
     return results
 
