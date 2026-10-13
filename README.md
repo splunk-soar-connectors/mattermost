@@ -105,7 +105,7 @@ action_result.data.\*.timezone.manualTimezone | string | | |
 action_result.data.\*.timezone.useAutomaticTimezone | boolean | | True False |
 action_result.data.\*.update_at | numeric | | 1535105717458 |
 action_result.data.\*.disable_welcome_email | boolean | | True False |
-action_result.summary.total_users | numeric | | |
+action_result.summary.total_users | numeric | | 9 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -137,21 +137,21 @@ action_result.parameter.team | string | `mattermost team` | |
 action_result.parameter.channel | string | `mattermost channel` | |
 action_result.parameter.vault_id | string | `vault id` `sha1` | |
 action_result.parameter.message | string | | |
-action_result.data.\*.id | string | | |
-action_result.data.\*.message | string | | |
-action_result.data.\*.user_id | string | | |
-action_result.data.\*.channel_id | string | `mattermost channel` | |
-action_result.data.\*.file_ids.\* | string | | |
-action_result.data.\*.create_at | numeric | | |
-action_result.data.\*.update_at | numeric | | |
-action_result.data.\*.delete_at | numeric | | |
-action_result.data.\*.edit_at | numeric | | |
+action_result.data.\*.id | string | | uinosfs9a3r9dgay15epdn39qy |
+action_result.data.\*.message | string | | Upload file |
+action_result.data.\*.user_id | string | | nj9wemswb7f4zykdetw9egbwuo |
+action_result.data.\*.channel_id | string | `mattermost channel` | ofond1t88jbr8e6cbwb7ogk98h |
+action_result.data.\*.file_ids.\* | string | | 1ioo54wdtpnq7eddp9yc5jikhy |
+action_result.data.\*.create_at | numeric | | 1535533720541 |
+action_result.data.\*.update_at | numeric | | 1535533720541 |
+action_result.data.\*.delete_at | numeric | | 0 |
+action_result.data.\*.edit_at | numeric | | 1535533798521 |
 action_result.data.\*.hashtags | string | | |
 action_result.data.\*.is_pinned | boolean | | True False |
-action_result.data.\*.original_id | string | | |
-action_result.data.\*.parent_id | string | | |
-action_result.data.\*.pending_post_id | string | | |
-action_result.data.\*.root_id | string | | |
+action_result.data.\*.original_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
+action_result.data.\*.parent_id | string | | uinosfs9a3r9dgay15epdn39qy |
+action_result.data.\*.pending_post_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
+action_result.data.\*.root_id | string | | uinosfs9a3r9dgay15epdn39qy |
 action_result.data.\*.type | string | | |
 action_result.data.\*.metadata.files.\*.id | string | | 8fgytaxpojn15dchqonjb15enw |
 action_result.data.\*.metadata.files.\*.name | string | | test.png |
@@ -166,7 +166,7 @@ action_result.data.\*.metadata.files.\*.extension | string | | png |
 action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
 action_result.data.\*.metadata.files.\*.update_at | numeric | | 1636961337700 |
 action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3qw |
-action_result.data.\*.metadata.files.\*.mini_preview | string | | |
+action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCBgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
@@ -201,20 +201,20 @@ action_result.message | string | | |
 action_result.parameter.team | string | `mattermost team` | |
 action_result.parameter.channel | string | `mattermost channel` | |
 action_result.parameter.message | string | | |
-action_result.data.\*.id | string | | |
-action_result.data.\*.message | string | | |
-action_result.data.\*.user_id | string | | |
-action_result.data.\*.channel_id | string | `mattermost channel` | |
-action_result.data.\*.create_at | numeric | | |
-action_result.data.\*.update_at | numeric | | |
-action_result.data.\*.delete_at | numeric | | |
-action_result.data.\*.edit_at | numeric | | |
+action_result.data.\*.id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
+action_result.data.\*.message | string | | Hey, guys how r u? |
+action_result.data.\*.user_id | string | | hrfxwdb7gtdjzbzqscix7edyeh |
+action_result.data.\*.channel_id | string | `mattermost channel` | 9fm7epgq9b8x3ekb3frhid5kaw |
+action_result.data.\*.create_at | numeric | | 1535458197064 |
+action_result.data.\*.update_at | numeric | | 1535458197064 |
+action_result.data.\*.delete_at | numeric | | 0 |
+action_result.data.\*.edit_at | numeric | | 1535458199241 |
 action_result.data.\*.hashtags | string | | |
 action_result.data.\*.is_pinned | boolean | | True False |
-action_result.data.\*.original_id | string | | |
-action_result.data.\*.parent_id | string | | |
-action_result.data.\*.pending_post_id | string | | |
-action_result.data.\*.root_id | string | | |
+action_result.data.\*.original_id | string | | uinosfs9a3r9dgay15epdn39qy |
+action_result.data.\*.parent_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
+action_result.data.\*.pending_post_id | string | | uinosfs9a3r9dgay15epdn39qy |
+action_result.data.\*.root_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
 action_result.data.\*.type | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
@@ -250,24 +250,24 @@ action_result.parameter.team | string | `mattermost team` | |
 action_result.parameter.channel | string | `mattermost channel` | |
 action_result.parameter.start_time | string | | |
 action_result.parameter.end_time | string | | |
-action_result.data.\*.id | string | | |
-action_result.data.\*.message | string | | |
-action_result.data.\*.type | string | | |
-action_result.data.\*.user_id | string | | |
-action_result.data.\*.props.addedUsername | string | `user name` | |
-action_result.data.\*.props.username | string | `user name` | |
-action_result.data.\*.channel_id | string | `mattermost channel` | |
-action_result.data.\*.file_ids.\* | string | | |
-action_result.data.\*.create_at | numeric | | |
-action_result.data.\*.edit_at | numeric | | |
-action_result.data.\*.update_at | numeric | | |
-action_result.data.\*.delete_at | numeric | | |
+action_result.data.\*.id | string | | rb19t6ggfj81bk1txxtcw13kir |
+action_result.data.\*.message | string | | Test |
+action_result.data.\*.type | string | | system_join_channel |
+action_result.data.\*.user_id | string | | zxutg6e6ibgyxjmpee7wjsmc5a |
+action_result.data.\*.props.addedUsername | string | `user name` | test-name |
+action_result.data.\*.props.username | string | `user name` | admin |
+action_result.data.\*.channel_id | string | `mattermost channel` | ectpw8kdeir4589wu61ijp77tc |
+action_result.data.\*.file_ids.\* | string | | e4yq14jxd3ra5pmcsjeqjw3j7o |
+action_result.data.\*.create_at | numeric | | 1541079654322 |
+action_result.data.\*.edit_at | numeric | | 1535007704567 |
+action_result.data.\*.update_at | numeric | | 1541079654322 |
+action_result.data.\*.delete_at | numeric | | 0 |
 action_result.data.\*.hashtags | string | | |
 action_result.data.\*.is_pinned | boolean | | True False |
-action_result.data.\*.original_id | string | | |
-action_result.data.\*.parent_id | string | | |
-action_result.data.\*.pending_post_id | string | | |
-action_result.data.\*.root_id | string | | |
+action_result.data.\*.original_id | string | | uinosfs9a3r9dgay15epdn39qy |
+action_result.data.\*.parent_id | string | | fsn1bn4nwjdwpmbuqch5fp9xnh |
+action_result.data.\*.pending_post_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
+action_result.data.\*.root_id | string | | fsn1bn4nwjdwpmbuqch5fp9xnh |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.metadata.files.\*.id | string | | 1nrp7izie7gdz81mwb99azed4w |
@@ -283,11 +283,11 @@ action_result.data.\*.metadata.files.\*.extension | string | | png |
 action_result.data.\*.metadata.files.\*.mime_type | string | | image/png |
 action_result.data.\*.metadata.files.\*.update_at | numeric | | 1637228792269 |
 action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg86tq9xx3wy |
-action_result.data.\*.metadata.files.\*.mini_preview | string | | |
+action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
 action_result.data.\*.participants.\* | string | | |
-action_result.summary.total_posts | numeric | | |
+action_result.summary.total_posts | numeric | | 5 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -335,7 +335,7 @@ action_result.data.\*.team_display_name | string | | test-005 |
 action_result.data.\*.shared | boolean | | True False |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | boolean | | True False |
-action_result.summary.total_channels | numeric | | |
+action_result.summary.total_channels | numeric | | 6 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -374,7 +374,7 @@ action_result.data.\*.scheme_id | string | | |
 action_result.data.\*.update_at | numeric | | 1534918716675 |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | boolean | | True False |
-action_result.summary.total_teams | numeric | | |
+action_result.summary.total_teams | numeric | | 7 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 

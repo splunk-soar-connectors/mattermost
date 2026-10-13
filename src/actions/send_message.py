@@ -43,22 +43,36 @@ class SendMessageParams(Params):
 class SendMessageOutput(PermissiveActionOutput):
     """Mattermost post created by the send message action."""
 
-    id: str | None = OutputField(column_name="Message ID")
-    message: str | None = OutputField(column_name="Message")
-    user_id: str | None = OutputField(column_name="User ID")
-    channel_id: str | None = OutputField(
-        column_name="Channel ID", cef_types=["mattermost channel"]
+    id: str | None = OutputField(
+        column_name="Message ID", example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"]
     )
-    create_at: float | None = OutputField(column_name="Created At")
-    update_at: float | None = OutputField(column_name="Updated At")
-    delete_at: float | None = None
-    edit_at: float | None = None
+    message: str | None = OutputField(
+        column_name="Message", example_values=["Hey, guys how r u?"]
+    )
+    user_id: str | None = OutputField(
+        column_name="User ID", example_values=["hrfxwdb7gtdjzbzqscix7edyeh"]
+    )
+    channel_id: str | None = OutputField(
+        column_name="Channel ID",
+        cef_types=["mattermost channel"],
+        example_values=["9fm7epgq9b8x3ekb3frhid5kaw"],
+    )
+    create_at: float | None = OutputField(
+        column_name="Created At", example_values=[1535458197064]
+    )
+    update_at: float | None = OutputField(
+        column_name="Updated At", example_values=[1535458197064]
+    )
+    delete_at: float | None = OutputField(example_values=[0])
+    edit_at: float | None = OutputField(example_values=[1535458199241])
     hashtags: str | None = None
     is_pinned: bool | None = None
-    original_id: str | None = None
-    parent_id: str | None = None
-    pending_post_id: str | None = None
-    root_id: str | None = None
+    original_id: str | None = OutputField(example_values=["uinosfs9a3r9dgay15epdn39qy"])
+    parent_id: str | None = OutputField(example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"])
+    pending_post_id: str | None = OutputField(
+        example_values=["uinosfs9a3r9dgay15epdn39qy"]
+    )
+    root_id: str | None = OutputField(example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"])
     type: str | None = None
     reply_count: float | None = OutputField(example_values=[0])
     last_reply_at: float | None = OutputField(example_values=[0])

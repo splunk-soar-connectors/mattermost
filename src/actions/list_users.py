@@ -52,7 +52,7 @@ class TimezoneOutput(ActionOutput):
 
     automaticTimezone: str | None = None
     manualTimezone: str | None = None
-    useAutomaticTimezone: bool | None = OutputField(example_values=[True, False])
+    useAutomaticTimezone: bool | None = OutputField(example_values=[True])
 
 
 class ListUsersOutput(PermissiveActionOutput):
@@ -104,7 +104,7 @@ class ListUsersOutput(PermissiveActionOutput):
 class ListUsersSummary(ActionOutput):
     """Summary for the list users action."""
 
-    total_users: int
+    total_users: int = OutputField(example_values=[9])
 
 
 def list_users(

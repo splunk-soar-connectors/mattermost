@@ -79,7 +79,7 @@ class ListChannelsOutput(PermissiveActionOutput):
 class ListChannelsSummary(ActionOutput):
     """Summary for the list channels action."""
 
-    total_channels: int
+    total_channels: int = OutputField(example_values=[6])
 
 
 def list_channels(

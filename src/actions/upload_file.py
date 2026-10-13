@@ -74,8 +74,12 @@ class FilesOutput(PermissiveActionOutput):
     mime_type: str | None = OutputField(example_values=["image/png"])
     update_at: float | None = OutputField(example_values=[1636961337700])
     channel_id: str | None = OutputField(example_values=["aopx3i38utrfxqyg86tq9xx3qw"])
-    mini_preview: str | None = None
-    has_preview_image: bool | None = None
+    mini_preview: str | None = OutputField(
+        example_values=[
+            "/9j/2wCEAAMCAgMCBgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z"  # pragma: allowlist secret
+        ]
+    )
+    has_preview_image: bool | None = OutputField(example_values=[True])
     remote_id: str | None = None
 
 
@@ -88,23 +92,39 @@ class MetadataOutput(PermissiveActionOutput):
 class UploadFileOutput(PermissiveActionOutput):
     """Mattermost post created after the file upload."""
 
-    id: str | None = OutputField(column_name="Message ID")
-    message: str | None = OutputField(column_name="Message")
-    user_id: str | None = OutputField(column_name="User ID")
-    channel_id: str | None = OutputField(
-        column_name="Channel ID", cef_types=["mattermost channel"]
+    id: str | None = OutputField(
+        column_name="Message ID", example_values=["uinosfs9a3r9dgay15epdn39qy"]
     )
-    file_ids: list[str] | None = OutputField(column_name="File ID")
-    create_at: float | None = OutputField(column_name="Created At")
-    update_at: float | None = OutputField(column_name="Updated At")
-    delete_at: float | None = None
-    edit_at: float | None = None
+    message: str | None = OutputField(
+        column_name="Message", example_values=["Upload file"]
+    )
+    user_id: str | None = OutputField(
+        column_name="User ID", example_values=["nj9wemswb7f4zykdetw9egbwuo"]
+    )
+    channel_id: str | None = OutputField(
+        column_name="Channel ID",
+        cef_types=["mattermost channel"],
+        example_values=["ofond1t88jbr8e6cbwb7ogk98h"],
+    )
+    file_ids: list[str] | None = OutputField(
+        column_name="File ID", example_values=["1ioo54wdtpnq7eddp9yc5jikhy"]
+    )
+    create_at: float | None = OutputField(
+        column_name="Created At", example_values=[1535533720541]
+    )
+    update_at: float | None = OutputField(
+        column_name="Updated At", example_values=[1535533720541]
+    )
+    delete_at: float | None = OutputField(example_values=[0])
+    edit_at: float | None = OutputField(example_values=[1535533798521])
     hashtags: str | None = None
     is_pinned: bool | None = None
-    original_id: str | None = None
-    parent_id: str | None = None
-    pending_post_id: str | None = None
-    root_id: str | None = None
+    original_id: str | None = OutputField(example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"])
+    parent_id: str | None = OutputField(example_values=["uinosfs9a3r9dgay15epdn39qy"])
+    pending_post_id: str | None = OutputField(
+        example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"]
+    )
+    root_id: str | None = OutputField(example_values=["uinosfs9a3r9dgay15epdn39qy"])
     type: str | None = None
     metadata: MetadataOutput | None = None
     reply_count: float | None = OutputField(example_values=[0])

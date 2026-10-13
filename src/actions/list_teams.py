@@ -63,7 +63,7 @@ class ListTeamsOutput(PermissiveActionOutput):
 class ListTeamsSummary(ActionOutput):
     """Summary for the list teams action."""
 
-    total_teams: int
+    total_teams: int = OutputField(example_values=[7])
 
 
 def list_teams(params: Params, soar: SOARClient, asset: Asset) -> list[ListTeamsOutput]:

@@ -58,8 +58,12 @@ class ListPostsParams(Params):
 class PostPropsOutput(PermissiveActionOutput):
     """Post properties returned by Mattermost."""
 
-    addedUsername: str | None = OutputField(cef_types=["user name"])
-    username: str | None = OutputField(cef_types=["user name"], column_name="User Name")
+    addedUsername: str | None = OutputField(
+        cef_types=["user name"], example_values=["test-name"]
+    )
+    username: str | None = OutputField(
+        cef_types=["user name"], column_name="User Name", example_values=["admin"]
+    )
 
 
 class FilesOutput(PermissiveActionOutput):
@@ -78,8 +82,12 @@ class FilesOutput(PermissiveActionOutput):
     mime_type: str | None = OutputField(example_values=["image/png"])
     update_at: float | None = OutputField(example_values=[1637228792269])
     channel_id: str | None = OutputField(example_values=["aopx3i38utrfxqyg86tq9xx3wy"])
-    mini_preview: str | None = None
-    has_preview_image: bool | None = None
+    mini_preview: str | None = OutputField(
+        example_values=[
+            "/9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z"  # pragma: allowlist secret
+        ]
+    )
+    has_preview_image: bool | None = OutputField(example_values=[True])
     remote_id: str | None = None
 
 
@@ -92,25 +100,43 @@ class MetadataOutput(PermissiveActionOutput):
 class ListPostsOutput(PermissiveActionOutput):
     """A Mattermost post."""
 
-    id: str | None = OutputField(column_name="Post ID")
-    message: str | None = OutputField(column_name="Message")
-    type: str | None = OutputField(column_name="Type")
-    user_id: str | None = OutputField(column_name="User ID")
+    id: str | None = OutputField(
+        column_name="Post ID", example_values=["rb19t6ggfj81bk1txxtcw13kir"]
+    )
+    message: str | None = OutputField(column_name="Message", example_values=["Test"])
+    type: str | None = OutputField(
+        column_name="Type", example_values=["system_join_channel"]
+    )
+    user_id: str | None = OutputField(
+        column_name="User ID", example_values=["zxutg6e6ibgyxjmpee7wjsmc5a"]
+    )
     props: PostPropsOutput | None = None
     channel_id: str | None = OutputField(
-        column_name="Channel ID", cef_types=["mattermost channel"]
+        column_name="Channel ID",
+        cef_types=["mattermost channel"],
+        example_values=["ectpw8kdeir4589wu61ijp77tc"],
     )
-    file_ids: list[str] | None = OutputField(column_name="File ID")
-    create_at: float | None = OutputField(column_name="Created At")
-    edit_at: float | None = OutputField(column_name="Edited At")
-    update_at: float | None = OutputField(column_name="Updated At")
-    delete_at: float | None = None
+    file_ids: list[str] | None = OutputField(
+        column_name="File ID", example_values=["e4yq14jxd3ra5pmcsjeqjw3j7o"]
+    )
+    create_at: float | None = OutputField(
+        column_name="Created At", example_values=[1541079654322]
+    )
+    edit_at: float | None = OutputField(
+        column_name="Edited At", example_values=[1535007704567]
+    )
+    update_at: float | None = OutputField(
+        column_name="Updated At", example_values=[1541079654322]
+    )
+    delete_at: float | None = OutputField(example_values=[0])
     hashtags: str | None = None
     is_pinned: bool | None = None
-    original_id: str | None = None
-    parent_id: str | None = None
-    pending_post_id: str | None = None
-    root_id: str | None = None
+    original_id: str | None = OutputField(example_values=["uinosfs9a3r9dgay15epdn39qy"])
+    parent_id: str | None = OutputField(example_values=["fsn1bn4nwjdwpmbuqch5fp9xnh"])
+    pending_post_id: str | None = OutputField(
+        example_values=["g9rit1zsx3ngzbs1srtx8tu5fe"]
+    )
+    root_id: str | None = OutputField(example_values=["fsn1bn4nwjdwpmbuqch5fp9xnh"])
     reply_count: float | None = OutputField(example_values=[0])
     last_reply_at: float | None = OutputField(example_values=[0])
     metadata: MetadataOutput | None = None
@@ -120,7 +146,7 @@ class ListPostsOutput(PermissiveActionOutput):
 class ListPostsSummary(ActionOutput):
     """Summary for the list posts action."""
 
-    total_posts: int
+    total_posts: int = OutputField(example_values=[5])
 
 
 def list_posts(
