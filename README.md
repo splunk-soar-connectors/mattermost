@@ -92,14 +92,19 @@ action_result.data.\*.last_picture_update | numeric | | 0 |
 action_result.data.\*.locale | string | | en |
 action_result.data.\*.mfa_active | boolean | | True False |
 action_result.data.\*.nickname | string | | test |
+action_result.data.\*.notify_props.email | string | | |
+action_result.data.\*.notify_props.push | string | | |
+action_result.data.\*.notify_props.desktop | string | | |
+action_result.data.\*.notify_props.desktop_sound | string | | |
+action_result.data.\*.notify_props.mention_keys | string | | |
+action_result.data.\*.notify_props.channel | string | | |
+action_result.data.\*.notify_props.first_name | string | | |
 action_result.data.\*.position | string | | |
 action_result.data.\*.timezone.automaticTimezone | string | | |
 action_result.data.\*.timezone.manualTimezone | string | | |
 action_result.data.\*.timezone.useAutomaticTimezone | boolean | | True False |
 action_result.data.\*.update_at | numeric | | 1535105717458 |
 action_result.data.\*.disable_welcome_email | boolean | | True False |
-action_result.data.\*.notify_props | string | | |
-action_result.data.\*.props | string | | |
 action_result.summary.total_users | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
@@ -167,7 +172,6 @@ action_result.data.\*.metadata.files.\*.remote_id | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants.\* | string | | |
-action_result.summary | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -215,7 +219,6 @@ action_result.data.\*.type | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
 action_result.data.\*.participants.\* | string | | |
-action_result.summary | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -332,7 +335,6 @@ action_result.data.\*.team_display_name | string | | test-005 |
 action_result.data.\*.shared | boolean | | True False |
 action_result.data.\*.policy_id | string | | |
 action_result.data.\*.group_constrained | boolean | | True False |
-action_result.data.\*.props | string | | |
 action_result.summary.total_channels | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |

@@ -14,7 +14,7 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
@@ -25,7 +25,6 @@ from ..consts import (
     MATTERMOST_NO_POSTS_FOUND,
 )
 from ._helpers import (
-    LegacyCompatibleOutput,
     _process_posts,
     _resolve_channel_id,
     _resolve_team_id,
@@ -56,14 +55,14 @@ class ListPostsParams(Params):
     )
 
 
-class PropsOutput(LegacyCompatibleOutput):
+class PostPropsOutput(PermissiveActionOutput):
     """Post properties returned by Mattermost."""
 
     addedUsername: str | None = OutputField(cef_types=["user name"])
     username: str | None = OutputField(cef_types=["user name"], column_name="User Name")
 
 
-class FilesOutput(LegacyCompatibleOutput):
+class FilesOutput(PermissiveActionOutput):
     """File metadata embedded in a Mattermost post."""
 
     id: str | None = OutputField(example_values=["1nrp7izie7gdz81mwb99azed4w"])
@@ -84,20 +83,20 @@ class FilesOutput(LegacyCompatibleOutput):
     remote_id: str | None = None
 
 
-class MetadataOutput(LegacyCompatibleOutput):
+class MetadataOutput(PermissiveActionOutput):
     """Metadata attached to a Mattermost post."""
 
     files: list[FilesOutput] | None = None
 
 
-class ListPostsOutput(LegacyCompatibleOutput):
+class ListPostsOutput(PermissiveActionOutput):
     """A Mattermost post."""
 
     id: str | None = OutputField(column_name="Post ID")
     message: str | None = OutputField(column_name="Message")
     type: str | None = OutputField(column_name="Type")
     user_id: str | None = OutputField(column_name="User ID")
-    props: PropsOutput | None = None
+    props: PostPropsOutput | None = None
     channel_id: str | None = OutputField(
         column_name="Channel ID", cef_types=["mattermost channel"]
     )

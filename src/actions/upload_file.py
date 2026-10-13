@@ -14,7 +14,7 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import OutputField
+from soar_sdk.action_results import OutputField, PermissiveActionOutput
 from soar_sdk.exceptions import ActionFailure
 from soar_sdk.params import Param, Params
 
@@ -27,12 +27,7 @@ from ..consts import (
     MATTERMOST_FILES_ENDPOINT,
     MATTERMOST_VAULT_ID_NOT_FOUND,
 )
-from ._helpers import (
-    LegacyCompatibleOutput,
-    _create_post,
-    _resolve_channel_id,
-    _resolve_team_id,
-)
+from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
 
 
 class UploadFileParams(Params):
@@ -63,7 +58,7 @@ class UploadFileParams(Params):
     )
 
 
-class FilesOutput(LegacyCompatibleOutput):
+class FilesOutput(PermissiveActionOutput):
     """File metadata returned by Mattermost."""
 
     id: str | None = OutputField(example_values=["8fgytaxpojn15dchqonjb15enw"])
@@ -84,13 +79,13 @@ class FilesOutput(LegacyCompatibleOutput):
     remote_id: str | None = None
 
 
-class MetadataOutput(LegacyCompatibleOutput):
+class MetadataOutput(PermissiveActionOutput):
     """File metadata embedded in the created post."""
 
     files: list[FilesOutput] | None = None
 
 
-class UploadFileOutput(LegacyCompatibleOutput):
+class UploadFileOutput(PermissiveActionOutput):
     """Mattermost post created after the file upload."""
 
     id: str | None = OutputField(column_name="Message ID")

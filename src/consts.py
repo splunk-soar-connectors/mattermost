@@ -29,10 +29,6 @@ MATTERMOST_ACCESS_TOKEN_URL = "{server_url}/oauth/access_token"  # noqa: S105
 MATTERMOST_OAUTH_CALLBACK_ROUTE = "oauth_callback"
 MATTERMOST_OAUTH_SUCCESS_MSG = "Code received. Please close this window, the action will continue to get new token."
 
-MATTERMOST_CONFIG_PARAMS_REQUIRED_CONNECTIVITY = (
-    "Either 'personal_token' or 'client_id' and 'client_secret' are required "
-    "for test connectivity"
-)
 MATTERMOST_TEAM_NOT_FOUND_MSG = "Team with given name or ID not found"
 MATTERMOST_CHANNEL_NOT_FOUND_MSG = "Channel with given name or ID not found"
 MATTERMOST_NO_POSTS_FOUND = "No posts found"
@@ -41,7 +37,6 @@ MATTERMOST_FILE_UPLOAD_MSG = "Phantom file upload"
 MATTERMOST_FILE_UPLOAD_SUCCESS = "File uploaded successfully"
 MATTERMOST_VAULT_ID_NOT_FOUND = "Vault ID not found"
 MATTERMOST_FILE_UPLOAD_FAILED = "Cannot upload file to the given channel"
-MATTERMOST_INVALID_TIME = "Parameter 'start_time' or 'end_time' failed validation"
 MATTERMOST_INVALID_TIME_RANGE = (
     "Invalid time range. 'end_time' should be greater than 'start_time'."
 )
@@ -54,12 +49,12 @@ MATTERMOST_MAKING_CONNECTION_MSG = "Connecting to an endpoint"
 MATTERMOST_OAUTH_URL_MSG = "Using OAuth URL:"
 MATTERMOST_TEST_CONNECTIVITY_FAILED_MSG = "Test connectivity failed"
 MATTERMOST_TEST_CONNECTIVITY_PASSED_MSG = "Test connectivity passed"
-MATTERMOST_WAITING_FOR_AUTHORIZATION_MSG = (
-    "Waiting for user to complete authorization..."
-)
 MATTERMOST_TC_STATUS_SLEEP = 3
 
 # These limits are part of the legacy connector's safety contract.
 MATTERMOST_MAX_POST_PAGES = 1000
 MATTERMOST_MAX_POSTS = 10000
 MATTERMOST_MAX_GENERIC_PAGES = 1000
+MATTERMOST_GENERIC_PAGINATION_LIMIT_MSG = (
+    "Mattermost pagination exceeded the safe generic page limit"
+)

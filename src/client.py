@@ -31,7 +31,6 @@ if TYPE_CHECKING:
 def _request_with_auth(
     method: str,
     url: str,
-    asset: Asset,
     *,
     auth: httpx.Auth,
     params: dict[str, Any] | None,
@@ -102,7 +101,6 @@ def call_mattermost(
     response = _request_with_auth(
         method,
         url,
-        asset,
         auth=auth_candidates[0],
         params=params,
         json=json,
@@ -118,7 +116,6 @@ def call_mattermost(
     return _request_with_auth(
         method,
         url,
-        asset,
         auth=auth_candidates[1],
         params=params,
         json=json,

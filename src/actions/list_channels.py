@@ -14,15 +14,11 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
-from ._helpers import (
-    LegacyCompatibleOutput,
-    _list_all_channels,
-    _resolve_team_id,
-)
+from ._helpers import _list_all_channels, _resolve_team_id
 
 
 class ListChannelsParams(Params):
@@ -37,19 +33,8 @@ class ListChannelsParams(Params):
     )
 
 
-class ListChannelsOutput(LegacyCompatibleOutput):
+class ListChannelsOutput(PermissiveActionOutput):
     """A Mattermost public or private channel."""
-
-    @classmethod
-    def _to_json_schema(
-        cls, parent_datapath="action_result.data.*", column_order_counter=None
-    ):
-        """Keep the legacy string contract for the unstructured props field."""
-        yield from super()._to_json_schema(parent_datapath, column_order_counter)
-        yield {
-            "data_path": f"{parent_datapath}.props",
-            "data_type": "string",
-        }
 
     id: str | None = OutputField(
         column_name="Channel ID",
@@ -74,7 +59,7 @@ class ListChannelsOutput(LegacyCompatibleOutput):
     extra_update_at: float | None = OutputField(example_values=[0])
     header: str | None = None
     last_post_at: float | None = OutputField(example_values=[1535370232524])
-    props: LegacyCompatibleOutput | None = None
+    props: PermissiveActionOutput | None = None
     purpose: str | None = None
     scheme_id: str | None = None
     team_id: str | None = OutputField(

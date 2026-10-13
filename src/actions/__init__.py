@@ -8,7 +8,6 @@
 
 from soar_sdk.app import App
 
-from ._helpers import LegacyStringSummary
 from .list_channels import ListChannelsSummary, list_channels
 from .list_posts import ListPostsSummary, list_posts
 from .list_teams import ListTeamsSummary, list_teams
@@ -35,7 +34,6 @@ def register_actions(app: App) -> App:
         verbose="Uploads a SOAR vault file and creates a Mattermost post containing it.",
         read_only=False,
         render_as="table",
-        summary_type=LegacyStringSummary,
     )
     app.register_action(
         send_message,
@@ -43,7 +41,6 @@ def register_actions(app: App) -> App:
         verbose="Creates a new post in a Mattermost channel.",
         read_only=False,
         render_as="table",
-        summary_type=LegacyStringSummary,
     )
     app.register_action(
         list_posts,

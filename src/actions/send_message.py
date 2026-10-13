@@ -14,17 +14,12 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import OutputField
+from soar_sdk.action_results import OutputField, PermissiveActionOutput
 from soar_sdk.params import Param, Params
 
 from ..asset import Asset
 from ..consts import MATTERMOST_SEND_MSG_SUCCESS
-from ._helpers import (
-    LegacyCompatibleOutput,
-    _create_post,
-    _resolve_channel_id,
-    _resolve_team_id,
-)
+from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
 
 
 class SendMessageParams(Params):
@@ -45,7 +40,7 @@ class SendMessageParams(Params):
     message: str = Param(required=True, description="Message to send")
 
 
-class SendMessageOutput(LegacyCompatibleOutput):
+class SendMessageOutput(PermissiveActionOutput):
     """Mattermost post created by the send message action."""
 
     id: str | None = OutputField(column_name="Message ID")

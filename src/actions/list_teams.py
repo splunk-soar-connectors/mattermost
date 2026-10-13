@@ -14,17 +14,14 @@
 
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.params import Params
 
 from ..asset import Asset
-from ._helpers import (
-    LegacyCompatibleOutput,
-    _list_all_teams,
-)
+from ._helpers import _list_all_teams
 
 
-class ListTeamsOutput(LegacyCompatibleOutput):
+class ListTeamsOutput(PermissiveActionOutput):
     """A Mattermost team returned by the API."""
 
     id: str | None = OutputField(

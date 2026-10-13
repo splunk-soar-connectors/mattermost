@@ -16,18 +16,17 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Iterator
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
-from pydantic import ConfigDict
-from soar_sdk.action_results import ActionOutput, OutputFieldSpecification
 from soar_sdk.exceptions import ActionFailure
 
 from ..client import call_mattermost, parse_json_response
 from ..consts import (
     MATTERMOST_CHANNEL_NOT_FOUND_MSG,
+    MATTERMOST_GENERIC_PAGINATION_LIMIT_MSG,
     MATTERMOST_LIST_CHANNELS_ENDPOINT,
+    MATTERMOST_MAX_GENERIC_PAGES,
     MATTERMOST_MAX_POST_PAGES,
     MATTERMOST_MAX_POSTS,
     MATTERMOST_NEGATIVE_TIME,
@@ -50,47 +49,6 @@ ISO8601_RE = re.compile(
 )
 
 
-class LegacyCompatibleOutput(ActionOutput):
-    """Preserve fields returned by the legacy connector but not yet modeled."""
-
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
-
-class LegacyStringSummary(ActionOutput):
-    """Represent the legacy scalar ``action_result.summary`` datapath."""
-
-    value: str = ""
-
-    def model_dump(self, *args: Any, **kwargs: Any) -> str:
-        """Serialize the compatibility summary as the legacy string value."""
-        return self.value
-
-    @classmethod
-    def _to_json_schema(
-        cls,
-        parent_datapath: str = "action_result.summary",
-        column_order_counter: Any | None = None,
-    ) -> Iterator[OutputFieldSpecification]:
-        """Declare the legacy scalar summary datapath in the app manifest."""
-        yield {"data_path": parent_datapath, "data_type": "string"}
-
-
-def _legacy_string_fields(
-    parent_datapath: str, field_names: tuple[str, ...]
-) -> Iterator[OutputFieldSpecification]:
-    """Declare legacy string datapaths while preserving raw runtime values."""
-    for field_name in field_names:
-        yield {
-            "data_path": f"{parent_datapath}.{field_name}",
-            "data_type": "string",
-        }
-
-
-def _check_response(response) -> Any:
-    """Return a decoded response or raise a user-facing action failure."""
-    return parse_json_response(response)
-
-
 def _paginate_all(
     endpoint: str,
     asset: Asset,
@@ -100,13 +58,19 @@ def _paginate_all(
     page = 0
     results: list[dict[str, Any]] = []
 
-    while True:
+    while page < MATTERMOST_MAX_GENERIC_PAGES:
         query = {"page": page, **(extra_params or {})}
-        payload = _check_response(call_mattermost("GET", endpoint, asset, params=query))
+        payload = parse_json_response(
+            call_mattermost("GET", endpoint, asset, params=query)
+        )
         if not payload:
             return results
         results.extend(payload)
         page += 1
+
+    raise ActionFailure(
+        f"{MATTERMOST_GENERIC_PAGINATION_LIMIT_MSG} ({MATTERMOST_MAX_GENERIC_PAGES})"
+    )
 
 
 def _resolve_team_id(team: str, asset: Asset) -> str:
@@ -114,14 +78,14 @@ def _resolve_team_id(team: str, asset: Asset) -> str:
     team_value = team.lower()
     page = 0
 
-    while True:
-        payload = _check_response(
+    while page < MATTERMOST_MAX_GENERIC_PAGES:
+        payload = parse_json_response(
             call_mattermost(
                 "GET", MATTERMOST_TEAMS_ENDPOINT, asset, params={"page": page}
             )
         )
         if not payload:
-            break
+            raise ActionFailure(MATTERMOST_TEAM_NOT_FOUND_MSG)
 
         for each_team in payload:
             if team_value in (
@@ -132,7 +96,9 @@ def _resolve_team_id(team: str, asset: Asset) -> str:
 
         page += 1
 
-    raise ActionFailure(MATTERMOST_TEAM_NOT_FOUND_MSG)
+    raise ActionFailure(
+        f"{MATTERMOST_GENERIC_PAGINATION_LIMIT_MSG} ({MATTERMOST_MAX_GENERIC_PAGES})"
+    )
 
 
 def _list_all_teams(asset: Asset) -> list[dict[str, Any]]:
@@ -142,8 +108,8 @@ def _list_all_teams(asset: Asset) -> list[dict[str, Any]]:
     duplicate_entry = 0
     previous_teams: list[dict[str, Any]] = []
 
-    while True:
-        payload = _check_response(
+    while page < MATTERMOST_MAX_GENERIC_PAGES:
+        payload = parse_json_response(
             call_mattermost(
                 "GET", MATTERMOST_TEAMS_ENDPOINT, asset, params={"page": page}
             )
@@ -164,11 +130,15 @@ def _list_all_teams(asset: Asset) -> list[dict[str, Any]]:
 
         page += 1 + duplicate_entry
 
+    raise ActionFailure(
+        f"{MATTERMOST_GENERIC_PAGINATION_LIMIT_MSG} ({MATTERMOST_MAX_GENERIC_PAGES})"
+    )
+
 
 def _resolve_channel_id(team_id: str, channel: str, asset: Asset) -> str:
     """Resolve a Mattermost channel name or ID to its ID."""
     endpoint = MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id)
-    channels = _check_response(call_mattermost("GET", endpoint, asset))
+    channels = parse_json_response(call_mattermost("GET", endpoint, asset))
     channel_value = channel.strip().lower()
     for each_channel in channels:
         if channel_value in (
@@ -182,7 +152,7 @@ def _resolve_channel_id(team_id: str, channel: str, asset: Asset) -> str:
 def _list_all_channels(team_id: str, asset: Asset) -> list[dict[str, Any]]:
     """Return public and private channels visible to the current user."""
     endpoint = MATTERMOST_LIST_CHANNELS_ENDPOINT.format(team=team_id)
-    channels = _check_response(call_mattermost("GET", endpoint, asset))
+    channels = parse_json_response(call_mattermost("GET", endpoint, asset))
     return [
         channel
         for channel in channels
@@ -195,7 +165,7 @@ def _create_post(request_data: dict[str, Any], asset: Asset) -> dict[str, Any]:
     response = call_mattermost(
         "POST", MATTERMOST_SEND_MSG_ENDPOINT, asset, data=json.dumps(request_data)
     )
-    return _check_response(response)
+    return parse_json_response(response)
 
 
 def _validate_and_convert_time(time_stamp: str) -> int:
@@ -234,7 +204,7 @@ def _get_posts(
 
     while page < MATTERMOST_MAX_POST_PAGES and len(results) < MATTERMOST_MAX_POSTS:
         params["page"] = page
-        payload = _check_response(
+        payload = parse_json_response(
             call_mattermost("GET", endpoint, asset, params=params)
         )
         if not payload["posts"]:
@@ -289,8 +259,6 @@ def _process_posts(
 
 
 __all__ = [
-    "LegacyCompatibleOutput",
-    "_check_response",
     "_create_post",
     "_get_posts",
     "_list_all_channels",

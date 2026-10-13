@@ -15,6 +15,8 @@ from soar_sdk.exceptions import ActionFailure
 from src.actions._helpers import (
     _create_post,
     _get_posts,
+    _list_all_teams,
+    _paginate_all,
     _process_posts,
     _resolve_team_id,
     _validate_and_convert_time,
@@ -22,7 +24,11 @@ from src.actions._helpers import (
 from src.actions.list_channels import ListChannelsParams, list_channels
 from src.actions.list_posts import ListPostsOutput, ListPostsParams, list_posts
 from src.actions.list_teams import ListTeamsOutput, list_teams
-from src.actions.list_users import ListUsersParams, _normalize_user_output, list_users
+from src.actions.list_users import (
+    ListUsersOutput,
+    ListUsersParams,
+    list_users,
+)
 from src.actions.make_request import MattermostMakeRequestParams, make_request
 from src.actions.upload_file import UploadFileParams, upload_file
 from src.app import app
@@ -72,7 +78,7 @@ def test_parse_json_response_processes_legacy_html_errors() -> None:
         parse_json_response(response)
 
 
-def test_normalize_user_output_preserves_nested_timezone_flag() -> None:
+def test_list_users_output_preserves_nested_timezone_flag() -> None:
     user = {
         "timezone": {
             "automaticTimezone": "UTC",
@@ -81,9 +87,21 @@ def test_normalize_user_output_preserves_nested_timezone_flag() -> None:
         }
     }
 
-    normalized = _normalize_user_output(user)
+    output = ListUsersOutput(**user)
 
-    assert normalized["timezone"]["useAutomaticTimezone"] is True
+    assert output.model_dump()["timezone"]["useAutomaticTimezone"] is True
+
+
+def test_list_users_output_preserves_typed_notify_props_and_raw_props() -> None:
+    output = ListUsersOutput(
+        notify_props={"email": "true", "desktop": "mention"},
+        props={"future_property": {"enabled": True}},
+    )
+
+    dumped = output.model_dump()
+    assert dumped["notify_props"]["email"] == "true"
+    assert dumped["notify_props"]["desktop"] == "mention"
+    assert dumped["props"] == {"future_property": {"enabled": True}}
 
 
 def test_list_teams_output_preserves_legacy_fields_and_extra_values() -> None:
@@ -281,6 +299,42 @@ def test_resolve_team_id_stops_after_matching_page() -> None:
         assert _resolve_team_id("target-team", _asset()) == "team-id"
 
     call.assert_called_once_with("GET", "/teams", _asset(), params={"page": 0})
+
+
+def test_generic_user_pagination_reports_page_limit() -> None:
+    response = httpx.Response(200, json=[{"id": "user-id"}])
+
+    with (
+        patch("src.actions._helpers.call_mattermost", return_value=response),
+        patch("src.actions._helpers.MATTERMOST_MAX_GENERIC_PAGES", 1),
+        pytest.raises(ActionFailure, match=r"safe generic page limit \(1\)"),
+    ):
+        _paginate_all("/users", _asset())
+
+
+def test_team_resolution_reports_page_limit() -> None:
+    response = httpx.Response(200, json=[{"id": "other-team"}])
+
+    with (
+        patch("src.actions._helpers.call_mattermost", return_value=response),
+        patch("src.actions._helpers.MATTERMOST_MAX_GENERIC_PAGES", 1),
+        pytest.raises(ActionFailure, match=r"safe generic page limit \(1\)"),
+    ):
+        _resolve_team_id("target-team", _asset())
+
+
+def test_list_teams_reports_page_limit() -> None:
+    response = httpx.Response(
+        200,
+        json=[{"id": "team-id", "name": "team-name"}],
+    )
+
+    with (
+        patch("src.actions._helpers.call_mattermost", return_value=response),
+        patch("src.actions._helpers.MATTERMOST_MAX_GENERIC_PAGES", 1),
+        pytest.raises(ActionFailure, match=r"safe generic page limit \(1\)"),
+    ):
+        _list_all_teams(_asset())
 
 
 def test_process_posts_stops_at_end_time() -> None:
