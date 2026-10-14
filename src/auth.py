@@ -27,6 +27,7 @@ from soar_sdk.auth import (
 )
 from soar_sdk.auth.client import ConfigurationChangedError, OAuthToken
 from soar_sdk.exceptions import ActionFailure
+from soar_sdk.shims.phantom.encryption_helper import encryption_helper
 from .consts import (
     MATTERMOST_ACCESS_TOKEN_URL,
     MATTERMOST_API_BASE_URL,
@@ -71,10 +72,66 @@ def _oauth_http_client(verify: bool) -> httpx.Client:
     return httpx.Client(timeout=httpx.Timeout(None), verify=verify)
 
 
+def migrate_legacy_oauth_state(asset: Asset) -> None:
+    """Copy a legacy Mattermost OAuth token into SDK-managed auth state."""
+    auth_state = asset.auth_state
+    current_state = auth_state.get_all()
+    current_oauth = current_state.get("oauth")
+    if isinstance(current_oauth, dict):
+        current_token = current_oauth.get("token")
+        if isinstance(current_token, dict) and current_token.get("access_token"):
+            return
+
+    if not asset.client_id:
+        return
+
+    legacy_state = auth_state.backend.load_state() or {}
+    legacy_token = legacy_state.get("token")
+    if not isinstance(legacy_token, dict):
+        return
+
+    access_token = legacy_token.get("access_token")
+    if not isinstance(access_token, str) or not access_token:
+        return
+
+    refresh_token = legacy_token.get("refresh_token")
+    try:
+        if legacy_token.get("is_encrypted"):
+            access_token = encryption_helper.decrypt(access_token, auth_state.asset_id)
+    except Exception:
+        # An unreadable legacy token must not prevent normal OAuth authorization.
+        return
+
+    token_data: dict[str, object] = {
+        "access_token": access_token,
+        "token_type": legacy_token.get("token_type", "Bearer"),
+    }
+    for field in ("expires_in", "refresh_token", "scope", "expires_at"):
+        value = refresh_token if field == "refresh_token" else legacy_token.get(field)
+        if value is not None:
+            token_data[field] = value
+
+    try:
+        token = OAuthToken.model_validate(token_data)
+    except (TypeError, ValueError):
+        return
+
+    migrated_oauth = dict(current_oauth) if isinstance(current_oauth, dict) else {}
+    migrated_oauth.update(
+        {
+            "token": token.model_dump(mode="json", exclude_none=True),
+            "client_id": asset.client_id,
+        }
+    )
+    current_state["oauth"] = migrated_oauth
+    auth_state.put_all(current_state)
+
+
 def build_oauth_client(
     asset: Asset, *, redirect_uri: str | None = None
 ) -> SOARAssetOAuthClient:
     """Build an OAuth client backed by the asset's persisted auth state."""
+    migrate_legacy_oauth_state(asset)
     return SOARAssetOAuthClient(
         _build_oauth_config(asset, redirect_uri=redirect_uri),
         asset.auth_state,

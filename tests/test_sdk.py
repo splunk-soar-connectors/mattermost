@@ -6,6 +6,7 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 
+from types import SimpleNamespace
 from unittest.mock import MagicMock, Mock, patch
 
 import httpx
@@ -32,6 +33,7 @@ from src.actions.list_users import (
 from src.actions.make_request import MattermostMakeRequestParams, make_request
 from src.actions.upload_file import UploadFileParams, upload_file
 from src.app import app
+from src.auth import build_oauth_client, migrate_legacy_oauth_state
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
 
@@ -42,6 +44,133 @@ def _asset() -> Asset:
         verify_server_cert=True,
         personal_token="personal-token",
     )
+
+
+def _auth_state(*, current: dict, legacy: dict) -> MagicMock:
+    state = MagicMock()
+    state.get_all.return_value = current
+    state.backend.load_state.return_value = legacy
+    state.asset_id = "asset-id"
+    return state
+
+
+def _migration_asset(auth_state: MagicMock) -> SimpleNamespace:
+    return SimpleNamespace(client_id="client-id", auth_state=auth_state)
+
+
+def test_migrate_legacy_oauth_state_preserves_plaintext_token() -> None:
+    auth_state = _auth_state(
+        current={"session": {"session_id": "session-id"}},
+        legacy={
+            "token": {
+                "access_token": "legacy-access-token",
+                "refresh_token": "legacy-refresh-token",
+                "scope": "read",
+            }
+        },
+    )
+    asset = _migration_asset(auth_state)
+
+    migrate_legacy_oauth_state(asset)
+
+    saved_state = auth_state.put_all.call_args.args[0]
+    assert saved_state["session"] == {"session_id": "session-id"}
+    assert saved_state["oauth"] == {
+        "token": {
+            "access_token": "legacy-access-token",
+            "token_type": "Bearer",
+            "refresh_token": "legacy-refresh-token",
+            "scope": "read",
+        },
+        "client_id": "client-id",
+    }
+
+
+def test_migrate_legacy_oauth_state_decrypts_token_values() -> None:
+    auth_state = _auth_state(
+        current={},
+        legacy={
+            "token": {
+                "access_token": "encrypted-access-token",
+                "refresh_token": "legacy-refresh-token",
+                "is_encrypted": True,
+            }
+        },
+    )
+    asset = _migration_asset(auth_state)
+
+    with patch(
+        "src.auth.encryption_helper.decrypt",
+        return_value="access-token",
+    ) as decrypt:
+        migrate_legacy_oauth_state(asset)
+
+    decrypt.assert_called_once_with("encrypted-access-token", "asset-id")
+    assert auth_state.put_all.call_args.args[0]["oauth"]["token"]["access_token"] == (
+        "access-token"
+    )
+    assert auth_state.put_all.call_args.args[0]["oauth"]["token"]["refresh_token"] == (
+        "legacy-refresh-token"
+    )
+
+
+def test_migrate_legacy_oauth_state_does_not_overwrite_sdk_token() -> None:
+    auth_state = _auth_state(
+        current={
+            "oauth": {
+                "token": {"access_token": "sdk-access-token"},
+                "client_id": "client-id",
+            }
+        },
+        legacy={
+            "token": {"access_token": "legacy-access-token"},
+        },
+    )
+    asset = _migration_asset(auth_state)
+
+    migrate_legacy_oauth_state(asset)
+
+    auth_state.put_all.assert_not_called()
+
+
+def test_migrate_legacy_oauth_state_ignores_invalid_legacy_token() -> None:
+    auth_state = _auth_state(
+        current={},
+        legacy={
+            "token": {
+                "access_token": "encrypted-access-token",
+                "is_encrypted": True,
+            }
+        },
+    )
+    asset = _migration_asset(auth_state)
+
+    with patch(
+        "src.auth.encryption_helper.decrypt",
+        side_effect=ValueError("invalid token"),
+    ):
+        migrate_legacy_oauth_state(asset)
+
+    auth_state.put_all.assert_not_called()
+
+
+def test_build_oauth_client_migrates_legacy_state_before_use() -> None:
+    asset = SimpleNamespace(
+        server_url="https://mattermost.example.com",
+        client_id="client-id",
+        client_secret="client-secret",  # pragma: allowlist secret
+        verify_server_cert=True,
+        auth_state=MagicMock(),
+    )
+
+    with (
+        patch("src.auth.migrate_legacy_oauth_state") as migrate,
+        patch("src.auth.SOARAssetOAuthClient") as oauth_client,
+    ):
+        result = build_oauth_client(asset)
+
+    migrate.assert_called_once_with(asset)
+    assert result is oauth_client.return_value
 
 
 def test_parse_json_response_returns_success_payload() -> None:
