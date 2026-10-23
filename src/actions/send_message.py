@@ -20,6 +20,7 @@ from soar_sdk.params import Param, Params
 from ..asset import Asset
 from ..consts import MATTERMOST_SEND_MSG_SUCCESS
 from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
+from .list_users import UserOutput
 
 
 class SendMessageParams(Params):
@@ -76,7 +77,7 @@ class SendMessageOutput(PermissiveActionOutput):
     type: str | None = None
     reply_count: float | None = OutputField(example_values=[0])
     last_reply_at: float | None = OutputField(example_values=[0])
-    participants: list[str] | None = None
+    participants: list[UserOutput] | None = None
 
 
 def send_message(

@@ -24,6 +24,7 @@ from ..consts import (
     MATTERMOST_LIST_POSTS_ENDPOINT,
     MATTERMOST_NO_POSTS_FOUND,
 )
+from .list_users import UserOutput
 from ._helpers import (
     _process_posts,
     _resolve_channel_id,
@@ -140,7 +141,7 @@ class ListPostsOutput(PermissiveActionOutput):
     reply_count: float | None = OutputField(example_values=[0])
     last_reply_at: float | None = OutputField(example_values=[0])
     metadata: MetadataOutput | None = None
-    participants: list[str] | None = None
+    participants: list[UserOutput] | None = None
 
 
 class ListPostsSummary(ActionOutput):

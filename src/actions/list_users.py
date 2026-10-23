@@ -35,7 +35,7 @@ class ListUsersParams(Params):
     )
 
 
-class NotifyPropsOutput(ActionOutput):
+class NotifyPropsOutput(PermissiveActionOutput):
     """Mattermost user notification properties."""
 
     email: str | None = None
@@ -47,7 +47,7 @@ class NotifyPropsOutput(ActionOutput):
     first_name: str | None = None
 
 
-class TimezoneOutput(ActionOutput):
+class TimezoneOutput(PermissiveActionOutput):
     """Mattermost user timezone settings."""
 
     automaticTimezone: str | None = None
@@ -55,7 +55,7 @@ class TimezoneOutput(ActionOutput):
     useAutomaticTimezone: bool | None = OutputField(example_values=[True])
 
 
-class ListUsersOutput(PermissiveActionOutput):
+class UserOutput(PermissiveActionOutput):
     """A Mattermost user returned by the API."""
 
     id: str | None = OutputField(
@@ -99,6 +99,10 @@ class ListUsersOutput(PermissiveActionOutput):
     timezone: TimezoneOutput | None = None
     update_at: float | None = OutputField(example_values=[1535105717458])
     disable_welcome_email: bool | None = OutputField(example_values=[False])
+
+
+class ListUsersOutput(UserOutput):
+    """A Mattermost user returned by the list users action."""
 
 
 class ListUsersSummary(ActionOutput):

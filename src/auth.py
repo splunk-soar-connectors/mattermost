@@ -25,7 +25,7 @@ from soar_sdk.auth import (
     SOARAssetOAuthClient,
     StaticTokenAuth,
 )
-from soar_sdk.auth.client import ConfigurationChangedError, OAuthToken
+from soar_sdk.auth.client import OAuthClientError, OAuthToken
 from soar_sdk.exceptions import ActionFailure
 from soar_sdk.shims.phantom.encryption_helper import encryption_helper
 from .consts import (
@@ -167,14 +167,17 @@ def complete_oauth_authorization(
     announce_url: Callable[[str], None],
     poll_timeout: int = OAUTH_POLL_TIMEOUT,
     poll_interval: int = MATTERMOST_TC_STATUS_SLEEP,
+    force_authorization: bool = False,
 ) -> OAuthToken:
     """Run the browser-based Mattermost OAuth authorization flow."""
     client = build_oauth_client(asset, redirect_uri=redirect_uri)
-    try:
-        if client.get_stored_token() is not None:
-            return client.get_valid_token(auto_refresh=True)
-    except ConfigurationChangedError:
-        pass
+    if not force_authorization:
+        try:
+            if client.get_stored_token() is not None:
+                return client.get_valid_token(auto_refresh=True)
+        except OAuthClientError:
+            # Stored OAuth state is unusable; continue with fresh authorization.
+            pass
 
     auth_url, _ = client.create_authorization_url(asset_id, use_pkce=False)
     announce_url(auth_url)
@@ -195,3 +198,35 @@ def complete_oauth_authorization(
         f"OAuth authorization failed: timed out after {poll_timeout}s "
         "waiting for user authorization."
     )
+
+
+def authorize_and_probe_current_user(
+    asset: Asset,
+    *,
+    asset_id: str,
+    redirect_uri: str,
+    announce_url: Callable[[str], None],
+) -> httpx.Response:
+    """Authorize OAuth and reauthorize once if the stored token is rejected."""
+    complete_oauth_authorization(
+        asset,
+        asset_id=asset_id,
+        redirect_uri=redirect_uri,
+        announce_url=announce_url,
+    )
+    try:
+        response = probe_current_user(asset, build_oauth_auth(asset))
+    except OAuthClientError:
+        response = None
+
+    if response is not None and response.status_code != 401:
+        return response
+
+    complete_oauth_authorization(
+        asset,
+        asset_id=asset_id,
+        redirect_uri=redirect_uri,
+        announce_url=announce_url,
+        force_authorization=True,
+    )
+    return probe_current_user(asset, build_oauth_auth(asset))

@@ -11,6 +11,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import httpx
 import pytest
+from soar_sdk.auth.client import TokenExpiredError
 from soar_sdk.exceptions import ActionFailure
 
 from src.actions._helpers import (
@@ -24,16 +25,23 @@ from src.actions._helpers import (
 )
 from src.actions.list_channels import ListChannelsParams, list_channels
 from src.actions.list_posts import ListPostsOutput, ListPostsParams, list_posts
+from src.actions.send_message import SendMessageOutput
 from src.actions.list_teams import ListTeamsOutput, list_teams
 from src.actions.list_users import (
     ListUsersOutput,
     ListUsersParams,
+    UserOutput,
     list_users,
 )
 from src.actions.make_request import MattermostMakeRequestParams, make_request
-from src.actions.upload_file import UploadFileParams, upload_file
+from src.actions.upload_file import UploadFileOutput, UploadFileParams, upload_file
 from src.app import app
-from src.auth import build_oauth_client, migrate_legacy_oauth_state
+from src.auth import (
+    authorize_and_probe_current_user,
+    build_oauth_client,
+    complete_oauth_authorization,
+    migrate_legacy_oauth_state,
+)
 from src.asset import Asset
 from src.client import call_mattermost, parse_json_response
 
@@ -173,6 +181,88 @@ def test_build_oauth_client_migrates_legacy_state_before_use() -> None:
     assert result is oauth_client.return_value
 
 
+def test_complete_oauth_authorization_reauthorizes_after_expired_token() -> None:
+    client = MagicMock()
+    client.get_stored_token.return_value = object()
+    client.get_valid_token.side_effect = TokenExpiredError("expired")
+    client.create_authorization_url.return_value = (
+        "https://mattermost.example.com/oauth",
+        None,
+    )
+    client.get_authorization_code.return_value = "authorization-code"
+    token = object()
+    client.fetch_token_with_authorization_code.return_value = token
+    announce_url = Mock()
+
+    with (
+        patch("src.auth.build_oauth_client", return_value=client),
+        patch("src.auth.time.sleep"),
+    ):
+        result = complete_oauth_authorization(
+            SimpleNamespace(),
+            asset_id="asset-id",
+            redirect_uri="https://soar.example.com/callback",
+            announce_url=announce_url,
+            poll_timeout=1,
+            poll_interval=0,
+        )
+
+    assert result is token
+    client.create_authorization_url.assert_called_once_with("asset-id", use_pkce=False)
+    client._store_token.assert_called_once_with(token)
+    announce_url.assert_called_once_with("https://mattermost.example.com/oauth")
+
+
+def test_authorize_and_probe_current_user_keeps_valid_token() -> None:
+    response = httpx.Response(200, json={"id": "user-id"})
+    asset = SimpleNamespace()
+    announce_url = Mock()
+
+    with (
+        patch("src.auth.complete_oauth_authorization") as authorize,
+        patch("src.auth.probe_current_user", return_value=response),
+        patch("src.auth.build_oauth_auth", return_value=Mock()),
+    ):
+        result = authorize_and_probe_current_user(
+            asset,
+            asset_id="asset-id",
+            redirect_uri="https://soar.example.com/callback",
+            announce_url=announce_url,
+        )
+
+    assert result is response
+    authorize.assert_called_once_with(
+        asset,
+        asset_id="asset-id",
+        redirect_uri="https://soar.example.com/callback",
+        announce_url=announce_url,
+    )
+
+
+def test_authorize_and_probe_current_user_reauthorizes_after_401() -> None:
+    responses = [
+        httpx.Response(401),
+        httpx.Response(200, json={"id": "user-id"}),
+    ]
+    asset = SimpleNamespace()
+
+    with (
+        patch("src.auth.complete_oauth_authorization") as authorize,
+        patch("src.auth.probe_current_user", side_effect=responses),
+        patch("src.auth.build_oauth_auth", return_value=Mock()),
+    ):
+        result = authorize_and_probe_current_user(
+            asset,
+            asset_id="asset-id",
+            redirect_uri="https://soar.example.com/callback",
+            announce_url=Mock(),
+        )
+
+    assert result is responses[1]
+    assert authorize.call_count == 2
+    assert authorize.call_args_list[1].kwargs["force_authorization"] is True
+
+
 def test_parse_json_response_returns_success_payload() -> None:
     response = httpx.Response(200, json={"id": "post-id"})
 
@@ -213,23 +303,35 @@ def test_list_users_output_preserves_nested_timezone_flag() -> None:
             "automaticTimezone": "UTC",
             "manualTimezone": "",
             "useAutomaticTimezone": True,
+            "future_timezone_property": "value",
         }
     }
 
     output = ListUsersOutput(**user)
 
-    assert output.model_dump()["timezone"]["useAutomaticTimezone"] is True
+    timezone = output.model_dump()["timezone"]
+    assert timezone["useAutomaticTimezone"] is True
+    assert timezone["future_timezone_property"] == "value"
 
 
 def test_list_users_output_preserves_typed_notify_props_and_raw_props() -> None:
     output = ListUsersOutput(
-        notify_props={"email": "true", "desktop": "mention"},
+        notify_props={
+            "email": "true",
+            "desktop": "mention",
+            "comments": "any",
+            "push_status": "online",
+            "desktop_threads": "all",
+        },
         props={"future_property": {"enabled": True}},
     )
 
     dumped = output.model_dump()
     assert dumped["notify_props"]["email"] == "true"
     assert dumped["notify_props"]["desktop"] == "mention"
+    assert dumped["notify_props"]["comments"] == "any"
+    assert dumped["notify_props"]["push_status"] == "online"
+    assert dumped["notify_props"]["desktop_threads"] == "all"
     assert dumped["props"] == {"future_property": {"enabled": True}}
 
 
@@ -249,11 +351,20 @@ def test_list_teams_output_preserves_legacy_fields_and_extra_values() -> None:
     assert output.model_dump()["legacy_extra"] == {"key": "value"}
 
 
-def test_output_model_preserves_structured_post_values() -> None:
-    output = ListPostsOutput(file_ids=["file-id"], participants=["user-id"])
+@pytest.mark.parametrize(
+    "output_type", [ListPostsOutput, SendMessageOutput, UploadFileOutput]
+)
+def test_post_outputs_preserve_structured_participants(output_type: type) -> None:
+    participant = {
+        "id": "user-id",
+        "username": "test.user",
+        "notify_props": {"comments": "mention"},
+        "custom_property": {"enabled": True},
+    }
+    output = output_type(participants=[participant])
 
-    assert output.model_dump()["file_ids"] == ["file-id"]
-    assert output.model_dump()["participants"] == ["user-id"]
+    assert isinstance(output.participants[0], UserOutput)
+    assert output.model_dump()["participants"] == [participant]
 
 
 def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:

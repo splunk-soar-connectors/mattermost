@@ -20,9 +20,8 @@ from soar_sdk.logging import getLogger
 from .actions import register_actions
 from .asset import Asset
 from .auth import (
-    build_oauth_auth,
+    authorize_and_probe_current_user,
     build_pat_auth,
-    complete_oauth_authorization,
     probe_current_user,
 )
 from .client import parse_json_response
@@ -82,13 +81,12 @@ def create_mattermost_app() -> App:
                 parse_json_response(response)
 
         redirect_uri = app.get_webhook_url(MATTERMOST_OAUTH_CALLBACK_ROUTE)
-        complete_oauth_authorization(
+        response = authorize_and_probe_current_user(
             asset,
             asset_id=str(soar.get_asset_id()),
             redirect_uri=redirect_uri,
             announce_url=_announce_oauth_url,
         )
-        response = probe_current_user(asset, build_oauth_auth(asset))
         try:
             parse_json_response(response)
         except ActionFailure:

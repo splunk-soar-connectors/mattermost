@@ -8,6 +8,55 @@ Minimum Product Version: 7.0.0
 
 This app integrates with Mattermost to support various investigative actions
 
+### OAuth authentication
+
+Mattermost supports authentication with either a personal access token or an
+OAuth 2.0 application. Configure `server_url` for every asset. For OAuth,
+configure both `client_id` and `client_secret`; the two fields are used
+together for authorization and token exchange. `personal_token` is optional.
+
+#### Configure the Mattermost OAuth application
+
+1. In Mattermost, open **System Console > Integrations > OAuth 2.0
+   Applications** and select the OAuth application used by the SOAR asset.
+1. In the SOAR asset, open **Webhook Settings** and copy the route ending in
+   `/oauth_callback`.
+1. Add that complete URL to the Mattermost OAuth application's **Callback
+   URLs**, including the SOAR host, application identifier, and asset ID. The
+   URL is asset-specific, so use the URL displayed for each asset. Do not use
+   the legacy `/rest/handler/.../result` callback for the SDK app.
+1. Save the OAuth application and verify that the client ID and client secret
+   in the SOAR asset belong to that application.
+
+#### Authorize an asset
+
+1. Configure the Mattermost asset with `server_url`, `client_id`, and
+   `client_secret`.
+1. Select **Test Connectivity** in SOAR.
+1. If authorization is required, open the OAuth URL displayed in the test
+   progress message, sign in to Mattermost, and select **Allow**.
+1. Return to the SOAR test and wait for the OAuth callback and connectivity
+   result.
+
+If a valid `personal_token` is configured, the connector tries it first. When
+that token is absent or rejected and both OAuth fields are configured, the
+connector uses the OAuth flow instead.
+
+#### Upgrade from the legacy connector
+
+The SDK app uses the webhook callback ending in `/oauth_callback` instead of
+the legacy `/rest/handler/.../result` callback. Before upgrading an existing
+OAuth asset, add the new SDK callback URL to the Mattermost OAuth application
+for that asset. Keep the legacy callback while an older connector version is
+still in use, then remove it after the upgrade is complete.
+
+The connector migrates a usable legacy OAuth token into SDK-managed OAuth
+state when `client_id` is configured. Existing assets must still have both
+`client_id` and `client_secret` configured so the connector can authorize or
+refresh OAuth credentials. Run **Test Connectivity** after the upgrade. If the
+legacy token cannot be used or no token is available, SOAR displays a new
+authorization URL and the asset must be authorized once through the browser.
+
 ### Configuration variables
 
 This table lists the configuration variables required to operate Mattermost. These variables are specified when configuring a Mattermost asset in Splunk SOAR.
@@ -171,7 +220,36 @@ action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True Fal
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
-action_result.data.\*.participants.\* | string | | |
+action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
+action_result.data.\*.participants.\*.username | string | `user name` | test.user |
+action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
+action_result.data.\*.participants.\*.first_name | string | | test |
+action_result.data.\*.participants.\*.last_name | string | | user |
+action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.auth_data | string | | |
+action_result.data.\*.participants.\*.auth_service | string | | |
+action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
+action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
+action_result.data.\*.participants.\*.email_verified | boolean | | True False |
+action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
+action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
+action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
+action_result.data.\*.participants.\*.locale | string | | en |
+action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
+action_result.data.\*.participants.\*.nickname | string | | test |
+action_result.data.\*.participants.\*.notify_props.email | string | | |
+action_result.data.\*.participants.\*.notify_props.push | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
+action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
+action_result.data.\*.participants.\*.notify_props.channel | string | | |
+action_result.data.\*.participants.\*.notify_props.first_name | string | | |
+action_result.data.\*.participants.\*.position | string | | |
+action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
+action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
+action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -218,7 +296,36 @@ action_result.data.\*.root_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
 action_result.data.\*.type | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
-action_result.data.\*.participants.\* | string | | |
+action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
+action_result.data.\*.participants.\*.username | string | `user name` | test.user |
+action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
+action_result.data.\*.participants.\*.first_name | string | | test |
+action_result.data.\*.participants.\*.last_name | string | | user |
+action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.auth_data | string | | |
+action_result.data.\*.participants.\*.auth_service | string | | |
+action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
+action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
+action_result.data.\*.participants.\*.email_verified | boolean | | True False |
+action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
+action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
+action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
+action_result.data.\*.participants.\*.locale | string | | en |
+action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
+action_result.data.\*.participants.\*.nickname | string | | test |
+action_result.data.\*.participants.\*.notify_props.email | string | | |
+action_result.data.\*.participants.\*.notify_props.push | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
+action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
+action_result.data.\*.participants.\*.notify_props.channel | string | | |
+action_result.data.\*.participants.\*.notify_props.first_name | string | | |
+action_result.data.\*.participants.\*.position | string | | |
+action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
+action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
+action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -286,7 +393,36 @@ action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg
 action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
-action_result.data.\*.participants.\* | string | | |
+action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
+action_result.data.\*.participants.\*.username | string | `user name` | test.user |
+action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
+action_result.data.\*.participants.\*.first_name | string | | test |
+action_result.data.\*.participants.\*.last_name | string | | user |
+action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.auth_data | string | | |
+action_result.data.\*.participants.\*.auth_service | string | | |
+action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
+action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
+action_result.data.\*.participants.\*.email_verified | boolean | | True False |
+action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
+action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
+action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
+action_result.data.\*.participants.\*.locale | string | | en |
+action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
+action_result.data.\*.participants.\*.nickname | string | | test |
+action_result.data.\*.participants.\*.notify_props.email | string | | |
+action_result.data.\*.participants.\*.notify_props.push | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop | string | | |
+action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
+action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
+action_result.data.\*.participants.\*.notify_props.channel | string | | |
+action_result.data.\*.participants.\*.notify_props.first_name | string | | |
+action_result.data.\*.participants.\*.position | string | | |
+action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
+action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
+action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
+action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 action_result.summary.total_posts | numeric | | 5 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
