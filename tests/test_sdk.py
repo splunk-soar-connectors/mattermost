@@ -31,7 +31,6 @@ from src.actions.list_users import (
     ListUsersOutput,
     ListUsersParams,
     ParticipantOutput,
-    UserOutput,
     list_users,
 )
 from src.actions.make_request import MattermostMakeRequestParams, make_request

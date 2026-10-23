@@ -220,12 +220,12 @@ action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True Fal
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
-action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
-action_result.data.\*.participants.\*.username | string | `user name` | test.user |
-action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
-action_result.data.\*.participants.\*.first_name | string | | test |
-action_result.data.\*.participants.\*.last_name | string | | user |
-action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.id | string | | |
+action_result.data.\*.participants.\*.username | string | | |
+action_result.data.\*.participants.\*.email | string | | |
+action_result.data.\*.participants.\*.first_name | string | | |
+action_result.data.\*.participants.\*.last_name | string | | |
+action_result.data.\*.participants.\*.roles | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -272,12 +272,12 @@ action_result.data.\*.root_id | string | | g9rit1zsx3ngzbs1srtx8tu5fe |
 action_result.data.\*.type | string | | |
 action_result.data.\*.reply_count | numeric | | 0 |
 action_result.data.\*.last_reply_at | numeric | | 0 |
-action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
-action_result.data.\*.participants.\*.username | string | `user name` | test.user |
-action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
-action_result.data.\*.participants.\*.first_name | string | | test |
-action_result.data.\*.participants.\*.last_name | string | | user |
-action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.id | string | | |
+action_result.data.\*.participants.\*.username | string | | |
+action_result.data.\*.participants.\*.email | string | | |
+action_result.data.\*.participants.\*.first_name | string | | |
+action_result.data.\*.participants.\*.last_name | string | | |
+action_result.data.\*.participants.\*.roles | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -345,12 +345,12 @@ action_result.data.\*.metadata.files.\*.channel_id | string | | aopx3i38utrfxqyg
 action_result.data.\*.metadata.files.\*.mini_preview | string | | /9j/2wCEAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRQBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/AABEIABAAEAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APgKe+e6YM7DhMDCA+2Kg8krAJs4GcD5hnI68V1NjfQxWlmiMI5UhRi2DkH1B+uKi1O6ie1uQZd0jITyDkk89fxrqsc1z//Z |
 action_result.data.\*.metadata.files.\*.has_preview_image | boolean | | True False |
 action_result.data.\*.metadata.files.\*.remote_id | string | | |
-action_result.data.\*.participants.\*.id | string | | pyx8sqe7zfn1dpmtd1s3qzqhfr |
-action_result.data.\*.participants.\*.username | string | `user name` | test.user |
-action_result.data.\*.participants.\*.email | string | `email` | test.user@mattermost.com |
-action_result.data.\*.participants.\*.first_name | string | | test |
-action_result.data.\*.participants.\*.last_name | string | | user |
-action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
+action_result.data.\*.participants.\*.id | string | | |
+action_result.data.\*.participants.\*.username | string | | |
+action_result.data.\*.participants.\*.email | string | | |
+action_result.data.\*.participants.\*.first_name | string | | |
+action_result.data.\*.participants.\*.last_name | string | | |
+action_result.data.\*.participants.\*.roles | string | | |
 action_result.summary.total_posts | numeric | | 5 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
