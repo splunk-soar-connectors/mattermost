@@ -392,6 +392,49 @@ def test_call_mattermost_falls_back_to_oauth_after_pat_401() -> None:
     )
 
 
+def test_call_mattermost_does_not_initialize_oauth_for_valid_pat() -> None:
+    asset = Asset(
+        server_url="https://mattermost.example.com",
+        personal_token="valid-token",
+        client_id="client-id",
+        client_secret="client-secret",  # pragma: allowlist secret
+    )
+    response = httpx.Response(200, json={"id": "user-id"})
+
+    with (
+        patch("src.client._request_with_auth", return_value=response) as request,
+        patch(
+            "src.client.build_oauth_auth",
+            side_effect=RuntimeError("unusable OAuth state"),
+        ) as build_oauth,
+    ):
+        result = call_mattermost("GET", "/users/me", asset)
+
+    assert result is response
+    request.assert_called_once()
+    build_oauth.assert_not_called()
+
+
+def test_call_mattermost_uses_oauth_when_pat_is_absent() -> None:
+    asset = Asset(
+        server_url="https://mattermost.example.com",
+        client_id="client-id",
+        client_secret="client-secret",  # pragma: allowlist secret
+    )
+    response = httpx.Response(200, json={"id": "user-id"})
+    oauth_auth = Mock()
+
+    with (
+        patch("src.client.build_oauth_auth", return_value=oauth_auth) as build_oauth,
+        patch("src.client._request_with_auth", return_value=response) as request,
+    ):
+        result = call_mattermost("GET", "/users/me", asset)
+
+    assert result is response
+    build_oauth.assert_called_once_with(asset)
+    assert request.call_args.kwargs["auth"] is oauth_auth
+
+
 def test_call_mattermost_preserves_legacy_request_defaults() -> None:
     response = httpx.Response(200, json={"id": "user-id"})
 

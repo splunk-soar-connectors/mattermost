@@ -87,43 +87,33 @@ def call_mattermost(
     request_verify_ssl = asset.verify_server_cert if verify_ssl is None else verify_ssl
     request_timeout = timeout
 
-    auth_candidates: list[httpx.Auth] = []
-    if asset.personal_token:
-        auth_candidates.append(build_pat_auth(asset))
-    if asset.client_id and asset.client_secret:
-        auth_candidates.append(build_oauth_auth(asset))
-    if not auth_candidates:
-        raise ActionFailure(
-            "Please provide 'personal_token' or run test connectivity with "
-            "'client_id' and 'client_secret'"
+    def request_with_auth(auth: httpx.Auth) -> httpx.Response:
+        return _request_with_auth(
+            method,
+            url,
+            auth=auth,
+            params=params,
+            json=json,
+            data=data,
+            files=files,
+            headers=request_headers,
+            timeout=request_timeout,
+            verify_ssl=request_verify_ssl,
         )
 
-    response = _request_with_auth(
-        method,
-        url,
-        auth=auth_candidates[0],
-        params=params,
-        json=json,
-        data=data,
-        files=files,
-        headers=request_headers,
-        timeout=request_timeout,
-        verify_ssl=request_verify_ssl,
-    )
-    if response.status_code != 401 or len(auth_candidates) == 1:
-        return response
+    has_oauth_credentials = bool(asset.client_id and asset.client_secret)
+    if asset.personal_token:
+        response = request_with_auth(build_pat_auth(asset))
+        if response.status_code != 401 or not has_oauth_credentials:
+            return response
+        return request_with_auth(build_oauth_auth(asset))
 
-    return _request_with_auth(
-        method,
-        url,
-        auth=auth_candidates[1],
-        params=params,
-        json=json,
-        data=data,
-        files=files,
-        headers=request_headers,
-        timeout=request_timeout,
-        verify_ssl=request_verify_ssl,
+    if has_oauth_credentials:
+        return request_with_auth(build_oauth_auth(asset))
+
+    raise ActionFailure(
+        "Please provide 'personal_token' or run test connectivity with "
+        "'client_id' and 'client_secret'"
     )
 
 
