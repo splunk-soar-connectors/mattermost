@@ -101,6 +101,17 @@ class UserOutput(PermissiveActionOutput):
     disable_welcome_email: bool | None = OutputField(example_values=[False])
 
 
+class ParticipantOutput(PermissiveActionOutput):
+    """A Mattermost user embedded in a post response."""
+
+    id: str | None = None
+    username: str | None = None
+    email: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    roles: str | None = None
+
+
 class ListUsersOutput(UserOutput):
     """A Mattermost user returned by the list users action."""
 

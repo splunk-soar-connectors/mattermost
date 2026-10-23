@@ -30,6 +30,7 @@ from src.actions.list_teams import ListTeamsOutput, list_teams
 from src.actions.list_users import (
     ListUsersOutput,
     ListUsersParams,
+    ParticipantOutput,
     UserOutput,
     list_users,
 )
@@ -363,7 +364,7 @@ def test_post_outputs_preserve_structured_participants(output_type: type) -> Non
     }
     output = output_type(participants=[participant])
 
-    assert isinstance(output.participants[0], UserOutput)
+    assert isinstance(output.participants[0], ParticipantOutput)
     assert output.model_dump()["participants"] == [participant]
 
 

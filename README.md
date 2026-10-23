@@ -226,30 +226,6 @@ action_result.data.\*.participants.\*.email | string | `email` | test.user@matte
 action_result.data.\*.participants.\*.first_name | string | | test |
 action_result.data.\*.participants.\*.last_name | string | | user |
 action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
-action_result.data.\*.participants.\*.auth_data | string | | |
-action_result.data.\*.participants.\*.auth_service | string | | |
-action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
-action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
-action_result.data.\*.participants.\*.email_verified | boolean | | True False |
-action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
-action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
-action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
-action_result.data.\*.participants.\*.locale | string | | en |
-action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
-action_result.data.\*.participants.\*.nickname | string | | test |
-action_result.data.\*.participants.\*.notify_props.email | string | | |
-action_result.data.\*.participants.\*.notify_props.push | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
-action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
-action_result.data.\*.participants.\*.notify_props.channel | string | | |
-action_result.data.\*.participants.\*.notify_props.first_name | string | | |
-action_result.data.\*.participants.\*.position | string | | |
-action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
-action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
-action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -302,30 +278,6 @@ action_result.data.\*.participants.\*.email | string | `email` | test.user@matte
 action_result.data.\*.participants.\*.first_name | string | | test |
 action_result.data.\*.participants.\*.last_name | string | | user |
 action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
-action_result.data.\*.participants.\*.auth_data | string | | |
-action_result.data.\*.participants.\*.auth_service | string | | |
-action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
-action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
-action_result.data.\*.participants.\*.email_verified | boolean | | True False |
-action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
-action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
-action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
-action_result.data.\*.participants.\*.locale | string | | en |
-action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
-action_result.data.\*.participants.\*.nickname | string | | test |
-action_result.data.\*.participants.\*.notify_props.email | string | | |
-action_result.data.\*.participants.\*.notify_props.push | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
-action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
-action_result.data.\*.participants.\*.notify_props.channel | string | | |
-action_result.data.\*.participants.\*.notify_props.first_name | string | | |
-action_result.data.\*.participants.\*.position | string | | |
-action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
-action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
-action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -399,30 +351,6 @@ action_result.data.\*.participants.\*.email | string | `email` | test.user@matte
 action_result.data.\*.participants.\*.first_name | string | | test |
 action_result.data.\*.participants.\*.last_name | string | | user |
 action_result.data.\*.participants.\*.roles | string | | system_user system_user_access_token system_post_all |
-action_result.data.\*.participants.\*.auth_data | string | | |
-action_result.data.\*.participants.\*.auth_service | string | | |
-action_result.data.\*.participants.\*.create_at | numeric | | 1535004134292 |
-action_result.data.\*.participants.\*.delete_at | numeric | | 0 |
-action_result.data.\*.participants.\*.email_verified | boolean | | True False |
-action_result.data.\*.participants.\*.failed_attempts | numeric | | 0 |
-action_result.data.\*.participants.\*.last_password_update | numeric | | 0 |
-action_result.data.\*.participants.\*.last_picture_update | numeric | | 0 |
-action_result.data.\*.participants.\*.locale | string | | en |
-action_result.data.\*.participants.\*.mfa_active | boolean | | True False |
-action_result.data.\*.participants.\*.nickname | string | | test |
-action_result.data.\*.participants.\*.notify_props.email | string | | |
-action_result.data.\*.participants.\*.notify_props.push | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop | string | | |
-action_result.data.\*.participants.\*.notify_props.desktop_sound | string | | |
-action_result.data.\*.participants.\*.notify_props.mention_keys | string | | |
-action_result.data.\*.participants.\*.notify_props.channel | string | | |
-action_result.data.\*.participants.\*.notify_props.first_name | string | | |
-action_result.data.\*.participants.\*.position | string | | |
-action_result.data.\*.participants.\*.timezone.automaticTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.manualTimezone | string | | |
-action_result.data.\*.participants.\*.timezone.useAutomaticTimezone | boolean | | True False |
-action_result.data.\*.participants.\*.update_at | numeric | | 1535105717458 |
-action_result.data.\*.participants.\*.disable_welcome_email | boolean | | True False |
 action_result.summary.total_posts | numeric | | 5 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |

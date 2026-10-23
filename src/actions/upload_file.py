@@ -28,7 +28,7 @@ from ..consts import (
     MATTERMOST_VAULT_ID_NOT_FOUND,
 )
 from ._helpers import _create_post, _resolve_channel_id, _resolve_team_id
-from .list_users import UserOutput
+from .list_users import ParticipantOutput
 
 
 class UploadFileParams(Params):
@@ -130,7 +130,7 @@ class UploadFileOutput(PermissiveActionOutput):
     metadata: MetadataOutput | None = None
     reply_count: float | None = OutputField(example_values=[0])
     last_reply_at: float | None = OutputField(example_values=[0])
-    participants: list[UserOutput] | None = None
+    participants: list[ParticipantOutput] | None = None
 
 
 def upload_file(
