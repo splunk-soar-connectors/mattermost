@@ -1,7 +1,7 @@
 # Ruff linting
 [project]
 name = "mattermost"
-version = "3.0.1"
+version = "4.0.0"
 description = "This app integrates with Mattermost to support various investigative actions"
 license = "Copyright (c) 2018-2026 Splunk Inc."
 requires-python = ">=3.13,<3.14"
